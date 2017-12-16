@@ -10,6 +10,7 @@ import Homepage from '../containers/Homepage';
 import NotFound from '../containers/NotFound';
 import SignIn from '../containers/SignIn';
 import SignUp from '../containers/SignUp';
+import VerifyEmail from '../containers/VerifyEmail';
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
@@ -25,6 +26,7 @@ class App extends Component {
       <BrowserRouter>
         <Switch>
           <AppRoute exact path="/" layout={EmptyLayout} component={Homepage} />
+          <AppRoute exact path="/verify-email/:token" layout={EmptyLayout} component={VerifyEmail} />
           <AppRoute exact path="/sign-in" layout={PortalAccessLayout} component={SignIn} />
           <AppRoute exact path="/sign-up" layout={PortalAccessLayout} component={SignUp} />
         </Switch>
