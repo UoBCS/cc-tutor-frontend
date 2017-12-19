@@ -7,7 +7,17 @@ import storage from 'utils/storage';
 class SignIn extends Component {
   state = {
     email: '',
-    password: ''
+    password: '',
+    ui: {
+      message: {
+        headerContent: '',
+        mainContent: '',
+        type: ''
+      },
+      loader: {
+        main: false
+      }
+    }
   }
 
   getFormData = () => {
@@ -26,19 +36,26 @@ class SignIn extends Component {
   }
 
   handleSignInClick = () => {
+    this.props.ui.loader.show(this, 'main');
+
     api.signIn(this.getFormData())
       .then(res => {
+        this.props.ui.loader.hide(this, 'main');
         storage.set('access_token', res.data.access_token);
-        // redirect to index
+        this.props.history.push('/dashboard');
       })
       .catch(err => {
-
+        this.props.ui.loader.hide(this, 'main');
+        this.props.ui.message.show(this, 'negative', 'An error has occurred.', err.response.data.errors[0].detail);
       });
   }
 
   render() {
     return (
       <div>
+        {this.props.ui.message.render(this)}
+        {this.props.ui.loader.render(this, 'main')}
+
         <Header as='h2' color='teal' textAlign='center'>
           Log-in to your account
         </Header>

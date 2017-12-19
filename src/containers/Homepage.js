@@ -14,10 +14,46 @@ import {
   Visibility,
 } from 'semantic-ui-react';
 
+import auth from 'utils/auth';
+import api from 'api';
+
 export default class Homepage extends Component {
-  state = {}
+  state = {
+    authenticated: false
+  }
+
+  componentWillMount() {
+    auth.isAuthenticated()
+      .then(res => {
+        this.setState({ authenticated: true });
+      })
+      .catch(err => {
+        this.setState({ authenticated: false });
+      })
+  }
+
+  handleLogOutClick = () => {
+    api.logOut()
+      .then(res => {
+
+      })
+      .catch(err => {
+
+      });
+  }
 
   render() {
+    const rightMenu = this.state.authenticated
+      ?
+      <Menu.Item position='right'>
+        <Button as={Link} to='/dashboard' inverted>Dashboard</Button>
+        <Button onClick={this.handleLogOutClick} inverted style={{ marginLeft: '0.5em' }}>Log out</Button>
+      </Menu.Item>
+      :
+      <Menu.Item position='right'>
+        <Button as={Link} to='/sign-in' inverted>Sign in</Button>
+        <Button as={Link} to='/sign-up' inverted style={{ marginLeft: '0.5em' }}>Sign Up</Button>
+      </Menu.Item>
 
     return (
       <div>
@@ -32,10 +68,7 @@ export default class Homepage extends Component {
               <Menu.Item as={Link} to='/' active>Home</Menu.Item>
               <Menu.Item as='a'>About</Menu.Item>
               <Menu.Item as='a'>API</Menu.Item>
-              <Menu.Item position='right'>
-                <Button as={Link} to='/sign-in' inverted>Sign in</Button>
-                <Button as={Link} to='/sign-up' inverted style={{ marginLeft: '0.5em' }}>Sign Up</Button>
-              </Menu.Item>
+              {rightMenu}
             </Menu>
           </Container>
 

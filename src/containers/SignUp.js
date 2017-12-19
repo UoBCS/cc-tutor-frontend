@@ -9,8 +9,16 @@ class SignUp extends Component {
     email: '',
     password: '',
     teacher: false,
-    confirmationMessage: false,
-    errorMessage: false
+    ui: {
+      message: {
+        headerContent: '',
+        mainContent: '',
+        type: ''
+      },
+      loader: {
+        main: false
+      }
+    }
   }
 
   getFormData = () => {
@@ -44,12 +52,16 @@ class SignUp extends Component {
   }
 
   handleSignUpClick = () => {
+    this.props.ui.loader.show(this, 'main');
+
     api.signUp(this.getFormData())
       .then(res => {
-        this.setState({ confirmationMessage: true });
+        this.props.ui.loader.hide(this, 'main');
+        this.props.ui.message.show(this, 'positive', 'You have been successfully signed up.', 'Check your email to activate your account.');
       })
       .catch(err => {
-        this.setState({ errorMessage: true });
+        this.props.ui.loader.hide(this, 'main');
+        this.props.ui.message.show(this, 'negative', 'An error has occurred.', 'An error has occurred when signing up.');
       });
 
     this.resetInput();
@@ -58,19 +70,8 @@ class SignUp extends Component {
   render() {
     return (
       <div>
-        {this.state.confirmationMessage &&
-          <Message positive>
-            <Message.Header>You have been successfully signed up.</Message.Header>
-            <p>Check your email to activate your account.</p>
-          </Message>
-        }
-
-        {this.state.errorMessage &&
-          <Message positive>
-            <Message.Header>An error has occurred.</Message.Header>
-            <p>An error has occurred when signing up.</p>
-          </Message>
-        }
+        {this.props.ui.message.render(this)}
+        {this.props.ui.loader.render(this, 'main')}
 
         <Header as='h2' color='teal' textAlign='center'>
           Sign-up to CC Tutor
