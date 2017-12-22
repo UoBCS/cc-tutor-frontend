@@ -3,21 +3,13 @@ import { Link } from 'react-router-dom';
 import { Button, Form, Header, Message, Segment } from 'semantic-ui-react';
 import api from 'api';
 import storage from 'utils/storage';
+import misc from 'utils/misc';
 
 class SignIn extends Component {
   state = {
     email: '',
     password: '',
-    ui: {
-      message: {
-        headerContent: '',
-        mainContent: '',
-        type: ''
-      },
-      loader: {
-        main: false
-      }
-    }
+    ui: misc.lazyClone(this.props.uiState)
   }
 
   getFormData = () => {

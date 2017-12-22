@@ -17,10 +17,21 @@ import RegexToNFA from '../containers/RegexToNFA';
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
     <Layout>
-      <Component {...props} ui={uiObj} />
+      <Component {...props} ui={uiObj} uiState={uiState} />
     </Layout>
   )} />
 );
+
+const uiState = {
+  message: {
+    headerContent: '',
+    mainContent: '',
+    type: ''
+  },
+  loader: {
+    main: false
+  }
+};
 
 const uiObj = {};
 

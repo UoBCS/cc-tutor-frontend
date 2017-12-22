@@ -25,4 +25,8 @@ api.logOut = () => {
   return axios.post('/logout');
 };
 
+api.regexToNfa = regex => {
+  return axios.get(`/algorithms/regex2nfa/${regex}`);
+};
+
 export default api;

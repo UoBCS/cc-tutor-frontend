@@ -6,7 +6,6 @@ class MainLayout extends Component {
   state = { activeItem: 'dashboard' }
 
   handleItemClick = (e, { name }) => {
-    console.log(name);
     this.setState({ activeItem: name })
   }
 
@@ -72,7 +71,7 @@ class MainLayout extends Component {
             Logout
           </Menu.Item>
         </div>
-        <div style={{ marginLeft: 250, minWidth: 550, paddingTop: 30, paddingLeft: 30, paddingRight: 30 }}>
+        <div style={{ marginLeft: 250, minWidth: 550 }}>
           {this.props.children}
         </div>
       </div>

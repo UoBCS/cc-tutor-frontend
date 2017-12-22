@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Form, Header, Message, Segment, Radio } from 'semantic-ui-react';
 import api from 'api';
+import misc from 'utils/misc';
 
 class SignUp extends Component {
   state = {
@@ -9,16 +10,7 @@ class SignUp extends Component {
     email: '',
     password: '',
     teacher: false,
-    ui: {
-      message: {
-        headerContent: '',
-        mainContent: '',
-        type: ''
-      },
-      loader: {
-        main: false
-      }
-    }
+    ui: misc.lazyClone(this.props.uiState)
   }
 
   getFormData = () => {
