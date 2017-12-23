@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
 import ParseTreeViz from 'components/ParseTreeViz';
 import { Graph } from 'react-d3-graph';
-//import SigmaLoader from 'components/SigmaLoader';
+import FiniteAutomatonViz from 'components/FiniteAutomatonViz';
 //import { Sigma, RandomizeNodePositions, RelativeSize } from 'react-sigma';
 import api from 'api';
 import misc from 'utils/misc';
@@ -13,8 +13,9 @@ class RegexToNFA extends Component {
     regexTreeData: null,
     conversionSteps: null,
     currentNfa: {
-      nodes: [],
-      links: []
+      toAdd: true,
+      //nodes: [],
+      edge: {}
     },
     currentStep: {
       action: '',
@@ -35,9 +36,16 @@ class RegexToNFA extends Component {
     let step = this.state.conversionSteps[this.state.currentStep.index];
     let currentNfa = this.state.currentNfa;
 
-    currentNfa.nodes.push({id: step.entry});
-    currentNfa.nodes.push({id: step.exit});
-    currentNfa.links.push({source: step.entry, target: step.exit});
+    currentNfa.toAdd = true;
+    //currentNfa.nodes.push(step.entry);
+    //currentNfa.nodes.push(step.exit);
+    //source: step.entry, target: step.exit, char: step.transition});
+
+    currentNfa.edge = {
+      source: { id: step.entry, final: step.entry.startsWith('||') },
+      target: { id: step.exit, final: step.exit.startsWith('||') },
+      char: step.transition
+    }
 
     let currentStep = this.state.currentStep;
     currentStep.index++;
@@ -76,6 +84,12 @@ class RegexToNFA extends Component {
   render() {
     // steps={this.state.conversionSteps} currentStep={this.state.currentStep.index}
 
+    /*
+    {this.state.currentNfa.nodes.length
+      ? <Graph id='fa-viz' data={this.state.currentNfa} config={nfaConfig} />
+      : null
+    }
+
     const nfaConfig = {
         nodeHighlightBehavior: true,
         node: {
@@ -86,7 +100,7 @@ class RegexToNFA extends Component {
         link: {
             highlightColor: 'lightblue'
         }
-    };
+    };*/
 
     const body = this.state.regexTreeData ?
     (
@@ -100,10 +114,7 @@ class RegexToNFA extends Component {
           </Grid.Column>
           <Grid.Column width={8}>
             <Header as='h2' textAlign='center'>Non-deterministic finite automaton</Header>
-            {this.state.currentNfa.nodes.length
-              ? <Graph id='fa-viz' data={this.state.currentNfa} config={nfaConfig} />
-              : null
-            }
+            <FiniteAutomatonViz data={this.state.currentNfa} linkDistance={200} width={600} height={600} />
           </Grid.Column>
         </Grid.Row>
       </Grid>

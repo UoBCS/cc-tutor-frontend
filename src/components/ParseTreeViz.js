@@ -13,9 +13,9 @@ class ParseTreeViz extends Component {
   createTree = () => {
     const o = this.props.data;
 
-    var margin = {top: 40, right: 90, bottom: 50, left: 90},
-    width = 660 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    let margin = {top: 40, right: 90, bottom: 50, left: 90};
+    let width = 660 - margin.left - margin.right;
+    let height = 500 - margin.top - margin.bottom;
 
     // Clear
     d3.selectAll("#parse-tree-viz > svg").remove();
@@ -41,7 +41,7 @@ class ParseTreeViz extends Component {
 
     // adds the links between the nodes
     var link = g.selectAll(".link")
-    .data( nodes.descendants().slice(1))
+    .data(nodes.descendants().slice(1))
     .enter().append("path")
     .attr("class", "link")
     .attr("d", function(d) {
@@ -85,6 +85,10 @@ class ParseTreeViz extends Component {
           fill: #fff;
           stroke: steelblue;
           stroke-width: 3px;
+        }
+
+        .node.active circle {
+          fill: steelblue;
         }
 
         .node text { font: 12px sans-serif; }
