@@ -3,7 +3,6 @@ import { Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-reac
 import ParseTreeViz from 'components/ParseTreeViz';
 import { Graph } from 'react-d3-graph';
 import FiniteAutomatonViz from 'components/FiniteAutomatonViz';
-//import { Sigma, RandomizeNodePositions, RelativeSize } from 'react-sigma';
 import api from 'api';
 import misc from 'utils/misc';
 
@@ -42,8 +41,8 @@ class RegexToNFA extends Component {
     //source: step.entry, target: step.exit, char: step.transition});
 
     currentNfa.edge = {
-      source: { id: step.entry, final: step.entry.startsWith('||') },
-      target: { id: step.exit, final: step.exit.startsWith('||') },
+      source: { id: step.entry.id, final: step.entry.final },
+      target: { id: step.exit.id, final: step.exit.final },
       char: step.transition
     }
 

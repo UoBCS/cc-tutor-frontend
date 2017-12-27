@@ -29,4 +29,8 @@ api.regexToNfa = regex => {
   return axios.get(`/algorithms/regex2nfa/${regex}`);
 };
 
+api.nfaToDfa = data => {
+  return axios.post('/algorithms/nfa2dfa', data);
+}
+
 export default api;

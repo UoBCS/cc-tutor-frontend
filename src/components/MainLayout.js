@@ -6,11 +6,12 @@ class MainLayout extends Component {
   state = { activeItem: 'dashboard' }
 
   handleItemClick = (e, { name }) => {
-    this.setState({ activeItem: name })
+    this.setState({ activeItem: name });
   }
 
   render() {
     const { activeItem } = this.state || {};
+    const pref = '/dashboard';
 
     return (
       <div>
@@ -22,7 +23,7 @@ class MainLayout extends Component {
             background: 'rgb(27, 28, 29)',
             overflowY: 'scroll'
           }}>
-          <Menu.Item name='dashboard' active={activeItem === 'dashboard'} as={Link} to='/dashboard' onClick={this.handleItemClick}>
+          <Menu.Item name='dashboard' active={activeItem === 'dashboard'} as={Link} to={pref} onClick={this.handleItemClick}>
             Dashboard
           </Menu.Item>
 
@@ -40,8 +41,8 @@ class MainLayout extends Component {
           <Menu.Item>
             <Menu.Header>Algorithms</Menu.Header>
             <Menu.Menu>
-              <Menu.Item name='regularExpressionToNFA' active={activeItem === 'regularExpressionToNFA'} as={Link} to='/dashboard/regex2nfa' onClick={this.handleItemClick}/>
-              <Menu.Item name='NFAToDFA' active={activeItem === 'NFAToDFA'} onClick={this.handleItemClick}/>
+              <Menu.Item name='regularExpressionToNFA' active={activeItem === 'regularExpressionToNFA'} as={Link} to={`${pref}/regex2nfa`} onClick={this.handleItemClick}/>
+              <Menu.Item name='NFAToDFA' active={activeItem === 'NFAToDFA'} as={Link} to={`${pref}/nfa2dfa`} onClick={this.handleItemClick}/>
               <Menu.Item name='DFAMinimization' active={activeItem === 'DFAMinimization'} onClick={this.handleItemClick}/>
               <Menu.Item name='LLParsing' active={activeItem === 'LLParsing'} onClick={this.handleItemClick}/>
               <Menu.Item name='LRParsing' active={activeItem === 'LRParsing'} onClick={this.handleItemClick}/>
