@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Container, Dropdown, Form, TextArea, Icon, Input, Segment, Header, Menu, Grid, Step } from 'semantic-ui-react';
 import FiniteAutomatonCreator from 'components/FiniteAutomatonCreator';
-//import misc from 'utils/misc';
+import 'jsoneditor/dist/jsoneditor.min.css';
+import JSONEditor from 'jsoneditor';
 
 const jsnx = window.jsnx;
 
@@ -14,7 +15,11 @@ class InputNfa extends Component {
 
   state = {
     inputMethod: 'manual',
-    jsonInput: ''
+    jsonEditor: null
+  }
+
+  componentDidMount() {
+    this.createJsonEditor();
   }
 
   handleInputMethodClick = event => {
@@ -55,11 +60,34 @@ class InputNfa extends Component {
     this.props.windowChangeHandler('viz', this.createNfaData());
   }
 
+  createJsonEditor = () => {
+    const jsonEditor = new JSONEditor(document.getElementById('jsonEditor'), {
+      mode: 'code',
+      modes: ['code', 'tree'],
+      search: true
+    });
+
+    jsonEditor.set([
+      {
+        "src": { "id": 0, "final": false },
+        "char": "ε",
+        "dest": { "id": 1, "final": false }
+      },
+      {
+        "src": { "id": 1, "final": false },
+        "char": "a",
+        "dest": { "id": 2, "final": true }
+      }
+    ]);
+
+    this.setState({ jsonEditor });
+  }
+
   createNfaData = () => {
     let nfa;
 
     if (this.state.inputMethod === 'json') {
-      nfa = JSON.parse(this.state.jsonInput);
+      nfa = this.state.jsonEditor.get();
     }
 
     if (this.state.inputMethod === 'manual') {
@@ -70,14 +98,6 @@ class InputNfa extends Component {
   }
 
   render() {
-    /*
-    <Header
-                as='h1'
-                className='light-heading'>
-                STEP 1: CREATE THE NFA
-              </Header>
-    */
-
     return (
       <div>
         <Container className='dashboard-content'>
@@ -107,15 +127,7 @@ class InputNfa extends Component {
           </Segment>
 
           <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
-            <Form>
-              <TextArea
-                id='jsonInput'
-                placeholder='Input your JSON'
-                value={this.state.json}
-                style={{ minHeight: 700, fontFamily: 'monospace' }}
-                onChange={this.handleTextAreaChange}
-                onKeyDown={this.handleTextAreaKeyDown}/>
-            </Form>
+            <div id='jsonEditor' style={{ width: 600, height: 600, margin: '10px auto' }}></div>
           </div>
         </Container>
 
