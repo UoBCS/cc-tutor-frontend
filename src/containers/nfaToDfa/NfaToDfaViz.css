@@ -1,0 +1,36 @@
+.viz-info {
+    margin: 30px auto;
+}
+
+.viz-info .current-action {
+    text-align: center;
+    font-size: 1.3em;
+}
+
+.viz-area {
+    padding: 0px !important;
+}
+
+.viz-area-title {
+    margin: 0 !important;
+    background-color: #efefef;
+    color: #505050 !important;
+    border-radius: .28571429rem .28571429rem 0 0;
+    font-weight: 100 !important;
+    font-size: 1.1em !important;
+    text-transform: uppercase !important;
+    padding: 3px 4px !important;
+}
+
+.viz-controls-panel {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.node .highlight {
+    fill: rgb(12, 168, 207) !important;
+}
+
+.edge .highlight {
+    fill: rgb(255, 0, 0) !important;
+}

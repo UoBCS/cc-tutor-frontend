@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 export default class FiniteAutomatonViz extends Component {
   state = {
-    automaton: new window.jsnx.DiGraph()
+    automaton: new window.jsnx.MultiDiGraph()
   }
 
   componentDidMount() {

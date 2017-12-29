@@ -101,6 +101,8 @@ class App extends Component {
           <AppRoute exact path="/dashboard" layout={MainLayout} component={Dashboard} />
           <AppRoute exact path="/dashboard/regex2nfa" layout={MainLayout} component={RegexToNFA} />
           <AppRoute exact path="/dashboard/nfa2dfa" layout={MainLayout} component={NfaToDfa} />
+
+          <AppRoute exact path="*" layout={EmptyLayout} component={NotFound} />
         </Switch>
       </BrowserRouter>
     );

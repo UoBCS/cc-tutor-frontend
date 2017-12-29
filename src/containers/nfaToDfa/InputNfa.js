@@ -8,11 +8,6 @@ const jsnx = window.jsnx;
 
 class InputNfa extends Component {
 
-  manual = {
-    nfa: new jsnx.DiGraph(),
-    currentNodeIndex: 0
-  }
-
   state = {
     inputMethod: 'manual',
     jsonEditor: null
@@ -71,12 +66,12 @@ class InputNfa extends Component {
       {
         "src": { "id": 0, "final": false },
         "char": "ε",
-        "dest": { "id": 1, "final": false }
+        "dest": { "id": 1, "final": true }
       },
       {
-        "src": { "id": 1, "final": false },
+        "src": { "id": 0, "final": false },
         "char": "a",
-        "dest": { "id": 2, "final": true }
+        "dest": { "id": 1, "final": true }
       }
     ]);
 
