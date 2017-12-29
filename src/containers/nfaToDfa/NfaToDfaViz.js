@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Container, Header, Grid, Segment, Menu, Message } from 'semantic-ui-react';
+import vis from 'vis';
 import api from 'api';
 import automata from 'utils/automata';
 import objectPath from 'object-path';
@@ -7,16 +8,19 @@ import misc from 'utils/misc';
 
 import './NfaToDfaViz.css';
 
-const d3 = window.d3;
-const jsnx = window.jsnx;
-
 class NfaToDfaViz extends Component {
 
   state = {
-    nfaObj: new jsnx.DiGraph(),
-    dfaObj: new jsnx.DiGraph(),
-    nfa: null,
-    dfa: null,
+    nfa: {
+      instance: null,
+      nodes: null,
+      edges: null
+    },
+    dfa: {
+     instance: null,
+     nodes: null,
+     edges: null
+    },
     breakpoints: null,
     currentBreakpointsScope: [],
     currentIndexStack: [0],
@@ -26,67 +30,44 @@ class NfaToDfaViz extends Component {
     }
   }
 
+  vizConfig = {
+    nodeColor: '#000'
+  }
+
   componentWillMount() {
     api.nfaToDfa(this.props.data)
       .then(res => {
-        this.setState({
-          nfa: this.props.data.nfa,
-          breakpoints: res.data.breakpoints
-        });
-
-        automata.fromData(this.state.nfaObj, this.props.data.nfa);
-
-        this.createAutomaton('nfa');
-        this.createAutomaton('dfa');
+        this.setState({ breakpoints: res.data.breakpoints });
       })
       .catch(err => {
         console.log(err);
       });
   }
 
-  createAutomaton(type) {
-    jsnx.draw(type === 'nfa' ? this.state.nfaObj : this.state.dfaObj, {
-      element: `#${type}-viz`,
-      layoutAttr: {
-        linkDistance: 200,
-        friction: 0.9,
-        charge: -280,
-        gravity: 0.1,
-        theta: 0.8
+  componentDidMount() {
+    let nfaData = automata.visDataFormat(this.props.data.nfa);
+    let dfaData = {
+      nodes: new vis.DataSet(),
+      edges: new vis.DataSet()
+    };
+
+    this.setState({
+      nfa: {
+        instance: this.createAutomaton('nfa', nfaData, {}),
+        nodes: nfaData.nodes,
+        edges: nfaData.edges
       },
-      nodeStyle: {
-        fill: '#989898',
-        stroke: d => d.data.final ? '#000' : 'none'
-      },
-      nodeAttr: {
-        r: 30,
-        id: d => {
-          return `${type}-node-${d.node}`; // assign unique ID
-        }
-      },
-      edgeAttr: {
-        id: d => {
-          let a = `${type}-${d.edge[0]}-${d.data.char.join('-')}-${d.edge[1]}`
-          console.log(a);
-          return a;
-        }
-      },
-      labelStyle: {
-        fill: 'white',
-        'font-size': '30px'
-      },
-      withLabels: true,
-      edgeLabels: d => d.data.char.join(', '),
-      edgeStyle: {
-        fill: '#676767',
-        'stroke-width': 10,
-      },
-      edgeLabelStyle: {
-        'font-size': '20px'
-      },
-      withEdgeLabels: true,
-      stickyDrag: true
-    }, true);
+
+      dfa: {
+        instance: this.createAutomaton('dfa', dfaData, {}),
+        nodes: dfaData.nodes,
+        edges: dfaData.edges
+      }
+    });
+  }
+
+  createAutomaton(type, data, options) {
+    return new vis.Network(document.getElementById(`${type}-viz`), data, options);
   }
 
   getBreakpointPath = () => {
@@ -105,12 +86,20 @@ class NfaToDfaViz extends Component {
     return path;
   }
 
-  highlightNodes = (type, nodes) => {
-    d3.selectAll(nodes.map(n => `#${type}-node-${n}`).join(', ')).classed('highlight', true);
+  highlightNodes = (type, nodes, color = '#f00') => {
+    this.state[type].nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
   }
 
-  highlightEdges = (type, edges) => {
-    d3.selectAll(edges.map(e => `#${type}-${e.join('-')}`).join(', ')).classed('highlight', true);
+  resetNodesHighlight = type => {
+
+  }
+
+  highlightEdges = (type, edges, color = '#f00') => {
+    this.state[type].edges.update(edges.map(e => ({ char: e.char, color: { color } })));
+  }
+
+  resetEdgesHighlight = type => {
+
   }
 
   addToActionsHistory = obj => {
@@ -132,7 +121,7 @@ class NfaToDfaViz extends Component {
         break;
 
       case 'initial_state_epsilon_closure':
-        d3.selectAll('.node').classed('highlight', false);
+        this.resetNodesHighlight('nfa');
 
         let reachableStates = breakpoint.data.reachable_states.map(s => s.id);
         this.highlightNodes('nfa', reachableStates);
@@ -145,15 +134,14 @@ class NfaToDfaViz extends Component {
         break;
 
       case 'initial_dfa_state':
-        // TODO: fix resetting just for one type of FA
-        d3.selectAll('.node').classed('highlight', false);
+        this.resetNodesHighlight('nfa');
 
         // Highlight NFA states
         let nfaStates = breakpoint.data.states.map(s => s.id);
         this.highlightNodes('nfa', nfaStates);
 
         // Add DFA state
-        this.state.dfaObj.addNode(breakpoint.data.id);
+        this.state.dfa.nodes.add({ id: breakpoint.data.id, label: '' + breakpoint.data.id });
         this.highlightNodes('dfa', [breakpoint.data.id]);
 
         this.addToActionsHistory({
@@ -164,9 +152,13 @@ class NfaToDfaViz extends Component {
         break;
 
       case 'possible_inputs':
-        d3.selectAll('.node').classed('highlight', false);
+        this.resetNodesHighlight('nfa');
 
-        this.highlightEdges('nfa', breakpoint.data.transitions.map(e => [e.src.id, e.char, e.dest.id]));
+        this.highlightEdges('nfa', breakpoint.data.transitions.map(e => ({
+          src: e.src.id,
+          char: e.char,
+          dest: e.dest.id
+        })));
 
         this.addToActionsHistory({
           label: breakpoint.label,

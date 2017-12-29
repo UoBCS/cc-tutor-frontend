@@ -69,9 +69,9 @@ class InputNfa extends Component {
         "dest": { "id": 1, "final": true }
       },
       {
-        "src": { "id": 0, "final": false },
+        "src": { "id": 1, "final": false },
         "char": "a",
-        "dest": { "id": 1, "final": true }
+        "dest": { "id": 2, "final": true }
       }
     ]);
 
