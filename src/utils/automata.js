@@ -53,4 +53,25 @@ automata.visDataFormat = (data) => {
   return { nodes, edges };
 };
 
+automata.addEdge = (fa, n1, n2, transition) => {
+  let n1o = fa.nodes.get(n1);
+  let n2o = fa.nodes.get(n2);
+
+  if (n1o === null) {
+    fa.nodes.add({ id: n1, label: '' + n1 });
+  }
+
+  if (n2o === null) {
+    fa.nodes.add({ id: n2, label: '' + n2 });
+  }
+
+  fa.edges.add({
+    from: n1,
+    to: n2,
+    arrows: 'to',
+    label: transition,
+    font: {align: 'top'}
+  });
+};
+
 export default automata;

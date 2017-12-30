@@ -3,9 +3,6 @@ import { Button } from 'semantic-ui-react';
 import vis from 'vis';
 import 'vis/dist/vis-network.min.css';
 
-const d3 = window.d3;
-const jsnx = window.jsnx;
-
 class FiniteAutomatonCreator extends Component {
 
   nodes = new vis.DataSet();

@@ -16,11 +16,13 @@ class NfaToDfaViz extends Component {
       nodes: null,
       edges: null
     },
+
     dfa: {
      instance: null,
      nodes: null,
      edges: null
     },
+
     breakpoints: null,
     currentBreakpointsScope: [],
     currentIndexStack: [0],
@@ -66,7 +68,7 @@ class NfaToDfaViz extends Component {
     });
   }
 
-  createAutomaton(type, data, options) {
+  createAutomaton = (type, data, options) => {
     return new vis.Network(document.getElementById(`${type}-viz`), data, options);
   }
 

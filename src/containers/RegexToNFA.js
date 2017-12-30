@@ -1,106 +1,113 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
 import ParseTreeViz from 'components/ParseTreeViz';
-import { Graph } from 'react-d3-graph';
-import FiniteAutomatonViz from 'components/FiniteAutomatonViz';
+import VisualizationControl from 'components/VisualizationControl';
+import vis from 'vis';
+import objectPath from 'object-path';
 import api from 'api';
 import misc from 'utils/misc';
+import automata from 'utils/automata';
 
 class RegexToNFA extends Component {
   state = {
-    regexInput: '',
+    input: {
+      regex: ''
+    },
+
     regexTreeData: null,
-    conversionSteps: null,
-    currentNfa: {
-      toAdd: true,
-      //nodes: [],
-      edge: {}
+
+    nfa: {
+      instance: null,
+      nodes: null,
+      edegs: null
     },
-    currentStep: {
-      action: '',
-      index: 0
+
+    breakpoint: {
+      data: null,
+      scopeStack: [],
+      indexStack: [0],
     },
+
+    vizElements: {
+      actionsHistory: []
+    },
+
     ui: misc.lazyClone(this.props.uiState)
   }
 
-  handleInputChange = event => {
-    const target = event.target;
-
-    this.setState({
-      [target.name]: target.value
-    });
-  }
-
-  handleNextClick = () => {
-    let step = this.state.conversionSteps[this.state.currentStep.index];
-    let currentNfa = this.state.currentNfa;
-
-    currentNfa.toAdd = true;
-    //currentNfa.nodes.push(step.entry);
-    //currentNfa.nodes.push(step.exit);
-    //source: step.entry, target: step.exit, char: step.transition});
-
-    currentNfa.edge = {
-      source: { id: step.entry.id, final: step.entry.final },
-      target: { id: step.exit.id, final: step.exit.final },
-      char: step.transition
+  init = {
+    createAutomaton: (data, options) => {
+      return new vis.Network(document.getElementById('nfa-viz'), data, options);
     }
-
-    let currentStep = this.state.currentStep;
-    currentStep.index++;
-
-    this.setState({ currentStep, currentNfa });
   }
 
-  handlePreviousClick = () => {
-    /*let currentStep = this.state.currentStep;
-    currentStep.index--;
+  breakpoint = {
+    visualize: breakpoint => {
+      let data = breakpoint.data;
 
-    this.setState({ currentStep });*/
+      switch (breakpoint.label) {
+        case 'e':
+        case 'c':
+        case 's':
+          automata.addEdge(this.state.nfa, data.entry.id, data.exit.id, data.transition);
+          break;
+      }
+    }
   }
 
-  handleRegexToNfa = () => {
-    this.props.ui.loader.show(this, 'main');
+  eventHandlers = {
+    handleInputChange: event => {
+      const target = event.target;
+      let input = this.state.input;
+      input[target.name] = target.value;
+      this.setState({ input });
+    },
 
-    api.regexToNfa(this.state.regexInput)
-      .then(res => {
-        this.props.ui.loader.hide(this, 'main');
-        console.log(res.data);
-        this.setState({
-          regexTreeData: res.data.regex_tree,
-          conversionSteps: res.data.regex_tree_to_nfa_steps,
-          nfa: res.data.nfa
-        }, () => {
-          this.handleNextClick();
+    handleRegexToNfa: () => {
+      this.props.ui.loader.show(this, 'main');
+
+      api.regexToNfa(this.state.input.regex)
+        .then(res => {
+          this.props.ui.loader.hide(this, 'main');
+
+          console.log(res.data);
+
+          let data = {
+            nodes: new vis.DataSet(),
+            edges: new vis.DataSet()
+          };
+
+          this.setState({
+            breakpoint: {
+              data: res.data.breakpoints,
+              scopeStack: [],
+              indexStack: [0],
+            },
+            regexTreeData: res.data.regex_tree,
+          }, () => {
+            this.setState({
+              nfa: {
+                instance: this.init.createAutomaton(data, {}),
+                nodes: data.nodes,
+                edges: data.edges
+              }
+            });
+          });
+        })
+        .catch(err => {
+          this.props.ui.loader.hide(this, 'main');
+          console.log(err);
         });
-      })
-      .catch(err => {
-        this.props.ui.loader.hide(this, 'main');
-        console.log(err);
-      });
+    }
+  }
+
+  helpers = {
+    updateState: obj => {
+      this.setState(obj);
+    }
   }
 
   render() {
-    // steps={this.state.conversionSteps} currentStep={this.state.currentStep.index}
-
-    /*
-    {this.state.currentNfa.nodes.length
-      ? <Graph id='fa-viz' data={this.state.currentNfa} config={nfaConfig} />
-      : null
-    }
-
-    const nfaConfig = {
-        nodeHighlightBehavior: true,
-        node: {
-            color: 'lightgreen',
-            size: 120,
-            highlightStrokeColor: 'blue'
-        },
-        link: {
-            highlightColor: 'lightblue'
-        }
-    };*/
-
     const body = this.state.regexTreeData ?
     (
       <Grid>
@@ -113,7 +120,7 @@ class RegexToNFA extends Component {
           </Grid.Column>
           <Grid.Column width={8}>
             <Header as='h2' textAlign='center'>Non-deterministic finite automaton</Header>
-            <FiniteAutomatonViz data={this.state.currentNfa} linkDistance={200} width={600} height={600} />
+            <div id='nfa-viz' style={{ width: 600, height: 600 }}></div>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -134,21 +141,23 @@ class RegexToNFA extends Component {
         {this.props.ui.message.render(this)}
         <Form size='massive'>
           <Form.Group>
-            <Input name='regexInput' value={this.state.regexInput} onChange={this.handleInputChange} placeholder='Regular expression' icon={<Icon name='search' inverted circular link onClick={this.handleRegexToNfa} />} />
+            <Input
+              name='regex'
+              value={this.state.input.regex}
+              onChange={this.eventHandlers.handleInputChange}
+              placeholder='Regular expression'
+              icon={<Icon name='search' inverted circular link onClick={this.eventHandlers.handleRegexToNfa} />} />
           </Form.Group>
         </Form>
 
         {this.props.ui.loader.render(this, 'main')}
         {body}
 
-        <Segment inverted style={{ position: 'fixed', width: '100%', bottom: 0, borderRadius: 0 }}>
-          <Menu inverted secondary>
-            <Menu.Item name='previous' onClick={this.handlePreviousClick} />
-            <Menu.Item name='reset' />
-            <Menu.Item name='checkYourAnswer' />
-            <Menu.Item name='next' onClick={this.handleNextClick} />
-          </Menu>
-        </Segment>
+        <VisualizationControl
+          active={this.state.regexTreeData}
+          breakpoint={this.state.breakpoint}
+          visualizeBreakpoint={this.breakpoint.visualize}
+          updateState={this.helpers.updateState}/>
       </div>
     )
   }
