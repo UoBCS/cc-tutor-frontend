@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'semantic-ui-react';
 import vis from 'vis';
 import 'vis/dist/vis-network.min.css';
+import './FiniteAutomatonCreator.css';
 
 class FiniteAutomatonCreator extends Component {
 
@@ -12,6 +13,12 @@ class FiniteAutomatonCreator extends Component {
 
   componentDidMount() {
     this.createAutomaton();
+  }
+
+  componentDidUpdate() {
+    if (this.props.finished) {
+      this.props.onFinishEditing(this.edges);
+    }
   }
 
   createAutomaton = () => {
@@ -30,7 +37,7 @@ class FiniteAutomatonCreator extends Component {
           },
           addEdge: function (data, cb) {
             data.arrows = 'to';
-            data.label = 'test';
+            data.label = prompt('Please enter the transition character:', 'ε');
             data.font = {align: 'top'};
 
             if (data.from === data.to) {
@@ -47,12 +54,15 @@ class FiniteAutomatonCreator extends Component {
     );
   }
 
-  highlightNode = () => {
-
-  }
-
   render() {
-    return <div id={this.props.containerElement} style={{ height: 550, width: 800 }}></div>;
+    return (
+      <div
+        id={this.props.containerElement}
+        className='fa-creator-wrapper'
+        hidden={this.props.hidden}
+        style={{ height: 550 }}>
+      </div>
+    );
   }
 
 }

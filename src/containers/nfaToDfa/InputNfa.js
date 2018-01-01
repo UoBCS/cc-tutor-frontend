@@ -3,14 +3,15 @@ import { Button, Container, Dropdown, Form, TextArea, Icon, Input, Segment, Head
 import FiniteAutomatonCreator from 'components/FiniteAutomatonCreator';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
-
-const jsnx = window.jsnx;
+import automata from '../../utils/automata';
 
 class InputNfa extends Component {
 
   state = {
     inputMethod: 'manual',
-    jsonEditor: null
+    jsonEditor: null,
+    finishedManualInput: false,
+    nfaData: null
   }
 
   componentDidMount() {
@@ -23,36 +24,16 @@ class InputNfa extends Component {
     });
   }
 
-  handleTextAreaChange = event => {
-    const target = event.target;
-
-    this.setState({
-      [target.id]: target.value
-    });
-  }
-
-  handleTextAreaKeyDown = event => {
-    if (event.keyCode === 9) { // tab was pressed
-      let target = event.target;
-
-      // get caret position/selection
-      let val = target.value;
-      let start = target.selectionStart;
-      let end = target.selectionEnd;
-
-      // set textarea value to: text before caret + tab + text after caret
-      target.value = val.substring(0, start) + '\t' + val.substring(end);
-
-      // put caret at right position again
-      target.selectionStart = target.selectionEnd = start + 1;
-
-      // prevent the focus lose
-      event.preventDefault();
+  handleContinueClick = () => {
+    if (this.state.inputMethod === 'manual') {
+      this.setState({ finishedManualInput: true });
+    } else if (this.state.inputMethod === 'json') {
+      this.props.windowChangeHandler('viz', { nfa: this.state.jsonEditor.get() });
     }
   }
 
-  handleContinueClick = () => {
-    this.props.windowChangeHandler('viz', this.createNfaData());
+  handleManualEditingFinish = edges => {
+    this.props.windowChangeHandler('viz', { nfa: automata.fromVis(edges) });
   }
 
   createJsonEditor = () => {
@@ -69,7 +50,7 @@ class InputNfa extends Component {
         "dest": { "id": 1, "final": true }
       },
       {
-        "src": { "id": 1, "final": false },
+        "src": { "id": 1, "final": true },
         "char": "a",
         "dest": { "id": 2, "final": true }
       }
@@ -86,6 +67,7 @@ class InputNfa extends Component {
     }
 
     if (this.state.inputMethod === 'manual') {
+      this.setState({ finishedManualInput: true });
       nfa = [];
     }
 
@@ -117,12 +99,14 @@ class InputNfa extends Component {
             </Grid.Column>
           </Grid>
 
-          <Segment hidden={this.state.inputMethod !== 'manual'}>
-            <FiniteAutomatonCreator containerElement='manualInput' />
-          </Segment>
+          <FiniteAutomatonCreator
+            hidden={this.state.inputMethod !== 'manual'}
+            containerElement='manualInput'
+            finished={this.state.finishedManualInput}
+            onFinishEditing={this.handleManualEditingFinish}/>
 
           <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
-            <div id='jsonEditor' style={{ width: 600, height: 600, margin: '10px auto' }}></div>
+            <div id='jsonEditor' style={{ height: 600, margin: '10px auto' }}></div>
           </div>
         </Container>
 

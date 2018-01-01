@@ -113,7 +113,9 @@ class RegexToNFA extends Component {
       <Grid>
         <Grid.Row>
           <Grid.Column width={8}>
-            <Header as='h2' textAlign='center'>Regular expression parse tree</Header>
+            <Header as='h2' textAlign='center'>
+              Regular expression parse tree
+            </Header>
             <ParseTreeViz data={{
               treeData: this.state.regexTreeData
             }} />

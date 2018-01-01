@@ -1,0 +1,33 @@
+.fa-creator-wrapper {
+  background-color: #fafafa;
+  margin: 30px auto;
+  border: 1px solid #3883fa;
+}
+
+div.vis-network div.vis-manipulation {
+  background: #3883fa;
+  border-bottom: 1px solid #3883fa;
+  height: auto;
+  padding: 10px 0px;
+}
+
+div.vis-network div.vis-close {
+  display: none !important;
+}
+
+div.vis-network div.vis-edit-mode div.vis-button, div.vis-network div.vis-manipulation div.vis-button {
+  font-family: inherit;
+  color: #fafafa;
+  font-size: 1.2em;
+  height: auto;
+  background-image: none !important;
+}
+
+div.vis-network div.vis-edit-mode div.vis-button:hover, div.vis-network div.vis-manipulation div.vis-button:hover {
+  box-shadow: none;
+  background-color: #1e5cc0;
+}
+
+.vis-label {
+  margin: 0px !important;
+}

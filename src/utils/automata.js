@@ -1,40 +1,26 @@
 import vis from 'vis';
 
 const automata = {};
-const jsnx = window.jsnx;
+const config = {
+  FINAL_STATE_COLOR: '#f00'
+}
 
-/*automata.fromData = (fa, data) => {
-  data.forEach(entry => {
-    fa.addNode(entry.src.id, {
-      final: entry.src.final
-    });
-
-    fa.addNode(entry.dest.id, {
-      final: entry.dest.final
-    })
-
-    if (!fa.hasEdge(entry.src.id, entry.dest.id)) {
-      fa.addEdge(entry.src.id, entry.dest.id, {
-        char: [entry.char]
-      });
-    } else {
-      let char = fa.getEdgeData(entry.src.id, entry.dest.id).char;
-      char.push(entry.char);
-
-      fa.addEdge(entry.src.id, entry.dest.id, { char });
-    }
-  });
-};*/
-
-automata.visDataFormat = (data) => {
+automata.visDataFormat = data => {
   let nodesData = new Set();
 
   data.forEach(e => {
-    nodesData.add(e.src.id);
-    nodesData.add(e.dest.id);
+    nodesData.add(JSON.stringify(e.src));
+    nodesData.add(JSON.stringify(e.dest));
   });
 
-  let nodes = new vis.DataSet([...nodesData].map(n => ({ id: n, label: '' + n })));
+  let nodes = new vis.DataSet([...nodesData].map(node => {
+    const n = JSON.parse(node);
+    return {
+      id: n.id,
+      label: '' + n.id,
+      color: {background: n.final ? config.FINAL_STATE_COLOR : null}
+    }
+  }));
 
   let edgesData = [];
 
@@ -51,6 +37,30 @@ automata.visDataFormat = (data) => {
   let edges = new vis.DataSet(edgesData);
 
   return { nodes, edges };
+};
+
+automata.fromVis = edges => {
+  let nfa = [];
+
+  edges.forEach(e => {
+    nfa.push({
+      src: {
+        id: e.from,
+        final: false
+      },
+      char: e.label,
+      dest: {
+        id: e.to,
+        final: false
+      }
+    });
+  });
+
+  return nfa;
+};
+
+automata.addNode = (fa, n) => {
+  fa.nodes.add({ id: n, label: '' + n });
 };
 
 automata.addEdge = (fa, n1, n2, transition) => {
@@ -73,5 +83,21 @@ automata.addEdge = (fa, n1, n2, transition) => {
     font: {align: 'top'}
   });
 };
+
+automata.highlightNodes = (fa, nodes, color = '#f00') => {
+  fa.nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
+}
+
+automata.resetNodesHighlight = fa => {
+
+}
+
+automata.highlightEdges = (fa, edges, color = '#f00') => {
+  fa.edges.update(edges.map(e => ({ char: e.char, color: { color } })));
+}
+
+automata.resetEdgesHighlight = fa => {
+
+}
 
 export default automata;
