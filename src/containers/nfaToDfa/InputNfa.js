@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Container, Dropdown, Form, TextArea, Icon, Input, Segment, Header, Menu, Grid, Step } from 'semantic-ui-react';
+import { Button, Container, Segment, Header, Menu, Grid } from 'semantic-ui-react';
 import FiniteAutomatonCreator from 'components/FiniteAutomatonCreator';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
