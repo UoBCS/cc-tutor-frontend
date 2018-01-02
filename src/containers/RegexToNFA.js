@@ -39,12 +39,6 @@ class RegexToNFA extends Component {
     ui: misc.lazyClone(this.props.uiState)
   }
 
-  init = {
-    /*createAutomaton: (data, options) => {
-      return new vis.Network(document.getElementById('nfa-viz'), data, options);
-    }*/
-  }
-
   breakpoint = {
     visualize: breakpoint => {
       let data = breakpoint.data;
@@ -53,7 +47,27 @@ class RegexToNFA extends Component {
         case 'e':
         case 'c':
         case 's':
-          automata.addEdge(this.state.nfa, data.entry.id, data.exit.id, data.transition);
+          automata.addEdge(this.state.nfa, data.entry, data.exit, data.transition);
+          break;
+        case 'rep':
+          automata.addEdge(this.state.nfa, data.state1, data.state2, automata.EPSILON);
+          automata.addEdge(this.state.nfa, data.state2, data.state1, automata.EPSILON);
+          break;
+        case 'or1':
+          automata.addNode(this.state.nfa, data.entry);
+          break;
+        case 'or2':
+          automata.addEdge(this.state.nfa, data.entry, data.choices[0], automata.EPSILON);
+          automata.addEdge(this.state.nfa, data.entry, data.choices[1], automata.EPSILON);
+          break;
+
+        case 'or3':
+          automata.addNode(this.state.nfa, data.exit);
+          break;
+
+        case 'or4':
+          automata.addEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON);
+          automata.addEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON);
           break;
       }
     }
@@ -103,6 +117,7 @@ class RegexToNFA extends Component {
     return (
       <div>
         {this.props.ui.message.render(this)}
+
         <Form size='massive'>
           <Form.Group>
             <Input
