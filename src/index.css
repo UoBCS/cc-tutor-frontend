@@ -12,10 +12,35 @@ body {
   text-align: center;
 }
 
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
 .light-heading {
   font-weight: 100 !important;
 }
 
 .dashboard-content {
   padding: 30px 20px;
+}
+
+/* Visualization */
+
+.viz-area {
+  padding: 0px !important;
+}
+
+.viz-area-title {
+  margin: 0 !important;
+  background-color: #efefef;
+  color: #505050 !important;
+  border-radius: .28571429rem .28571429rem 0 0;
+  font-weight: 100 !important;
+  font-size: 1.1em !important;
+  text-transform: uppercase !important;
+  padding: 3px 4px !important;
 }

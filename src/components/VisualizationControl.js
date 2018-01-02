@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Button } from 'semantic-ui-react';
 import objectPath from 'object-path';
 
+import './VisualizationControl.css';
+
 class VisualizationControl extends Component {
 
   breakpoint = {
@@ -58,7 +60,7 @@ class VisualizationControl extends Component {
 
   render() {
     return !this.props.active ? null : (
-      <div className='visualization-control text-center'>
+      <div className='viz-control text-center'>
         <Button.Group>
           <Button
             labelPosition='left'

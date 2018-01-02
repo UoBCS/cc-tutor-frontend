@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
+import { Button, Container, Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl';
+import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import vis from 'vis';
 import objectPath from 'object-path';
 import api from 'api';
@@ -47,6 +48,11 @@ class RegexToNFA extends Component {
         case 'e':
         case 'c':
         case 's':
+          VisualizationElement.ActionsHistory.add(this, {
+            label: breakpoint.label,
+            title: `Action: ${breakpoint.label}`,
+            description: ''
+          });
           automata.addEdge(this.state.nfa, data.entry, data.exit, data.transition);
           break;
         case 'rep':
@@ -118,39 +124,62 @@ class RegexToNFA extends Component {
       <div>
         {this.props.ui.message.render(this)}
 
-        <Form size='massive'>
-          <Form.Group>
-            <Input
-              name='regex'
-              value={this.state.input.regex}
-              onChange={this.eventHandlers.handleInputChange}
-              placeholder='Regular expression'
-              icon={<Icon name='search' inverted circular link onClick={this.eventHandlers.handleRegexToNfa} />} />
-          </Form.Group>
-        </Form>
-
         {this.props.ui.loader.render(this, 'main')}
 
-        <Grid>
-          <Grid.Row>
-            <Grid.Column width={8}>
-              <Header as='h2' textAlign='center'>
-                Regular expression parse tree
+        <Container className='dashboard-content'>
+          <Grid>
+            <Grid.Column floated='left' width={9}>
+              <Header
+                as='h1'
+                className='light-heading'>
+                Regular expression to NFA
               </Header>
-              <div id='regex-tree-viz' style={{ width: 600, height: 600 }}></div>
+              <p>
+                Some nice description right here please.
+              </p>
             </Grid.Column>
-            <Grid.Column width={8}>
-              <Header as='h2' textAlign='center'>Non-deterministic finite automaton</Header>
-              <div id='nfa-viz' style={{ width: 600, height: 600 }}></div>
+            <Grid.Column floated='right' width={1}>
+              <Button.Group basic size='small' style={{ float: 'right' }}>
+                <Button icon='settings' />
+                <Button icon='question' />
+              </Button.Group>
+              <br style={{ clear: 'both' }}/>
             </Grid.Column>
-          </Grid.Row>
-        </Grid>
+          </Grid>
 
-        <VisualizationControl
-          active={this.state.regexTree.instance !== null}
-          breakpoint={this.state.breakpoint}
-          visualizeBreakpoint={this.breakpoint.visualize}
-          updateState={this.helpers.updateState}/>
+          <Input
+            name='regex'
+            value={this.state.input.regex}
+            onChange={this.eventHandlers.handleInputChange}
+            placeholder='Regular expression'
+            style={{ margin: '30px auto' }}
+            action={<Button onClick={this.eventHandlers.handleRegexToNfa}>Run</Button>}/>
+
+          <VisualizationElement.ActionsHistory
+            actions={this.state.vizElements.actionsHistory}
+            updateState={this.helpers.updateState}/>
+
+          <Grid columns={2}>
+            <Grid.Column>
+              <Segment className='viz-area'>
+                <Header as='h3' className='viz-area-title' content='Regular expression parse tree'/>
+                <div id='regex-tree-viz' style={{ height: 600 }}></div>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column>
+              <Segment className='viz-area'>
+                <Header as='h3' className='viz-area-title' content='Non-deterministic finite automaton'/>
+                <div id='nfa-viz' style={{ height: 600 }}></div>
+              </Segment>
+            </Grid.Column>
+          </Grid>
+
+          <VisualizationControl
+            active={this.state.regexTree.instance !== null}
+            breakpoint={this.state.breakpoint}
+            visualizeBreakpoint={this.breakpoint.visualize}
+            updateState={this.helpers.updateState}/>
+        </Container>
       </div>
     )
   }

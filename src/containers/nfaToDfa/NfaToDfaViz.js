@@ -8,8 +8,6 @@ import automata from 'utils/automata';
 import objectPath from 'object-path';
 import misc from 'utils/misc';
 
-import './NfaToDfaViz.css';
-
 class NfaToDfaViz extends Component {
 
   state = {
@@ -90,7 +88,7 @@ class NfaToDfaViz extends Component {
         case 'highlight_initial_nfa_state':
           automata.highlightNodes(this.state.nfa, [breakpoint.data.state.id]);
 
-          this.vizElements.addToActionsHistory({
+          VisualizationElement.ActionsHistory.add(this, {
             label: breakpoint.label,
             title: 'Consider the initial NFA state',
             description: ''
@@ -103,7 +101,7 @@ class NfaToDfaViz extends Component {
           let reachableStates = breakpoint.data.reachable_states.map(s => s.id);
           automata.highlightNodes(this.state.nfa, reachableStates);
 
-          this.vizElements.addToActionsHistory({
+          VisualizationElement.ActionsHistory.add(this, {
             label: breakpoint.label,
             title: `ε-closure of NFA state ${breakpoint.data.initial.id}: {${reachableStates.join(', ')}}`,
             description: ''
@@ -121,7 +119,7 @@ class NfaToDfaViz extends Component {
           automata.addNode(this.state.dfa, breakpoint.data.id);
           automata.highlightNodes(this.state.dfa, [breakpoint.data.id]);
 
-          this.vizElements.addToActionsHistory({
+          VisualizationElement.ActionsHistory.add(this, {
             label: breakpoint.label,
             title: `Initial DFA state ${breakpoint.data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`,
             description: ''
@@ -137,7 +135,7 @@ class NfaToDfaViz extends Component {
             dest: e.dest.id
           })));
 
-          this.vizElements.addToActionsHistory({
+          VisualizationElement.ActionsHistory.add(this, {
             label: breakpoint.label,
             title: `NFA states {${breakpoint.data.dfa_state_contents}} give the possible inputs to follow: {${breakpoint.data.possible_inputs}}`,
             description: ''
@@ -148,24 +146,10 @@ class NfaToDfaViz extends Component {
     }
   }
 
-  vizElements = {
-    addToActionsHistory: obj => {
-      let vizElements = this.state.vizElements;
-      vizElements.actionsHistory.push(obj);
-      this.setState({ vizElements });
-    }
-  }
-
   helpers = {
     updateState: obj => {
       this.setState(obj);
     }
-  }
-
-  addToActionsHistory = obj => {
-    let vizElements = this.state.vizElements;
-    vizElements.actionsHistory.push(obj);
-    this.setState({ vizElements });
   }
 
   render() {
