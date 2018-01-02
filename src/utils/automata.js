@@ -5,6 +5,17 @@ const config = {
   FINAL_STATE_COLOR: '#f00'
 }
 
+automata.createEmpty = (container, options = {}) => {
+  const nodes = new vis.DataSet();
+  const edges = new vis.DataSet();
+
+  return {
+    instance: new vis.Network(document.getElementById(container), { nodes, edges }, options),
+    nodes,
+    edges
+  };
+};
+
 automata.visDataFormat = data => {
   let nodesData = new Set();
 

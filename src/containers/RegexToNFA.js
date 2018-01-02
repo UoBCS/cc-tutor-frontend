@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
-import ParseTreeViz from 'components/ParseTreeViz';
 import VisualizationControl from 'components/VisualizationControl';
 import vis from 'vis';
 import objectPath from 'object-path';
 import api from 'api';
 import misc from 'utils/misc';
 import automata from 'utils/automata';
+import tree from 'utils/tree';
 
 class RegexToNFA extends Component {
   state = {
@@ -14,7 +14,11 @@ class RegexToNFA extends Component {
       regex: ''
     },
 
-    regexTreeData: null,
+    regexTree: {
+      instance: null,
+      nodes: null,
+      edges: null
+    },
 
     nfa: {
       instance: null,
@@ -36,9 +40,9 @@ class RegexToNFA extends Component {
   }
 
   init = {
-    createAutomaton: (data, options) => {
+    /*createAutomaton: (data, options) => {
       return new vis.Network(document.getElementById('nfa-viz'), data, options);
-    }
+    }*/
   }
 
   breakpoint = {
@@ -72,26 +76,14 @@ class RegexToNFA extends Component {
 
           console.log(res.data);
 
-          let data = {
-            nodes: new vis.DataSet(),
-            edges: new vis.DataSet()
-          };
-
           this.setState({
             breakpoint: {
               data: res.data.breakpoints,
               scopeStack: [],
               indexStack: [0],
             },
-            regexTreeData: res.data.regex_tree,
-          }, () => {
-            this.setState({
-              nfa: {
-                instance: this.init.createAutomaton(data, {}),
-                nodes: data.nodes,
-                edges: data.edges
-              }
-            });
+            nfa: automata.createEmpty('nfa-viz'),
+            regexTree: tree.visDataFormat('regex-tree-viz', res.data.regex_tree)
           });
         })
         .catch(err => {
@@ -108,36 +100,6 @@ class RegexToNFA extends Component {
   }
 
   render() {
-    const body = this.state.regexTreeData ?
-    (
-      <Grid>
-        <Grid.Row>
-          <Grid.Column width={8}>
-            <Header as='h2' textAlign='center'>
-              Regular expression parse tree
-            </Header>
-            <ParseTreeViz data={{
-              treeData: this.state.regexTreeData
-            }} />
-          </Grid.Column>
-          <Grid.Column width={8}>
-            <Header as='h2' textAlign='center'>Non-deterministic finite automaton</Header>
-            <div id='nfa-viz' style={{ width: 600, height: 600 }}></div>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    )
-    :
-    (
-      // Fix this
-      <Header as='h2' icon textAlign='center'>
-        <Icon name='users' circular />
-        <Header.Content>
-          Input a regular expression to visualize the conversion to NFA
-        </Header.Content>
-      </Header>
-    )
-
     return (
       <div>
         {this.props.ui.message.render(this)}
@@ -153,10 +115,24 @@ class RegexToNFA extends Component {
         </Form>
 
         {this.props.ui.loader.render(this, 'main')}
-        {body}
+
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={8}>
+              <Header as='h2' textAlign='center'>
+                Regular expression parse tree
+              </Header>
+              <div id='regex-tree-viz' style={{ width: 600, height: 600 }}></div>
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <Header as='h2' textAlign='center'>Non-deterministic finite automaton</Header>
+              <div id='nfa-viz' style={{ width: 600, height: 600 }}></div>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
 
         <VisualizationControl
-          active={this.state.regexTreeData}
+          active={this.state.regexTree.instance !== null}
           breakpoint={this.state.breakpoint}
           visualizeBreakpoint={this.breakpoint.visualize}
           updateState={this.helpers.updateState}/>
