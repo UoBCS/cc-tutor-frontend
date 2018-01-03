@@ -6,10 +6,18 @@ import './ActionsHistory.css';
 
 class ActionsHistory extends Component {
 
-  static add = (component, obj) => {
+  static addOrSelect = (component, index, obj) => {
     let vizElements = component.state.vizElements;
-    vizElements.actionsHistory.push(obj);
-    component.setState({ vizElements });
+
+    if (index === vizElements.actionsHistory.length) {
+      vizElements.actionsHistory.push(obj);
+    }
+
+    vizElements.actionsHistoryIndex = index;
+
+    component.setState({ vizElements }, () => {
+      console.log(vizElements.actionsHistory[vizElements.actionsHistoryIndex]);
+    });
   }
 
   render() {
@@ -17,8 +25,9 @@ class ActionsHistory extends Component {
       <div className='viz-history'>
         <p className='viz-history-current left'>
           {this.props.actions.length
-            ? misc.last(this.props.actions).title
-            : 'A description of the algorithm steps will be shown here.'}
+            ? this.props.actions[this.props.index].title
+            : 'A description of the algorithm steps will be shown here.'
+          }
         </p>
 
         <List bulleted horizontal className='viz-history-options right'>

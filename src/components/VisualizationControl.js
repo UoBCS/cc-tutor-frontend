@@ -13,6 +13,9 @@ export default class VisualizationControl extends Component {
   }
 
   breakpoint = {
+    globalLength: 0,
+    globalIndex: -1,
+
     getPath: () => {
       let path = '';
 
@@ -30,7 +33,7 @@ export default class VisualizationControl extends Component {
     },
 
     getCurrent: () => {
-      let path = this.breakpoint.getPath();
+      const path = this.breakpoint.getPath();
       return objectPath.get(this.props.breakpoint.data, path);
     },
 
@@ -40,22 +43,32 @@ export default class VisualizationControl extends Component {
 
     updateIndex: (direction = 1) => {
       let breakpointsObj = this.props.breakpoint;
-      let lastIndex = misc.last(breakpointsObj.indexStack);
 
       if (direction === 1) {
         breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]++;
       } else {
         breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]--;
       }
+
       this.props.updateState({ breakpointsObj });
+    },
+
+    updateGlobalIndex: (direction = 1) => {
+      this.breakpoint.globalIndex = this.breakpoint.globalIndex + direction;
+
+      if (this.breakpoint.globalIndex === this.breakpoint.globalLength - 1) {
+        this.breakpoint.globalLength++;
+      }
     }
   }
 
   eventHandlers = {
     handleForwardBtnClick: () => {
-      let breakpoint = this.breakpoint.getCurrent();
+      const breakpoint = this.breakpoint.getCurrent();
 
-      this.props.visualizeBreakpointForward(breakpoint);
+      this.breakpoint.updateGlobalIndex();
+
+      this.props.visualizeBreakpointForward(breakpoint, this.breakpoint.globalIndex);
 
       this.breakpoint.updateIndex();
 
@@ -68,10 +81,11 @@ export default class VisualizationControl extends Component {
     handleBackBtnClick: () => {
       this.breakpoint.updateIndex(-1);
 
-      let path = this.breakpoint.getPath();
-      let breakpoint = objectPath.get(this.props.breakpoint.data, path);
+      this.breakpoint.updateGlobalIndex(-1);
 
-      this.props.visualizeBreakpointBackward(breakpoint);
+      const breakpoint = this.breakpoint.getCurrent();
+
+      this.props.visualizeBreakpointBackward(breakpoint, this.breakpoint.globalIndex);
 
       this.setState({
         backwardBtnActive: this.breakpoint.getIndex() > 0,

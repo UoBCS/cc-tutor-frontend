@@ -74,7 +74,7 @@ automata.fromVis = edges => {
 };
 
 automata.addNode = (fa, n) => {
-  if (n === undefined) {
+  if (n.id === undefined) {
     n = {
       id: n,
       final: false
@@ -86,6 +86,10 @@ automata.addNode = (fa, n) => {
     label: '' + n.id,
     color: {background: n.final ? config.FINAL_STATE_COLOR : null}
   });
+};
+
+automata.removeNode = (fa, n) => {
+  fa.nodes.remove(n);
 };
 
 automata.addEdge = (fa, n1, n2, transition) => {

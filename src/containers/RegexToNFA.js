@@ -32,46 +32,74 @@ export default class RegexToNFA extends Component {
     },
 
     vizElements: {
-      actionsHistory: []
+      actionsHistory: [],
+      actionsHistoryIndex: 0
     },
 
     ui: this.props.uiState
   }
 
+  /*componentWillMount() {
+
+  }
+
+  init = {
+    actionsHistory
+  }*/
+
   breakpoint = {
-    visualizeForward: breakpoint => {
+    visualizeForward: (breakpoint, index) => {
       let data = breakpoint.data;
 
       switch (breakpoint.label) {
         case 'e':
         case 'c':
         case 's':
-          VisualizationElement.ActionsHistory.add(this, {
-            label: breakpoint.label,
-            title: `Action: ${breakpoint.label}`,
-            description: ''
-          });
           automata.addEdge(this.state.nfa, data.entry, data.exit, data.transition);
+
+          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+            title: `Add ${this.breakpoint.map[breakpoint.label]} transition from state ${data.entry.id} to state ${data.exit.id}`,
+          });
           break;
         case 'rep':
           automata.addEdge(this.state.nfa, data.state1, data.state2, automata.EPSILON);
           automata.addEdge(this.state.nfa, data.state2, data.state1, automata.EPSILON);
+
+          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+            title: `Add ${this.breakpoint.map[breakpoint.label]} transitions between states ${data.state1} and ${data.state2} to form repetition`,
+          });
           break;
         case 'or1':
           automata.addNode(this.state.nfa, data.entry);
+
+          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+            title: `Add entry choice state ${data.entry.id}`,
+          });
           break;
         case 'or2':
           automata.addEdge(this.state.nfa, data.entry, data.choices[0], automata.EPSILON);
           automata.addEdge(this.state.nfa, data.entry, data.choices[1], automata.EPSILON);
+
+          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+            title: `Add ${automata.EPSILON}-transitions to choice states ${data.choices[0].id} and ${data.choices[1].id} from entry state ${data.entry.id}`,
+          });
           break;
 
         case 'or3':
           automata.addNode(this.state.nfa, data.exit);
+
+          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+            title: `Add exit choice state ${data.exit.id}`,
+          });
           break;
 
         case 'or4':
           automata.addEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON);
           automata.addEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON);
+
+          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+            title: `Add ${automata.EPSILON}-transitions from choice states ${data.choices[0].id} and ${data.choices[1].id} to exit state ${data.exit.id}`,
+          });
           break;
         default:
           // TODO: show error
@@ -79,9 +107,8 @@ export default class RegexToNFA extends Component {
       }
     },
 
-    visualizeBackward: breakpoint => {
+    visualizeBackward: (breakpoint, index) => {
       let data = breakpoint.data;
-      console.log(breakpoint);
 
       switch (breakpoint.label) {
         case 'e':
@@ -89,7 +116,38 @@ export default class RegexToNFA extends Component {
         case 's':
           automata.removeEdge(this.state.nfa, data.entry, data.exit, data.transition);
           break;
+        case 'rep':
+          automata.removeEdge(this.state.nfa, data.state1, data.state2, automata.EPSILON);
+          automata.removeEdge(this.state.nfa, data.state2, data.state1, automata.EPSILON);
+          break;
+        case 'or1':
+          automata.removeNode(this.state.nfa, data.entry);
+          break;
+        case 'or2':
+          automata.removeEdge(this.state.nfa, data.entry, data.choices[0], automata.EPSILON);
+          automata.removeEdge(this.state.nfa, data.entry, data.choices[1], automata.EPSILON);
+          break;
+        case 'or3':
+          automata.removeNode(this.state.nfa, data.exit);
+          break;
+        case 'or4':
+          automata.removeEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON);
+          automata.removeEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON);
+          break;
+        default:
+
+          break;
       }
+
+      VisualizationElement.ActionsHistory.addOrSelect(this, index);
+    },
+
+    map: {
+      e: automata.EPSILON,
+      c: 'character',
+      s: 'sequence (through epsilon)',
+      rep: 'repetition (through epsilon)',
+      or1: ''
     }
   }
 
@@ -173,6 +231,7 @@ export default class RegexToNFA extends Component {
 
           <VisualizationElement.ActionsHistory
             actions={this.state.vizElements.actionsHistory}
+            index={this.state.vizElements.actionsHistoryIndex}
             updateState={this.helpers.updateState}/>
 
           <Grid columns={2}>
