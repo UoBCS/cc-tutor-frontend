@@ -14,12 +14,10 @@ import VerifyEmail from './VerifyEmail';
 import RegexToNFA from './RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
 
-import ui from 'utils/ui';
-
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
     <Layout>
-      <Component {...props} ui={ui.obj} uiState={ui.state} />
+      <Component {...props} />
     </Layout>
   )} />
 );

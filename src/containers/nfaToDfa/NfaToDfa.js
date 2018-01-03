@@ -3,6 +3,8 @@ import { Button, Container, Dropdown, Form, Icon, Input, Segment, Header, Menu, 
 import InputNfa from './InputNfa';
 import NfaToDfaViz from './NfaToDfaViz';
 import misc from 'utils/misc';
+import ui from 'utils/ui';
+import clone from 'clone';
 
 class NfaToDfa extends Component {
 
@@ -12,7 +14,7 @@ class NfaToDfa extends Component {
       viz: NfaToDfaViz
     },
     currentWindow: null,
-    ui: misc.lazyClone(this.props.uiState)
+    ui: clone(ui.state)
   }
 
   componentWillMount() {

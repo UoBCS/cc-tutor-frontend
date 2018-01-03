@@ -6,6 +6,9 @@ import api from 'api';
 import misc from 'utils/misc';
 import automata from 'utils/automata';
 import tree from 'utils/tree';
+import ui from 'utils/ui';
+import clone from 'clone';
+import shortid from 'shortid';
 
 export default class RegexToNFA extends Component {
   state = {
@@ -36,16 +39,8 @@ export default class RegexToNFA extends Component {
       actionsHistoryIndex: 0
     },
 
-    ui: this.props.uiState
+    ui: clone(ui.state)
   }
-
-  /*componentWillMount() {
-
-  }
-
-  init = {
-    actionsHistory
-  }*/
 
   breakpoint = {
     visualizeForward: (breakpoint, index) => {
@@ -151,6 +146,44 @@ export default class RegexToNFA extends Component {
     }
   }
 
+  userInteraction = {
+    nodes: [],
+
+    edges: [],
+
+    addNode: (data, cb) => {
+      data.id = shortid.generate();
+      data.label = '';
+      this.userInteraction.nodes.push(data.id);
+      cb(data);
+    },
+
+    addEdge: (data, cb) => {
+      data.arrows = 'to';
+      data.label = prompt('Please enter the transition character:', 'ε');
+      data.font = {align: 'top'};
+
+      this.userInteraction.edges.push({
+        from: data.from,
+        to: data.to,
+        label: data.label
+      });
+
+      if (data.from === data.to) {
+        if (window.confirm('Do you want to connect the state to itself?')) {
+          cb(data);
+        }
+      }
+      else {
+        cb(data);
+      }
+    },
+
+    handleCheckAnswerClick: () => {
+
+    }
+  }
+
   eventHandlers = {
     handleInputChange: event => {
       const target = event.target;
@@ -160,11 +193,20 @@ export default class RegexToNFA extends Component {
     },
 
     handleRegexToNfa: () => {
-      this.props.ui.loader.show(this, 'main');
+      const nfaOptions = {
+        manipulation: {
+          enabled: true,
+          initiallyActive: true,
+          addNode: this.userInteraction.addNode,
+          addEdge: this.userInteraction.addEdge
+        }
+      };
+
+      ui.obj.loader.show(this, 'main');
 
       api.regexToNfa(this.state.input.regex)
         .then(res => {
-          this.props.ui.loader.hide(this, 'main');
+          ui.obj.loader.hide(this, 'main');
 
           console.log(res.data);
 
@@ -174,12 +216,12 @@ export default class RegexToNFA extends Component {
               scopeStack: [],
               indexStack: [0],
             },
-            nfa: automata.createEmpty('nfa-viz'),
+            nfa: automata.createEmpty('nfa-viz', nfaOptions),
             regexTree: tree.visDataFormat('regex-tree-viz', res.data.regex_tree)
           });
         })
         .catch(err => {
-          this.props.ui.loader.hide(this, 'main');
+          ui.obj.loader.hide(this, 'main');
           console.log(err);
         });
     }
@@ -194,11 +236,11 @@ export default class RegexToNFA extends Component {
   render() {
     return (
       <div>
-        {this.props.ui.modal.render(this)}
+        {ui.obj.modal.render(this)}
 
-        {this.props.ui.message.render(this)}
+        {ui.obj.message.render(this)}
 
-        {this.props.ui.loader.render(this, 'main')}
+        {ui.obj.loader.render(this, 'main')}
 
         <Container className='dashboard-content'>
           <Grid>
@@ -209,7 +251,7 @@ export default class RegexToNFA extends Component {
                 Regular expression to NFA
               </Header>
               <p>
-                Some nice description right here please.
+                Enter the regular expression in the field below.
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
@@ -254,6 +296,7 @@ export default class RegexToNFA extends Component {
             breakpoint={this.state.breakpoint}
             visualizeBreakpointForward={this.breakpoint.visualizeForward}
             visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
+            checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
             updateState={this.helpers.updateState}/>
         </Container>
       </div>

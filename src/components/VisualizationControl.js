@@ -119,7 +119,7 @@ export default class VisualizationControl extends Component {
           <Button
             icon='check'
             content='Check answer'
-            onClick={this.eventHandlers.handleCheckAnswerBtnClick}/>
+            onClick={this.props.checkAnswerHandler}/>
           <Button
             icon='setting'
             content='Settings'

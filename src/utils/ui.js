@@ -5,16 +5,17 @@ const ui = {};
 
 ui.state = {
   message: {
-    headerContent: '',
-    mainContent: '',
+    headerContent: null,
+    mainContent: null,
     type: ''
   },
   loader: {
     main: false
   },
   modal: {
-    headerContent: '',
-    mainContent: '',
+    headerContent: null,
+    mainContent: null,
+    actionsContent: null,
     size: 'small',
     open: false,
     handleClose: comp => {
@@ -29,7 +30,10 @@ ui.state = {
 
 ui.obj = {};
 
-ui.obj.message ={
+/**
+ * Message
+ */
+ui.obj.message = {
   show: (comp, type, headerContent, mainContent) => {
     let ui = comp.state.ui;
     ui.message.type = type;
@@ -52,7 +56,7 @@ ui.obj.message ={
     let opts = {};
     opts[comp.state.ui.message.type] = undefined; // TODO: fix this
 
-    return comp.state.ui.message.headerContent !== '' ? (
+    return comp.state.ui.message.headerContent !== null ? (
       <Message {...opts}>
         <Message.Header>{comp.state.ui.message.headerContent}</Message.Header>
         <p>{comp.state.ui.message.mainContent}</p>
@@ -61,6 +65,9 @@ ui.obj.message ={
   }
 };
 
+/**
+ * Loader
+ */
 ui.obj.loader = {
   show: (comp, which) => {
     let ui = comp.state.ui;
@@ -81,12 +88,16 @@ ui.obj.loader = {
   }
 };
 
+/**
+ * Modal
+ */
 ui.obj.modal = {
-  show: (comp, headerContent, mainContent, size) => {
+  show: (comp, headerContent, mainContent, actionsContent, size) => {
     let ui = comp.state.ui;
     ui.modal.open = true;
     ui.modal.headerContent = headerContent;
     ui.modal.mainContent = mainContent;
+    ui.modal.actionsContent = actionsContent;
     ui.modal.size = size;
 
     comp.setState({ ui });
@@ -101,8 +112,11 @@ ui.obj.modal = {
           {modal.headerContent}
         </Modal.Header>
         <Modal.Content>
-          <p>{modal.mainContent}</p>
+          {modal.mainContent}
         </Modal.Content>
+        <Modal.Actions>
+          {modal.actionsContent}
+        </Modal.Actions>
       </Modal>
     );
   }
