@@ -3,7 +3,6 @@ import vis from 'vis';
 const tree = {};
 
 const traverseTree = (node, count, level, nodes, edges) => {
-  console.log(node.name, count, nodes.get());
   if (nodes.get(count) === null) {
     nodes.add({
       id: count,
@@ -30,15 +29,10 @@ const traverseTree = (node, count, level, nodes, edges) => {
 }
 
 tree.visDataFormat = (container, data) => {
-  console.log(data);
-
   let nodes = new vis.DataSet();
   let edges = new vis.DataSet();
 
   traverseTree(data, 0, 0, nodes, edges);
-
-  console.log(nodes);
-  console.log(edges);
 
   const options = {
     edges: {

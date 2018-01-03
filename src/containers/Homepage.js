@@ -10,8 +10,7 @@ import {
   Image,
   List,
   Menu,
-  Segment,
-  Visibility,
+  Segment
 } from 'semantic-ui-react';
 
 import auth from 'utils/auth';

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
-import { Message, Loader } from 'semantic-ui-react';
 
 import MainLayout from 'components/MainLayout';
 import EmptyLayout from 'components/EmptyLayout';
@@ -15,78 +14,15 @@ import VerifyEmail from './VerifyEmail';
 import RegexToNFA from './RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
 
+import ui from 'utils/ui';
+
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
     <Layout>
-      <Component {...props} ui={uiObj} uiState={uiState} />
+      <Component {...props} ui={ui.obj} uiState={ui.state} />
     </Layout>
   )} />
 );
-
-const uiState = {
-  message: {
-    headerContent: '',
-    mainContent: '',
-    type: ''
-  },
-  loader: {
-    main: false
-  }
-};
-
-const uiObj = {};
-
-uiObj.message ={
-  show: (comp, type, headerContent, mainContent) => {
-    let ui = comp.state.ui;
-    ui.message.type = type;
-    ui.message.headerContent = headerContent;
-    ui.message.mainContent = mainContent;
-
-    comp.setState({ ui });
-  },
-
-  hide: comp => {
-    let ui = comp.state.ui;
-    ui.message.type = '';
-    ui.message.headerContent = '';
-    ui.message.mainContent = '';
-
-    comp.setState({ ui });
-  },
-
-  render: comp => {
-    let opts = {};
-    opts[comp.state.ui.message.type] = undefined; // TODO: fix this
-
-    return comp.state.ui.message.headerContent !== '' ? (
-      <Message {...opts}>
-        <Message.Header>{comp.state.ui.message.headerContent}</Message.Header>
-        <p>{comp.state.ui.message.mainContent}</p>
-      </Message>
-    ) : null;
-  }
-};
-
-uiObj.loader = {
-  show: (comp, which) => {
-    let ui = comp.state.ui;
-    ui.loader[which] = true;
-
-    comp.setState({ ui });
-  },
-
-  hide: (comp, which) => {
-    let ui = comp.state.ui;
-    ui.loader[which] = false;
-
-    comp.setState({ ui });
-  },
-
-  render: (comp, which) => {
-    return comp.state.ui.loader[which] ? <Loader active inline='centered' /> : null;
-  }
-};
 
 class App extends Component {
   render() {

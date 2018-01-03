@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { Button, Container, Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
+import { Button, Container, Input, Segment, Header, Grid } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
-import vis from 'vis';
-import objectPath from 'object-path';
 import api from 'api';
 import misc from 'utils/misc';
 import automata from 'utils/automata';
 import tree from 'utils/tree';
 
-class RegexToNFA extends Component {
+export default class RegexToNFA extends Component {
   state = {
     input: {
       regex: ''
@@ -37,11 +35,11 @@ class RegexToNFA extends Component {
       actionsHistory: []
     },
 
-    ui: misc.lazyClone(this.props.uiState)
+    ui: this.props.uiState
   }
 
   breakpoint = {
-    visualize: breakpoint => {
+    visualizeForward: breakpoint => {
       let data = breakpoint.data;
 
       switch (breakpoint.label) {
@@ -74,6 +72,22 @@ class RegexToNFA extends Component {
         case 'or4':
           automata.addEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON);
           automata.addEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON);
+          break;
+        default:
+          // TODO: show error
+          break;
+      }
+    },
+
+    visualizeBackward: breakpoint => {
+      let data = breakpoint.data;
+      console.log(breakpoint);
+
+      switch (breakpoint.label) {
+        case 'e':
+        case 'c':
+        case 's':
+          automata.removeEdge(this.state.nfa, data.entry, data.exit, data.transition);
           break;
       }
     }
@@ -122,6 +136,8 @@ class RegexToNFA extends Component {
   render() {
     return (
       <div>
+        {this.props.ui.modal.render(this)}
+
         {this.props.ui.message.render(this)}
 
         {this.props.ui.loader.render(this, 'main')}
@@ -177,12 +193,11 @@ class RegexToNFA extends Component {
           <VisualizationControl
             active={this.state.regexTree.instance !== null}
             breakpoint={this.state.breakpoint}
-            visualizeBreakpoint={this.breakpoint.visualize}
+            visualizeBreakpointForward={this.breakpoint.visualizeForward}
+            visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
             updateState={this.helpers.updateState}/>
         </Container>
       </div>
     )
   }
 }
-
-export default RegexToNFA;

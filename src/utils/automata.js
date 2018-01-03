@@ -39,6 +39,7 @@ automata.visDataFormat = data => {
 
   data.forEach(e => {
     edgesData.push({
+      id: `${e.src.id}-${e.char}-${e.dest.id}`,
       from: e.src.id,
       to: e.dest.id,
       arrows:'to',
@@ -122,12 +123,41 @@ automata.addEdge = (fa, n1, n2, transition) => {
   }
 
   fa.edges.add({
+    id: `${n1.id}-${transition}-${n2.id}`,
     from: n1.id,
     to: n2.id,
     arrows: 'to',
     label: transition,
     font: {align: 'top'}
   });
+};
+
+automata.removeEdge = (fa, n1, n2, transition, removeNodesIfNotConnected = true) => {
+  if (n1.id !== undefined) {
+    n1 = n1.id;
+  }
+
+  if (n2.id !== undefined) {
+    n2 = n2.id;
+  }
+
+  fa.edges.remove(`${n1}-${transition}-${n2}`);
+
+  if (removeNodesIfNotConnected) {
+    let connectedNodes = new Set();
+    fa.edges.forEach(e => {
+      connectedNodes.add(e.from);
+      connectedNodes.add(e.to);
+    });
+
+    if (!connectedNodes.has(n1)) {
+      fa.nodes.remove(n1);
+    }
+
+    if (!connectedNodes.has(n2)) {
+      fa.nodes.remove(n2);
+    }
+  }
 };
 
 automata.highlightNodes = (fa, nodes, color = '#f00') => {

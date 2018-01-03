@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { Button } from 'semantic-ui-react';
 import objectPath from 'object-path';
+import misc from 'utils/misc';
 
 import './VisualizationControl.css';
 
-class VisualizationControl extends Component {
+export default class VisualizationControl extends Component {
+
+  state = {
+    forwardBtnActive: true,
+    backwardBtnActive: false
+  }
 
   breakpoint = {
     getPath: () => {
@@ -23,26 +29,54 @@ class VisualizationControl extends Component {
       return path;
     },
 
+    getCurrent: () => {
+      let path = this.breakpoint.getPath();
+      return objectPath.get(this.props.breakpoint.data, path);
+    },
+
+    getIndex: () => {
+      return misc.last(this.props.breakpoint.indexStack);
+    },
+
     updateIndex: (direction = 1) => {
       let breakpointsObj = this.props.breakpoint;
-      breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]++;
+      let lastIndex = misc.last(breakpointsObj.indexStack);
+
+      if (direction === 1) {
+        breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]++;
+      } else {
+        breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]--;
+      }
       this.props.updateState({ breakpointsObj });
     }
   }
 
   eventHandlers = {
     handleForwardBtnClick: () => {
-      let path = this.breakpoint.getPath();
-      let breakpoint = objectPath.get(this.props.breakpoint.data, path);
-      console.log(breakpoint);
+      let breakpoint = this.breakpoint.getCurrent();
 
-      this.props.visualizeBreakpoint(breakpoint);
+      this.props.visualizeBreakpointForward(breakpoint);
 
       this.breakpoint.updateIndex();
+
+      this.setState({
+        backwardBtnActive: this.breakpoint.getIndex() > 0,
+        forwardBtnActive: this.breakpoint.getCurrent() !== undefined
+      });
     },
 
     handleBackBtnClick: () => {
+      this.breakpoint.updateIndex(-1);
 
+      let path = this.breakpoint.getPath();
+      let breakpoint = objectPath.get(this.props.breakpoint.data, path);
+
+      this.props.visualizeBreakpointBackward(breakpoint);
+
+      this.setState({
+        backwardBtnActive: this.breakpoint.getIndex() > 0,
+        forwardBtnActive: breakpoint !== undefined
+      });
     },
 
     handleStepIntoBtnClick: () => {
@@ -66,6 +100,7 @@ class VisualizationControl extends Component {
             labelPosition='left'
             icon='left chevron'
             content='Back'
+            disabled={!this.state.backwardBtnActive}
             onClick={this.eventHandlers.handleBackBtnClick}/>
           <Button
             icon='check'
@@ -83,6 +118,7 @@ class VisualizationControl extends Component {
             labelPosition='right'
             icon='right chevron'
             content='Forward'
+            disabled={!this.state.forwardBtnActive}
             onClick={this.eventHandlers.handleForwardBtnClick}/>
         </Button.Group>
       </div>
@@ -90,5 +126,3 @@ class VisualizationControl extends Component {
   }
 
 }
-
-export default VisualizationControl;
