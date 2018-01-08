@@ -7,6 +7,7 @@ import api from 'api';
 import automata from 'utils/automata';
 import objectPath from 'object-path';
 import misc from 'utils/misc';
+import internal from './index';
 
 class NfaToDfaViz extends Component {
 
@@ -27,15 +28,7 @@ class NfaToDfaViz extends Component {
       data: null,
       scopeStack: [],
       indexStack: [0]
-    },
-
-    vizElements: {
-      actionsHistory: []
     }
-  }
-
-  vizConfig = {
-    nodeColor: '#000'
   }
 
   componentWillMount() {
@@ -56,93 +49,73 @@ class NfaToDfaViz extends Component {
 
   componentDidMount() {
     let nfaData = automata.visDataFormat(this.props.data.nfa);
-    let dfaData = {
-      nodes: new vis.DataSet(),
-      edges: new vis.DataSet()
-    };
 
     this.setState({
       nfa: {
-        instance: this.init.createAutomaton('nfa', nfaData, {}),
+        instance: new vis.Network(document.getElementById('nfa-viz'), nfaData, {}),
         nodes: nfaData.nodes,
         edges: nfaData.edges
       },
 
-      dfa: {
-        instance: this.init.createAutomaton('dfa', dfaData, {}),
-        nodes: dfaData.nodes,
-        edges: dfaData.edges
-      }
+      dfa: automata.createEmpty('dfa-viz', {})
     });
   }
 
-  init = {
-    createAutomaton: (type, data, options) => {
-      return new vis.Network(document.getElementById(`${type}-viz`), data, options);
-    }
-  }
-
   breakpoint = {
-    visualize: breakpoint => {
+    visualizeForward: (breakpoint, index) => {
+      let data = breakpoint.data;
+
+      console.log(breakpoint);
+
       switch (breakpoint.label) {
         case 'highlight_initial_nfa_state':
-          automata.highlightNodes(this.state.nfa, [breakpoint.data.state.id]);
-
-          VisualizationElement.ActionsHistory.add(this, {
-            label: breakpoint.label,
-            title: 'Consider the initial NFA state',
-            description: ''
-          });
+          internal.highlightInitialNfaState.call(this, { data, index });
           break;
 
         case 'initial_state_epsilon_closure':
-          automata.resetNodesHighlight(this.state.nfa);
-
-          let reachableStates = breakpoint.data.reachable_states.map(s => s.id);
-          automata.highlightNodes(this.state.nfa, reachableStates);
-
-          VisualizationElement.ActionsHistory.add(this, {
-            label: breakpoint.label,
-            title: `ε-closure of NFA state ${breakpoint.data.initial.id}: {${reachableStates.join(', ')}}`,
-            description: ''
-          });
+          internal.initialStateEpsilonClosure.call(this, { data, index });
           break;
 
         case 'initial_dfa_state':
-          automata.resetNodesHighlight(this.state.nfa);
-
-          // Highlight NFA states
-          let nfaStates = breakpoint.data.states.map(s => s.id);
-          automata.highlightNodes(this.state.nfa, nfaStates);
-
-          // Add DFA state
-          automata.addNode(this.state.dfa, breakpoint.data.id);
-          automata.highlightNodes(this.state.dfa, [breakpoint.data.id]);
-
-          VisualizationElement.ActionsHistory.add(this, {
-            label: breakpoint.label,
-            title: `Initial DFA state ${breakpoint.data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`,
-            description: ''
-          });
+          internal.initialDfaState.call(this, { data, index });
           break;
 
         case 'possible_inputs':
-          automata.resetNodesHighlight(this.state.nfa);
+          internal.possibleInputs.call(this, { data, index });
+          break;
 
-          automata.highlightEdges(this.state.nfa, breakpoint.data.transitions.map(e => ({
-            src: e.src.id,
-            char: e.char,
-            dest: e.dest.id
-          })));
+        case 'move_states':
+          internal.moveStates.call(this, { data, index });
+          break;
 
-          VisualizationElement.ActionsHistory.add(this, {
-            label: breakpoint.label,
-            title: `NFA states {${breakpoint.data.dfa_state_contents}} give the possible inputs to follow: {${breakpoint.data.possible_inputs}}`,
-            description: ''
-          });
+        case 'epsilon_closure':
+          internal.epsilonClosure.call(this, { data, index });
+          break;
+
+        case 'new_dfa_transition':
+
+          break;
+
+        default:
 
           break;
       }
+    },
+
+    visualizeBackward: (breakpoint, index) => {
+
+    }
+  }
+
+  userInteraction = {
+    handleCheckAnswerClick: () => {
+
+    }
+  }
+
+  eventHandlers = {
+    handleBackBtnClick: () => {
+      this.props.windowChangeHandler('input');
     }
   }
 
@@ -156,8 +129,8 @@ class NfaToDfaViz extends Component {
     return (
       <div>
         <Container className='dashboard-content'>
-          <Grid>
-            <Grid.Column floated='left' width={9}>
+          <Grid className='viz-heading'>
+            <Grid.Column floated='left' width={9} className='viz-heading-left'>
               <Header
                 as='h1'
                 className='light-heading'>
@@ -168,18 +141,15 @@ class NfaToDfaViz extends Component {
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
-              <Button
-                circular
-                icon='question'
-                color='blue'
-                style={{ float: 'right' }}/>
+              <Button.Group basic size='small' style={{ float: 'right' }}>
+                <Button icon='settings' />
+                <Button icon='question' />
+              </Button.Group>
               <br style={{ clear: 'both' }}/>
             </Grid.Column>
           </Grid>
 
-          <VisualizationElement.ActionsHistory
-            actions={this.state.vizElements.actionsHistory}
-            updateState={this.helpers.updateState}/>
+          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
 
           <Grid columns={2}>
             <Grid.Column>
@@ -199,7 +169,9 @@ class NfaToDfaViz extends Component {
           <VisualizationControl
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpoint={this.breakpoint.visualize}
+            visualizeBreakpointForward={this.breakpoint.visualizeForward}
+            visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
+            checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
             updateState={this.helpers.updateState}/>
         </Container>
 
@@ -207,7 +179,7 @@ class NfaToDfaViz extends Component {
           <Menu inverted secondary size='massive'>
             <Menu.Menu style={{ margin: '0 auto' }}>
               <Menu.Item>
-                <Button labelPosition='left' icon='left chevron' content='Go back'/>
+                <Button labelPosition='left' icon='left chevron' content='Go back' onClick={this.eventHandlers.handleBackBtnClick}/>
               </Menu.Item>
             </Menu.Menu>
           </Menu>

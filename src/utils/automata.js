@@ -1,9 +1,14 @@
 import vis from 'vis';
 
 const automata = {};
+
 const config = {
-  FINAL_STATE_COLOR: '#f00'
-}
+  STATE_COLOR: '#d2e5ff',
+  FINAL_STATE_COLOR: '#f00',
+  HIGHLIGHTING_STATE_COLOR: '#44ff00',
+
+  HIGHLIGHTING_TRANSITION_COLOR: '#44ff00'
+};
 
 automata.EPSILON = 'ε';
 
@@ -31,7 +36,8 @@ automata.visDataFormat = data => {
     return {
       id: n.id,
       label: '' + n.id,
-      color: {background: n.final ? config.FINAL_STATE_COLOR : null}
+      color: {background: n.final ? config.FINAL_STATE_COLOR : null},
+      final: n.final
     }
   }));
 
@@ -84,7 +90,10 @@ automata.addNode = (fa, n) => {
   fa.nodes.add({
     id: n.id,
     label: '' + n.id,
-    color: {background: n.final ? config.FINAL_STATE_COLOR : null}
+    color: {
+      background: n.final ? config.FINAL_STATE_COLOR : null
+    },
+    final: n.final
   });
 };
 
@@ -114,7 +123,8 @@ automata.addEdge = (fa, n1, n2, transition) => {
     fa.nodes.add({
       id: n1.id,
       label: '' + n1.id,
-      color: {background: n1.final ? config.FINAL_STATE_COLOR : null}
+      color: {background: n1.final ? config.FINAL_STATE_COLOR : null},
+      final: n1.final
     });
   }
 
@@ -122,7 +132,8 @@ automata.addEdge = (fa, n1, n2, transition) => {
     fa.nodes.add({
       id: n2.id,
       label: '' + n2.id,
-      color: {background: n2.final ? config.FINAL_STATE_COLOR : null}
+      color: {background: n2.final ? config.FINAL_STATE_COLOR : null},
+      final: n2.final
     });
   }
 
@@ -164,20 +175,61 @@ automata.removeEdge = (fa, n1, n2, transition, removeNodesIfNotConnected = true)
   }
 };
 
-automata.highlightNodes = (fa, nodes, color = '#f00') => {
-  fa.nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
+automata.isConnected = (fa, n) => {
+  let connectedNodes = new Set();
+
+  fa.edges.forEach(e => {
+    connectedNodes.add(e.from);
+    connectedNodes.add(e.to);
+  });
+
+  return connectedNodes.has(n);
+}
+
+automata.highlightNodes = (fa, nodes, color = config.HIGHLIGHTING_STATE_COLOR) => {
+  if (nodes.length > 0) {
+    fa.nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
+  }
 }
 
 automata.resetNodesHighlight = fa => {
+  const nodes = fa.nodes.getIds();
 
+  fa.nodes.update(nodes.map(n => {
+    const node = fa.nodes.get(n);
+
+    return {
+      id: n,
+      color: {
+        background: node.final
+                    ? config.FINAL_STATE_COLOR
+                    : config.STATE_COLOR
+      }
+    };
+  }));
 }
 
-automata.highlightEdges = (fa, edges, color = '#f00') => {
-  fa.edges.update(edges.map(e => ({ char: e.char, color: { color } })));
+automata.highlightEdges = (fa, edges, color = config.HIGHLIGHTING_TRANSITION_COLOR) => {
+  if (edges.length > 0) {
+    fa.edges.update(edges.map(e => ({ id: `${e.src}-${e.char}-${e.dest}`, color: { color } })));
+  }
 }
 
 automata.resetEdgesHighlight = fa => {
+  const nodes = fa.nodes.getIds();
 
+  fa.nodes.update(nodes.map(n => {
+    const node = fa.nodes.get(n);
+
+    return {
+      id: n,
+      color: {
+        background: node.final
+                    ? config.FINAL_STATE_COLOR
+                    : config.STATE_COLOR
+      }
+    };
+  }));
 }
 
 export default automata;

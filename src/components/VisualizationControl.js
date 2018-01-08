@@ -97,42 +97,41 @@ export default class VisualizationControl extends Component {
 
     },
 
-    handleCheckAnswerBtnClick: () => {
-
-    },
-
     handleSettingsBtnClick: () => {
 
     }
   }
 
   render() {
-    return !this.props.active ? null : (
+    return (
       <div className='viz-control text-center'>
         <Button.Group>
           <Button
             labelPosition='left'
             icon='left chevron'
             content='Back'
-            disabled={!this.state.backwardBtnActive}
+            disabled={!this.state.backwardBtnActive || !this.props.active}
             onClick={this.eventHandlers.handleBackBtnClick}/>
           <Button
             icon='check'
             content='Check answer'
+            disabled={!this.props.active}
             onClick={this.props.checkAnswerHandler}/>
           <Button
             icon='setting'
             content='Settings'
+            disabled={!this.props.active}
             onClick={this.eventHandlers.handleSettingsBtnClick}/>
           <Button
             icon='level down'
             content='Step into'
+            disabled={!this.props.active}
             onClick={this.eventHandlers.handleStepIntoBtnClick}/>
           <Button
             labelPosition='right'
             icon='right chevron'
             content='Forward'
-            disabled={!this.state.forwardBtnActive}
+            disabled={!this.state.forwardBtnActive || !this.props.active}
             onClick={this.eventHandlers.handleForwardBtnClick}/>
         </Button.Group>
       </div>

@@ -78,8 +78,8 @@ class InputNfa extends Component {
     return (
       <div>
         <Container className='dashboard-content'>
-          <Grid>
-            <Grid.Column floated='left' width={9}>
+          <Grid className='viz-heading'>
+            <Grid.Column floated='left' width={9} className='viz-heading-left '>
               <Header
                 as='h1'
                 className='light-heading'>

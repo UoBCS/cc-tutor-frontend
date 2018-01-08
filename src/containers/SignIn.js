@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { Button, Form, Header, Message, Segment } from 'semantic-ui-react';
 import api from 'api';
 import storage from 'utils/storage';
-import misc from 'utils/misc';
+import ui from 'utils/ui';
+import clone from 'clone';
 
 class SignIn extends Component {
   state = {
     email: '',
     password: '',
-    ui: misc.lazyClone(this.props.uiState)
+    ui: clone(ui.state)
   }
 
   getFormData = () => {
@@ -28,25 +29,25 @@ class SignIn extends Component {
   }
 
   handleSignInClick = () => {
-    this.props.ui.loader.show(this, 'main');
+    ui.obj.loader.show(this, 'main');
 
     api.signIn(this.getFormData())
       .then(res => {
-        this.props.ui.loader.hide(this, 'main');
+        ui.obj.loader.hide(this, 'main');
         storage.set('access_token', res.data.access_token);
         this.props.history.push('/dashboard');
       })
       .catch(err => {
-        this.props.ui.loader.hide(this, 'main');
-        this.props.ui.message.show(this, 'negative', 'An error has occurred.', err.response.data.errors[0].detail);
+        ui.obj.loader.hide(this, 'main');
+        ui.obj.message.show(this, 'negative', 'An error has occurred.', err.response.data.errors[0].detail);
       });
   }
 
   render() {
     return (
       <div>
-        {this.props.ui.message.render(this)}
-        {this.props.ui.loader.render(this, 'main')}
+        {ui.obj.message.render(this)}
+        {ui.obj.loader.render(this, 'main')}
 
         <Header as='h2' color='teal' textAlign='center'>
           Log-in to your account

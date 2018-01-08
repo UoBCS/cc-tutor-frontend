@@ -8,27 +8,30 @@ import './ActionsHistory.css';
 
 class ActionsHistory extends Component {
 
-  static addOrSelect = (component, index, obj) => {
-    let vizElements = component.state.vizElements;
+  addOrSelect = (idx, obj) => {
+    let actions = this.state.actions;
+    let index = this.state.index;
 
-    if (index === vizElements.actionsHistory.length) {
-      vizElements.actionsHistory.push(obj);
+    if (idx === this.state.actions.length) {
+      actions.push(obj);
     }
 
-    vizElements.actionsHistoryIndex = index;
+    index = idx;
 
-    component.setState({ vizElements }, () => {
-      console.log(vizElements.actionsHistory[vizElements.actionsHistoryIndex]);
+    this.setState({ actions, index }, () => {
+      //console.log(vizElements.actionsHistory[vizElements.actionsHistoryIndex]);
     });
   }
 
   state = {
+    actions: [],
+    index: 0,
     ui: clone(ui.state)
   }
 
   eventHandlers = {
     handleShowHistoryClick: () => {
-      const mainContent = this.props.actions.map((action, index) =>
+      const mainContent = this.state.actions.map((action, index) =>
         <List.Item key={index}>
           <List.Content>
             {action.title}
@@ -54,8 +57,8 @@ class ActionsHistory extends Component {
 
         <div className='viz-history'>
           <p className='viz-history-current left'>
-            {this.props.actions.length
-              ? this.props.actions[this.props.index].title
+            {this.state.actions.length
+              ? this.state.actions[this.state.index].title
               : 'A description of the algorithm steps will be shown here.'
             }
           </p>

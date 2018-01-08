@@ -34,11 +34,6 @@ export default class RegexToNFA extends Component {
       indexStack: [0],
     },
 
-    vizElements: {
-      actionsHistory: [],
-      actionsHistoryIndex: 0
-    },
-
     ui: clone(ui.state)
   }
 
@@ -52,39 +47,44 @@ export default class RegexToNFA extends Component {
         case 's':
           automata.addEdge(this.state.nfa, data.entry, data.exit, data.transition);
 
-          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+          this.refs.actionsHistory.addOrSelect(index, {
             title: `Add ${this.breakpoint.map[breakpoint.label]} transition from state ${data.entry.id} to state ${data.exit.id}`,
+            breakpoint: data
           });
           break;
         case 'rep':
           automata.addEdge(this.state.nfa, data.state1, data.state2, automata.EPSILON);
           automata.addEdge(this.state.nfa, data.state2, data.state1, automata.EPSILON);
 
-          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+          this.refs.actionsHistory.addOrSelect(index, {
             title: `Add ${this.breakpoint.map[breakpoint.label]} transitions between states ${data.state1} and ${data.state2} to form repetition`,
+            breakpoint: data
           });
           break;
         case 'or1':
           automata.addNode(this.state.nfa, data.entry);
 
-          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+          this.refs.actionsHistory.addOrSelect(index, {
             title: `Add entry choice state ${data.entry.id}`,
+            breakpoint: data
           });
           break;
         case 'or2':
           automata.addEdge(this.state.nfa, data.entry, data.choices[0], automata.EPSILON);
           automata.addEdge(this.state.nfa, data.entry, data.choices[1], automata.EPSILON);
 
-          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+          this.refs.actionsHistory.addOrSelect(index, {
             title: `Add ${automata.EPSILON}-transitions to choice states ${data.choices[0].id} and ${data.choices[1].id} from entry state ${data.entry.id}`,
+            breakpoint: data
           });
           break;
 
         case 'or3':
           automata.addNode(this.state.nfa, data.exit);
 
-          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+          this.refs.actionsHistory.addOrSelect(index, {
             title: `Add exit choice state ${data.exit.id}`,
+            breakpoint: data
           });
           break;
 
@@ -92,8 +92,9 @@ export default class RegexToNFA extends Component {
           automata.addEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON);
           automata.addEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON);
 
-          VisualizationElement.ActionsHistory.addOrSelect(this, index, {
+          this.refs.actionsHistory.addOrSelect(index, {
             title: `Add ${automata.EPSILON}-transitions from choice states ${data.choices[0].id} and ${data.choices[1].id} to exit state ${data.exit.id}`,
+            breakpoint: data
           });
           break;
         default:
@@ -134,7 +135,7 @@ export default class RegexToNFA extends Component {
           break;
       }
 
-      VisualizationElement.ActionsHistory.addOrSelect(this, index);
+      this.refs.actionsHistory.addOrSelect(index);
     },
 
     map: {
@@ -166,7 +167,9 @@ export default class RegexToNFA extends Component {
       this.userInteraction.edges.push({
         from: data.from,
         to: data.to,
-        label: data.label
+        label: data.label,
+        new: !automata.isConnected(this.state.nfa, data.from)
+          && !automata.isConnected(this.state.nfa, data.to)
       });
 
       if (data.from === data.to) {
@@ -180,7 +183,26 @@ export default class RegexToNFA extends Component {
     },
 
     handleCheckAnswerClick: () => {
+      const index = misc.last(this.state.breakpoint.indexStack);
+      const breakpoint = this.state.breakpoint.data[index];
+      const edges = this.userInteraction.edges;
+      const nodes = this.userInteraction.nodes;
+      let valid;
 
+      console.log(breakpoint);
+
+      if (breakpoint.label === 's') {
+        valid = edges[0].from === breakpoint.data.entry.id
+            && edges[0].to === breakpoint.data.exit.id
+            && edges[0].label === breakpoint.data.transition;
+      } else if (breakpoint.label === 'c' || breakpoint.label === 'e') {
+        valid = edges[0].label === breakpoint.data.transition
+            && edges[0].new;
+      }
+
+      if (valid) {
+
+      }
     }
   }
 
@@ -243,8 +265,8 @@ export default class RegexToNFA extends Component {
         {ui.obj.loader.render(this, 'main')}
 
         <Container className='dashboard-content'>
-          <Grid>
-            <Grid.Column floated='left' width={9}>
+           <Grid className='viz-heading'>
+            <Grid.Column floated='left' width={9} className='viz-heading-left'>
               <Header
                 as='h1'
                 className='light-heading'>
@@ -271,10 +293,7 @@ export default class RegexToNFA extends Component {
             style={{ margin: '30px auto' }}
             action={<Button onClick={this.eventHandlers.handleRegexToNfa}>Run</Button>}/>
 
-          <VisualizationElement.ActionsHistory
-            actions={this.state.vizElements.actionsHistory}
-            index={this.state.vizElements.actionsHistoryIndex}
-            updateState={this.helpers.updateState}/>
+          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
 
           <Grid columns={2}>
             <Grid.Column>

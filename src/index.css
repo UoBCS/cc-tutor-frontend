@@ -44,3 +44,11 @@ body {
   text-transform: uppercase !important;
   padding: 3px 4px !important;
 }
+
+.viz-heading.ui.grid {
+  margin-bottom: 12px;
+}
+
+.viz-heading-left h1.ui.header {
+  font-size: 1.5em;
+}
