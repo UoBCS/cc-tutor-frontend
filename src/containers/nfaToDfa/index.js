@@ -43,6 +43,10 @@ internal.initialDfaState = function ({data, index}) {
   // Add DFA state
   automata.addNode(this.state.dfa, data.id);
   automata.highlightNodes(this.state.dfa, [data.id]);
+  automata.updateNodesAttr(this.state.dfa, [{
+    id: data.id,
+    title: `Corresponding NFA states: {${nfaStates.join(', ')}}`
+  }]);
 
   this.refs.actionsHistory.addOrSelect(index, {
     title: `Initial DFA state ${data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`,
@@ -70,7 +74,9 @@ internal.moveStates = function ({data, index}) {
 
   automata.highlightNodes(this.state.nfa, [data.state.id].concat(data.connected_states.map(s => s.id)));
 
-  let connectedStatesString = `${!data.connected_states.length ? 'no state' : `{${data.connected_states.map(s => s.id).join(', ')}}`}`
+  let connectedStatesString = `${!data.connected_states.length
+          ? `no state: there is no '${data.char}' transition`
+          : `{${data.connected_states.map(s => s.id).join(', ')}}`}`;
 
   this.refs.actionsHistory.addOrSelect(index, {
     title: `Move action: NFA state ${data.state.id} moves to ${connectedStatesString}`,

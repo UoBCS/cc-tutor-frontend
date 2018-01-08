@@ -5,9 +5,15 @@ const automata = {};
 const config = {
   STATE_COLOR: '#d2e5ff',
   FINAL_STATE_COLOR: '#f00',
-  HIGHLIGHTING_STATE_COLOR: '#44ff00',
+  HIGHLIGHTING_STATE_COLOR: [
+    '#44ff00',
+    '#f0ff00'
+  ],
 
-  HIGHLIGHTING_TRANSITION_COLOR: '#44ff00'
+  HIGHLIGHTING_TRANSITION_WIDTH: 5,
+  HIGHLIGHTING_TRANSITION_COLOR: [
+    '#44ff00'
+  ]
 };
 
 automata.EPSILON = 'ε';
@@ -186,7 +192,7 @@ automata.isConnected = (fa, n) => {
   return connectedNodes.has(n);
 }
 
-automata.highlightNodes = (fa, nodes, color = config.HIGHLIGHTING_STATE_COLOR) => {
+automata.highlightNodes = (fa, nodes, color = config.HIGHLIGHTING_STATE_COLOR[0]) => {
   if (nodes.length > 0) {
     fa.nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
   }
@@ -207,13 +213,29 @@ automata.resetNodesHighlight = fa => {
       }
     };
   }));
-}
+};
 
-automata.highlightEdges = (fa, edges, color = config.HIGHLIGHTING_TRANSITION_COLOR) => {
+automata.updateNodesAttr = (fa, nodes) => {
+  fa.nodes.update(nodes.map(n => {
+    let obj = { id: n.id };
+    Object.keys(n).forEach(k => {
+      if (k !== 'id') {
+        obj[k] = n[k];
+      }
+    });
+    return obj;
+  }));
+};
+
+automata.highlightEdges = (fa, edges, color = config.HIGHLIGHTING_TRANSITION_COLOR[0]) => {
   if (edges.length > 0) {
-    fa.edges.update(edges.map(e => ({ id: `${e.src}-${e.char}-${e.dest}`, color: { color } })));
+    fa.edges.update(edges.map(e => ({
+      id: `${e.src}-${e.char}-${e.dest}`,
+      color: { color },
+      width: config.HIGHLIGHTING_TRANSITION_WIDTH
+    })));
   }
-}
+};
 
 automata.resetEdgesHighlight = fa => {
   const nodes = fa.nodes.getIds();
@@ -230,6 +252,6 @@ automata.resetEdgesHighlight = fa => {
       }
     };
   }));
-}
+};
 
 export default automata;
