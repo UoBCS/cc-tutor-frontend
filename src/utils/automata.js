@@ -1,21 +1,61 @@
 import vis from 'vis';
+import _ from 'lodash';
 
 const automata = {};
 
-const config = {
-  STATE_COLOR: '#d2e5ff',
-  FINAL_STATE_COLOR: '#f00',
-  HIGHLIGHTING_STATE_COLOR: [
-    '#44ff00',
-    '#f0ff00'
+const defaultOptions = {
+  nodes: {
+    color: {
+      background: '#fafafa',
+      border: '#000'
+    },
+
+    shape: 'circle',
+
+    margin: {
+      top: 7,
+      left: 10,
+      right: 7,
+      bottom: 7
+    }
+  },
+
+  edges: {
+    color: {
+      color: '#000'
+    },
+
+    width: 1
+  }
+};
+
+const highlightOptions = {
+  finalState: {
+    color: {
+      background: '#f00'
+    }
+  },
+
+  highlightState: [
+    {
+      color: { background: '#44ff00' }
+    },
+
+    {
+      color: { background: '#f0ff00' }
+    }
   ],
 
-  HIGHLIGHTING_TRANSITION_WIDTH: 5,
-  HIGHLIGHTING_TRANSITION_COLOR: [
-    '#44ff00'
+  highlightTransition: [
+    {
+      color: { color: '#44ff00' },
+      width: 5
+    }
   ]
 };
 
+automata.defaultOptions = defaultOptions;
+automata.highlightOptions = highlightOptions;
 automata.EPSILON = 'ε';
 
 automata.createEmpty = (container, options = {}) => {
@@ -23,13 +63,13 @@ automata.createEmpty = (container, options = {}) => {
   const edges = new vis.DataSet();
 
   return {
-    instance: new vis.Network(document.getElementById(container), { nodes, edges }, options),
+    instance: new vis.Network(document.getElementById(container), { nodes, edges }, _.defaultsDeep(options, defaultOptions)),
     nodes,
     edges
   };
 };
 
-automata.visDataFormat = data => {
+automata.visDataFormat = (container, data, options = {}) => {
   let nodesData = new Set();
 
   data.forEach(e => {
@@ -42,7 +82,7 @@ automata.visDataFormat = data => {
     return {
       id: n.id,
       label: '' + n.id,
-      color: {background: n.final ? config.FINAL_STATE_COLOR : null},
+      color: {background: n.final ? highlightOptions.finalState.color.background : null},
       final: n.final
     }
   }));
@@ -62,7 +102,11 @@ automata.visDataFormat = data => {
 
   let edges = new vis.DataSet(edgesData);
 
-  return { nodes, edges };
+  return {
+    instance: new vis.Network(document.getElementById('nfa-viz'), { nodes, edges }, _.defaultsDeep(options, defaultOptions)),
+    nodes,
+    edges
+  };
 };
 
 automata.fromVis = edges => {
@@ -97,7 +141,7 @@ automata.addNode = (fa, n) => {
     id: n.id,
     label: '' + n.id,
     color: {
-      background: n.final ? config.FINAL_STATE_COLOR : null
+      background: n.final ? highlightOptions.finalState.color.background : null
     },
     final: n.final
   });
@@ -105,6 +149,41 @@ automata.addNode = (fa, n) => {
 
 automata.removeNode = (fa, n) => {
   fa.nodes.remove(n);
+};
+
+automata.highlightNodes = (fa, nodes, color = highlightOptions.highlightState[0].color.background) => {
+  if (nodes.length > 0) {
+    fa.nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
+  }
+}
+
+automata.resetNodesHighlight = fa => {
+  const nodes = fa.nodes.getIds();
+
+  fa.nodes.update(nodes.map(n => {
+    const node = fa.nodes.get(n);
+
+    return {
+      id: n,
+      color: {
+        background: node.final
+                    ? highlightOptions.finalState.color.background
+                    : defaultOptions.nodes.color.background
+      }
+    };
+  }));
+};
+
+automata.updateNodesAttr = (fa, nodes) => {
+  fa.nodes.update(nodes.map(n => {
+    let obj = { id: n.id };
+    Object.keys(n).forEach(k => {
+      if (k !== 'id') {
+        obj[k] = n[k];
+      }
+    });
+    return obj;
+  }));
 };
 
 automata.addEdge = (fa, n1, n2, transition) => {
@@ -129,7 +208,7 @@ automata.addEdge = (fa, n1, n2, transition) => {
     fa.nodes.add({
       id: n1.id,
       label: '' + n1.id,
-      color: {background: n1.final ? config.FINAL_STATE_COLOR : null},
+      color: {background: n1.final ? highlightOptions.finalState.color.background : null},
       final: n1.final
     });
   }
@@ -138,7 +217,7 @@ automata.addEdge = (fa, n1, n2, transition) => {
     fa.nodes.add({
       id: n2.id,
       label: '' + n2.id,
-      color: {background: n2.final ? config.FINAL_STATE_COLOR : null},
+      color: {background: n2.final ? highlightOptions.finalState.color.background : null},
       final: n2.final
     });
   }
@@ -181,6 +260,31 @@ automata.removeEdge = (fa, n1, n2, transition, removeNodesIfNotConnected = true)
   }
 };
 
+automata.highlightEdges = (fa, edges, color = highlightOptions.highlightTransition[0].color.color) => {
+  if (edges.length > 0) {
+    fa.edges.update(edges.map(e => ({
+      id: `${e.src}-${e.char}-${e.dest}`,
+      color: { color },
+      width: highlightOptions.highlightTransition[0].width
+    })));
+  }
+};
+
+automata.resetEdgesHighlight = fa => {
+  const edges = fa.edges.getIds();
+
+  fa.edges.update(edges.map(n => {
+    const edge = fa.edges.get(n);
+
+    return {
+      id: edge.id,
+      color: { color: defaultOptions.edges.color.color },
+      width: defaultOptions.edges.width
+    };
+  }));
+};
+
+
 automata.isConnected = (fa, n) => {
   let connectedNodes = new Set();
 
@@ -190,68 +294,6 @@ automata.isConnected = (fa, n) => {
   });
 
   return connectedNodes.has(n);
-}
-
-automata.highlightNodes = (fa, nodes, color = config.HIGHLIGHTING_STATE_COLOR[0]) => {
-  if (nodes.length > 0) {
-    fa.nodes.update(nodes.map(n => ({id: n, color: {background: color}})));
-  }
-}
-
-automata.resetNodesHighlight = fa => {
-  const nodes = fa.nodes.getIds();
-
-  fa.nodes.update(nodes.map(n => {
-    const node = fa.nodes.get(n);
-
-    return {
-      id: n,
-      color: {
-        background: node.final
-                    ? config.FINAL_STATE_COLOR
-                    : config.STATE_COLOR
-      }
-    };
-  }));
-};
-
-automata.updateNodesAttr = (fa, nodes) => {
-  fa.nodes.update(nodes.map(n => {
-    let obj = { id: n.id };
-    Object.keys(n).forEach(k => {
-      if (k !== 'id') {
-        obj[k] = n[k];
-      }
-    });
-    return obj;
-  }));
-};
-
-automata.highlightEdges = (fa, edges, color = config.HIGHLIGHTING_TRANSITION_COLOR[0]) => {
-  if (edges.length > 0) {
-    fa.edges.update(edges.map(e => ({
-      id: `${e.src}-${e.char}-${e.dest}`,
-      color: { color },
-      width: config.HIGHLIGHTING_TRANSITION_WIDTH
-    })));
-  }
-};
-
-automata.resetEdgesHighlight = fa => {
-  const nodes = fa.nodes.getIds();
-
-  fa.nodes.update(nodes.map(n => {
-    const node = fa.nodes.get(n);
-
-    return {
-      id: n,
-      color: {
-        background: node.final
-                    ? config.FINAL_STATE_COLOR
-                    : config.STATE_COLOR
-      }
-    };
-  }));
 };
 
 export default automata;

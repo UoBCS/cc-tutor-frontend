@@ -11,8 +11,9 @@ const internal = {};
   this.setState({ breakpoint: breakpointData });
 };*/
 
-internal.highlightInitialNfaState = function ({data, index}) {
-  console.log(this);
+internal.forward = {};
+
+internal.forward.highlightInitialNfaState = function ({data, index}) {
   automata.highlightNodes(this.state.nfa, [data.state.id]);
 
   this.refs.actionsHistory.addOrSelect(index, {
@@ -21,7 +22,7 @@ internal.highlightInitialNfaState = function ({data, index}) {
   });
 };
 
-internal.initialStateEpsilonClosure = function ({data, index}) {
+internal.forward.initialStateEpsilonClosure = function ({data, index}) {
   automata.resetNodesHighlight(this.state.nfa);
 
   let reachableStates = data.reachable_states.map(s => s.id);
@@ -33,7 +34,7 @@ internal.initialStateEpsilonClosure = function ({data, index}) {
   });
 };
 
-internal.initialDfaState = function ({data, index}) {
+internal.forward.initialDfaState = function ({data, index}) {
   automata.resetNodesHighlight(this.state.nfa);
 
   // Highlight NFA states
@@ -54,13 +55,16 @@ internal.initialDfaState = function ({data, index}) {
   });
 };
 
-internal.possibleInputs = function ({data, index}) {
+internal.forward.possibleInputs = function ({data, index}) {
   automata.resetNodesHighlight(this.state.nfa);
+  automata.resetEdgesHighlight(this.state.nfa);
+  automata.resetNodesHighlight(this.state.dfa);
 
   const edges = _.flatten(data.transitions.map(e => e.dest.map(dest => ({
     src: e.src.id, char: e.char, dest: dest.id
   }))));
 
+  automata.highlightNodes(this.state.nfa, data.dfa_state_contents);
   automata.highlightEdges(this.state.nfa, edges);
 
   this.refs.actionsHistory.addOrSelect(index, {
@@ -69,7 +73,7 @@ internal.possibleInputs = function ({data, index}) {
   });
 };
 
-internal.moveStates = function ({data, index}) {
+internal.forward.moveStates = function ({data, index}) {
   automata.resetNodesHighlight(this.state.nfa);
 
   automata.highlightNodes(this.state.nfa, [data.state.id].concat(data.connected_states.map(s => s.id)));
@@ -84,8 +88,31 @@ internal.moveStates = function ({data, index}) {
   });
 };
 
-internal.epsilonClosure = function ({ data, index }) {
+internal.forward.epsilonClosure = function ({ data, index }) {
+  automata.highlightNodes(this.state.nfa, data.output.map(s => s.id), automata.highlightOptions.highlightState[1].color.background);
 
+  this.refs.actionsHistory.addOrSelect(index, {
+    title: `ε-closure of NFA states {${data.input.map(s => s.id).join(', ')}}: {${data.output.map(s => s.id).join(', ')}}`,
+    breakpoint: data
+  });
 };
+
+internal.forward.newDfaTransition = function ({ data, index }) {
+  const nfaStates = data.dest.states.map(s => s.id).join(', ');
+
+  automata.addNode(this.state.dfa, data.dest);
+  automata.updateNodesAttr(this.state.dfa, [{
+    id: data.dest.id,
+    title: `Corresponding NFA states: ${nfaStates}`
+  }]);
+  automata.addEdge(this.state.dfa, data.src, data.dest, data.char);
+
+  this.refs.actionsHistory.addOrSelect(index, {
+    title: `New DFA state ${data.dest.id} formed by NFA states {${nfaStates}}`,
+    breakpoint: data
+  });
+};
+
+internal.backward = {};
 
 export default internal;

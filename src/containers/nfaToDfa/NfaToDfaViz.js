@@ -7,7 +7,7 @@ import api from 'api';
 import automata from 'utils/automata';
 import objectPath from 'object-path';
 import misc from 'utils/misc';
-import internal from './index';
+import internal from './internal';
 
 class NfaToDfaViz extends Component {
 
@@ -48,16 +48,9 @@ class NfaToDfaViz extends Component {
   }
 
   componentDidMount() {
-    let nfaData = automata.visDataFormat(this.props.data.nfa);
-
     this.setState({
-      nfa: {
-        instance: new vis.Network(document.getElementById('nfa-viz'), nfaData, {}),
-        nodes: nfaData.nodes,
-        edges: nfaData.edges
-      },
-
-      dfa: automata.createEmpty('dfa-viz', {})
+      nfa: automata.visDataFormat('nfa-viz', this.props.data.nfa),
+      dfa: automata.createEmpty('dfa-viz')
     });
   }
 
@@ -69,31 +62,31 @@ class NfaToDfaViz extends Component {
 
       switch (breakpoint.label) {
         case 'highlight_initial_nfa_state':
-          internal.highlightInitialNfaState.call(this, { data, index });
+          internal.forward.highlightInitialNfaState.call(this, { data, index });
           break;
 
         case 'initial_state_epsilon_closure':
-          internal.initialStateEpsilonClosure.call(this, { data, index });
+          internal.forward.initialStateEpsilonClosure.call(this, { data, index });
           break;
 
         case 'initial_dfa_state':
-          internal.initialDfaState.call(this, { data, index });
+          internal.forward.initialDfaState.call(this, { data, index });
           break;
 
         case 'possible_inputs':
-          internal.possibleInputs.call(this, { data, index });
+          internal.forward.possibleInputs.call(this, { data, index });
           break;
 
         case 'move_states':
-          internal.moveStates.call(this, { data, index });
+          internal.forward.moveStates.call(this, { data, index });
           break;
 
         case 'epsilon_closure':
-          internal.epsilonClosure.call(this, { data, index });
+          internal.forward.epsilonClosure.call(this, { data, index });
           break;
 
         case 'new_dfa_transition':
-
+          internal.forward.newDfaTransition.call(this, { data, index });
           break;
 
         default:

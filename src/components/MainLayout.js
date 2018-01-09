@@ -15,7 +15,7 @@ class MainLayout extends Component {
 
     return (
       <div>
-        <div className='ui large inverted vertical left fixed menu'
+        <div className='ui massive inverted vertical left fixed menu'
           style={{
             position: 'fixed',
             top: 0, left: 0, bottom: 0,

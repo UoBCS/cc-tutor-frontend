@@ -17,10 +17,12 @@ class ActionsHistory extends Component {
     }
 
     index = idx;
+    if (index === 8) {
+      console.log(this.state.actions);
+      console.log(index);
+    }
 
-    this.setState({ actions, index }, () => {
-      //console.log(vizElements.actionsHistory[vizElements.actionsHistoryIndex]);
-    });
+    this.setState({ actions, index });
   }
 
   state = {
