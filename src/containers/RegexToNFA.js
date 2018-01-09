@@ -264,60 +264,64 @@ export default class RegexToNFA extends Component {
 
         {ui.obj.loader.render(this, 'main')}
 
-        <Container className='dashboard-content'>
-           <Grid className='viz-heading'>
-            <Grid.Column floated='left' width={9} className='viz-heading-left'>
-              <Header
-                as='h1'
-                className='light-heading'>
-                Regular expression to NFA
-              </Header>
-              <p>
-                Enter the regular expression in the field below.
-              </p>
-            </Grid.Column>
-            <Grid.Column floated='right' width={1}>
-              <Button.Group basic size='small' style={{ float: 'right' }}>
-                <Button icon='settings' />
-                <Button icon='question' />
-              </Button.Group>
-              <br style={{ clear: 'both' }}/>
-            </Grid.Column>
-          </Grid>
+        <div className='dashboard-card'>
+          <div className='dashboard-card-header'>
+            <Grid className='viz-heading'>
+              <Grid.Column floated='left' width={9} className='viz-heading-left'>
+                <Header
+                  as='h1'
+                  className='light-heading'>
+                  Regular expression to NFA
+                </Header>
+                <p>
+                  Enter the regular expression in the field below.
+                </p>
+              </Grid.Column>
+              <Grid.Column floated='right' width={1}>
+                <Button.Group basic size='small' style={{ float: 'right' }}>
+                  <Button icon='settings' />
+                  <Button icon='question' />
+                </Button.Group>
+                <br style={{ clear: 'both' }}/>
+              </Grid.Column>
+            </Grid>
+          </div>
 
-          <Input
-            name='regex'
-            value={this.state.input.regex}
-            onChange={this.eventHandlers.handleInputChange}
-            placeholder='Regular expression'
-            style={{ margin: '30px auto' }}
-            action={<Button onClick={this.eventHandlers.handleRegexToNfa}>Run</Button>}/>
+          <div className='dashboard-card-content'>
+            <Input
+              name='regex'
+              value={this.state.input.regex}
+              onChange={this.eventHandlers.handleInputChange}
+              placeholder='Regular expression'
+              style={{ margin: '0px auto 30px auto' }}
+              action={<Button primary onClick={this.eventHandlers.handleRegexToNfa}>Run</Button>}/>
 
-          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+            <VisualizationElement.ActionsHistory ref='actionsHistory'/>
 
-          <Grid columns={2}>
-            <Grid.Column>
-              <Segment className='viz-area'>
-                <Header as='h3' className='viz-area-title' content='Regular expression parse tree'/>
-                <div id='regex-tree-viz' style={{ height: 600 }}></div>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column>
-              <Segment className='viz-area'>
-                <Header as='h3' className='viz-area-title' content='Non-deterministic finite automaton'/>
-                <div id='nfa-viz' style={{ height: 600 }}></div>
-              </Segment>
-            </Grid.Column>
-          </Grid>
+            <Grid columns={2}>
+              <Grid.Column>
+                <Segment className='viz-area'>
+                  <Header as='h3' className='viz-area-title' content='Regular expression parse tree'/>
+                  <div id='regex-tree-viz' style={{ height: 600 }}></div>
+                </Segment>
+              </Grid.Column>
+              <Grid.Column>
+                <Segment className='viz-area'>
+                  <Header as='h3' className='viz-area-title' content='Non-deterministic finite automaton'/>
+                  <div id='nfa-viz' style={{ height: 600 }}></div>
+                </Segment>
+              </Grid.Column>
+            </Grid>
 
-          <VisualizationControl
-            active={this.state.regexTree.instance !== null}
-            breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={this.breakpoint.visualizeForward}
-            visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
-            checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
-            updateState={this.helpers.updateState}/>
-        </Container>
+            <VisualizationControl
+              active={this.state.regexTree.instance !== null}
+              breakpoint={this.state.breakpoint}
+              visualizeBreakpointForward={this.breakpoint.visualizeForward}
+              visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
+              checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
+              updateState={this.helpers.updateState}/>
+          </div>
+        </div>
       </div>
     )
   }

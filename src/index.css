@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background-color: #eaeaea;
 }
 
 .hidden, [hidden] {
@@ -24,8 +25,26 @@ body {
   font-weight: 100 !important;
 }
 
+/* Dashboard */
+
 .dashboard-content {
   padding: 30px 20px;
+}
+
+.dashboard-card {
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  border-radius: .28571429rem;
+  border: 1px solid rgba(81, 83, 85, 0.15);
+}
+
+.dashboard-card-header {
+  background-color: #fff;
+  border-radius: .28571429rem;
+}
+
+.dashboard-card-content {
+  background-color: #fafafa;
+  padding: 25px;
 }
 
 /* Visualization */
@@ -46,7 +65,10 @@ body {
 }
 
 .viz-heading.ui.grid {
-  margin-bottom: 12px;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .viz-heading-left h1.ui.header {

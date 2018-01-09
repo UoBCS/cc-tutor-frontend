@@ -5,7 +5,7 @@ import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
 import automata from '../../utils/automata';
 
-class InputNfa extends Component {
+export default class InputNfa extends Component {
 
   state = {
     inputMethod: 'manual',
@@ -77,62 +77,62 @@ class InputNfa extends Component {
   render() {
     return (
       <div>
-        <Container className='dashboard-content'>
-          <Grid className='viz-heading'>
-            <Grid.Column floated='left' width={9} className='viz-heading-left '>
-              <Header
-                as='h1'
-                className='light-heading'>
-                Create the non-deterministic finite automaton
-              </Header>
-              <p>
-                Input the NFA either using the manual tingy or json
-              </p>
-            </Grid.Column>
-            <Grid.Column floated='right' width={1}>
-              <Button
-                circular
-                icon='question'
-                color='blue'
-                style={{ float: 'right' }}/>
-              <br style={{ clear: 'both' }}/>
-            </Grid.Column>
-          </Grid>
-
-          <FiniteAutomatonCreator
-            hidden={this.state.inputMethod !== 'manual'}
-            containerElement='manualInput'
-            finished={this.state.finishedManualInput}
-            onFinishEditing={this.handleManualEditingFinish}/>
-
-          <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
-            <div id='jsonEditor' style={{ height: 600, margin: '10px auto' }}></div>
+        <div className='dashboard-card'>
+          <div className='dashboard-card-header'>
+            <Grid className='viz-heading'>
+              <Grid.Column floated='left' width={9} className='viz-heading-left '>
+                <Header
+                  as='h1'
+                  className='light-heading'>
+                  Create the non-deterministic finite automaton
+                </Header>
+                <p>
+                  Input the NFA either using the manual tingy or json
+                </p>
+              </Grid.Column>
+              <Grid.Column floated='right' width={1}>
+                <Button
+                  circular
+                  icon='question'
+                  color='blue'
+                  style={{ float: 'right' }}/>
+                <br style={{ clear: 'both' }}/>
+              </Grid.Column>
+            </Grid>
           </div>
-        </Container>
 
-        <Segment inverted style={{ position: 'fixed', right: 0, left: 250, bottom: 0, borderRadius: 0 }}>
-          <Menu inverted secondary size='massive'>
-            <Menu.Menu style={{ margin: '0 auto' }}>
-              <Menu.Item>
-                <Button disabled labelPosition='left' icon='left chevron' content='Go back'/>
-              </Menu.Item>
-              <Menu.Item>
-                <Button.Group>
-                  <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.handleInputMethodClick}>Manual input</Button>
-                  <Button.Or />
-                  <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.handleInputMethodClick}>JSON input</Button>
-                </Button.Group>
-              </Menu.Item>
-              <Menu.Item>
-                <Button primary labelPosition='right' icon='right chevron' content='Continue' onClick={this.handleContinueClick} />
-              </Menu.Item>
-            </Menu.Menu>
-          </Menu>
-        </Segment>
+          <div className='dashboard-card-content'>
+            <FiniteAutomatonCreator
+              hidden={this.state.inputMethod !== 'manual'}
+              containerElement='manualInput'
+              finished={this.state.finishedManualInput}
+              onFinishEditing={this.handleManualEditingFinish}/>
+
+            <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
+              <div id='jsonEditor' style={{ height: 600, margin: '10px auto' }}></div>
+            </div>
+
+            <Menu secondary>
+              <Menu.Menu style={{ margin: '0 auto' }}>
+                <Menu.Item>
+                  <Button disabled labelPosition='left' icon='left chevron' content='Go back'/>
+                </Menu.Item>
+                <Menu.Item>
+                  <Button.Group>
+                    <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.handleInputMethodClick}>Manual input</Button>
+                    <Button.Or />
+                    <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.handleInputMethodClick}>JSON input</Button>
+                  </Button.Group>
+                </Menu.Item>
+                <Menu.Item>
+                  <Button primary labelPosition='right' icon='right chevron' content='Continue' onClick={this.handleContinueClick} />
+                </Menu.Item>
+              </Menu.Menu>
+            </Menu>
+          </div>
+        </div>
       </div>
     );
   }
 
 }
-
-export default InputNfa;

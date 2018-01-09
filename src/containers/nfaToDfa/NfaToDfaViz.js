@@ -9,7 +9,7 @@ import objectPath from 'object-path';
 import misc from 'utils/misc';
 import internal from './internal';
 
-class NfaToDfaViz extends Component {
+export default class NfaToDfaViz extends Component {
 
   state = {
     nfa: {
@@ -121,66 +121,66 @@ class NfaToDfaViz extends Component {
   render() {
     return (
       <div>
-        <Container className='dashboard-content'>
-          <Grid className='viz-heading'>
-            <Grid.Column floated='left' width={9} className='viz-heading-left'>
-              <Header
-                as='h1'
-                className='light-heading'>
-                NFA to DFA visualization
-              </Header>
-              <p>
-                Some nice description right here please.
-              </p>
-            </Grid.Column>
-            <Grid.Column floated='right' width={1}>
-              <Button.Group basic size='small' style={{ float: 'right' }}>
-                <Button icon='settings' />
-                <Button icon='question' />
-              </Button.Group>
-              <br style={{ clear: 'both' }}/>
-            </Grid.Column>
-          </Grid>
+        <div className='dashboard-card'>
+          <div className='dashboard-card-header'>
+            <Grid className='viz-heading'>
+              <Grid.Column floated='left' width={9} className='viz-heading-left'>
+                <Header
+                  as='h1'
+                  className='light-heading'>
+                  NFA to DFA visualization
+                </Header>
+                <p>
+                  Some nice description right here please.
+                </p>
+              </Grid.Column>
+              <Grid.Column floated='right' width={1}>
+                <Button.Group basic size='small' style={{ float: 'right' }}>
+                  <Button icon='settings' />
+                  <Button icon='question' />
+                </Button.Group>
+                <br style={{ clear: 'both' }}/>
+              </Grid.Column>
+            </Grid>
+          </div>
 
-          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+          <div className='dashboard-card-content'>
+            <VisualizationElement.ActionsHistory ref='actionsHistory'/>
 
-          <Grid columns={2}>
-            <Grid.Column>
-              <Segment className='viz-area'>
-                <Header as='h3' className='viz-area-title' content='Non-deterministic finite automaton'/>
-                <div id='nfa-viz' style={{ height: 500 }}></div>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column>
-              <Segment className='viz-area'>
-                <Header as='h3' className='viz-area-title' content='Deterministic finite automaton'/>
-                <div id='dfa-viz' style={{ height: 500 }}></div>
-              </Segment>
-            </Grid.Column>
-          </Grid>
+            <Grid columns={2}>
+              <Grid.Column>
+                <Segment className='viz-area'>
+                  <Header as='h3' className='viz-area-title' content='Non-deterministic finite automaton'/>
+                  <div id='nfa-viz' style={{ height: 500 }}></div>
+                </Segment>
+              </Grid.Column>
+              <Grid.Column>
+                <Segment className='viz-area'>
+                  <Header as='h3' className='viz-area-title' content='Deterministic finite automaton'/>
+                  <div id='dfa-viz' style={{ height: 500 }}></div>
+                </Segment>
+              </Grid.Column>
+            </Grid>
 
-          <VisualizationControl
-            active
-            breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={this.breakpoint.visualizeForward}
-            visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
-            checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
-            updateState={this.helpers.updateState}/>
-        </Container>
+            <VisualizationControl
+              active
+              breakpoint={this.state.breakpoint}
+              visualizeBreakpointForward={this.breakpoint.visualizeForward}
+              visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
+              checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
+              updateState={this.helpers.updateState}/>
 
-        <Segment inverted style={{ position: 'fixed', right: 0, left: 250, bottom: 0, borderRadius: 0 }}>
-          <Menu inverted secondary size='massive'>
-            <Menu.Menu style={{ margin: '0 auto' }}>
-              <Menu.Item>
-                <Button labelPosition='left' icon='left chevron' content='Go back' onClick={this.eventHandlers.handleBackBtnClick}/>
-              </Menu.Item>
-            </Menu.Menu>
-          </Menu>
-        </Segment>
+            <Menu secondary>
+              <Menu.Menu style={{ margin: '0 auto' }}>
+                <Menu.Item>
+                  <Button labelPosition='left' icon='left chevron' content='Go back' onClick={this.eventHandlers.handleBackBtnClick}/>
+                </Menu.Item>
+              </Menu.Menu>
+            </Menu>
+          </div>
+        </div>
       </div>
     );
   }
 
 }
-
-export default NfaToDfaViz;

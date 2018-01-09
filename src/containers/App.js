@@ -13,6 +13,7 @@ import SignUp from './SignUp';
 import VerifyEmail from './VerifyEmail';
 import RegexToNFA from './RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
+import LexicalAnalysis from './lexicalAnalysis/LexicalAnalysis';
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
@@ -35,6 +36,7 @@ class App extends Component {
           <AppRoute exact path="/dashboard" layout={MainLayout} component={Dashboard} />
           <AppRoute exact path="/dashboard/regex2nfa" layout={MainLayout} component={RegexToNFA} />
           <AppRoute exact path="/dashboard/nfa2dfa" layout={MainLayout} component={NfaToDfa} />
+          <AppRoute exact path="/dashboard/lexical-analysis" layout={MainLayout} component={LexicalAnalysis} />
 
           <AppRoute exact path="*" layout={EmptyLayout} component={NotFound} />
         </Switch>

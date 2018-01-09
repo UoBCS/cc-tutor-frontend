@@ -6,7 +6,7 @@ import misc from 'utils/misc';
 import ui from 'utils/ui';
 import clone from 'clone';
 
-class NfaToDfa extends Component {
+export default class NfaToDfa extends Component {
 
   state = {
     windows: {
@@ -42,5 +42,3 @@ class NfaToDfa extends Component {
   }
 
 }
-
-export default NfaToDfa;
