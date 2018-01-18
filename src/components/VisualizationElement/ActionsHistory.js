@@ -54,7 +54,9 @@ export default class ActionsHistory extends Component {
 
         <div className='viz-history'>
           <p className='viz-history-current left'>
-            {this.state.actions.length
+            {this.state.actions
+              && this.state.actions.length > 0
+              && this.state.actions[this.state.index] !== undefined
               ? this.state.actions[this.state.index].title
               : 'A description of the algorithm steps will be shown here.'
             }

@@ -53,9 +53,11 @@ export default class MainLayout extends Component {
                 <Menu.Menu>
                   <Menu.Item name='regularExpressionToNFA' active={activeItem === 'regularExpressionToNFA'} as={Link} to={`${pref}/regex2nfa`} onClick={this.handleItemClick}/>
                   <Menu.Item name='NFAToDFA' active={activeItem === 'NFAToDFA'} as={Link} to={`${pref}/nfa2dfa`} onClick={this.handleItemClick}/>
-                  <Menu.Item name='DFAMinimization' active={activeItem === 'DFAMinimization'} onClick={this.handleItemClick}/>
-                  <Menu.Item name='LLParsing' active={activeItem === 'LLParsing'} onClick={this.handleItemClick}/>
-                  <Menu.Item name='LRParsing' active={activeItem === 'LRParsing'} onClick={this.handleItemClick}/>
+                  <Menu.Item name='DFAMinimization' active={activeItem === 'DFAMinimization'} as={Link} to={`${pref}/dfa-minimization`} onClick={this.handleItemClick}/>
+                  <Menu.Item name='LLParsing' active={activeItem === 'LLParsing'} as={Link} to={`${pref}/ll`} onClick={this.handleItemClick}/>
+                  <Menu.Item name='LRParsing' active={activeItem === 'LRParsing'} as={Link} to={`${pref}/lr`} onClick={this.handleItemClick}/>
+                  <Menu.Item name='LL(1)Parsing' active={activeItem === 'LL(1)Parsing'} as={Link} to={`${pref}/ll1`} onClick={this.handleItemClick}/>
+                  <Menu.Item name='LR(0)Parsing' active={activeItem === 'LR(0)Parsing'} as={Link} to={`${pref}/lr0`} onClick={this.handleItemClick}/>
                   <Menu.Item name='markAndSweep' active={activeItem === 'markAndSweep'} onClick={this.handleItemClick}/>
                   <Menu.Item name='markSweepCompact' active={activeItem === 'markSweepCompact'} onClick={this.handleItemClick}/>
                   <Menu.Item name='markAndCopy' active={activeItem === 'markAndCopy'} onClick={this.handleItemClick}/>

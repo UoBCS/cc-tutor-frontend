@@ -35,7 +35,7 @@ export default class LexicalAnalysisViz extends Component {
 
     breakpoint: {
       data: null,
-      index: 0
+      index: -1
     },
 
     ui: clone(ui.state)
@@ -47,7 +47,7 @@ export default class LexicalAnalysisViz extends Component {
         this.setState({
           breakpoint: {
             data: res.data.breakpoints,
-            index: 0
+            index: -1
           },
 
           dfa: automata.visDataFormat('dfa-viz', res.data.dfa),
@@ -95,12 +95,13 @@ export default class LexicalAnalysisViz extends Component {
   }
 
   breakpoint = {
-    visualizeForward: (breakpoint, index) => {
+    visualizeForward: breakpoint => {
       const data = breakpoint.data;
+      const index = this.state.breakpoint.index;
       internal.forward[_.camelCase(breakpoint.label)].call(this, { data, index });
     },
 
-    visualizeBackward: (breakpoint, index) => {
+    visualizeBackward: breakpoint => {
 
     }
   }
@@ -112,8 +113,8 @@ export default class LexicalAnalysisViz extends Component {
   }
 
   helpers = {
-    updateState: obj => {
-      this.setState(obj);
+    updateState: (obj, cb) => {
+      this.setState(obj, cb);
     }
   }
 
@@ -136,7 +137,7 @@ export default class LexicalAnalysisViz extends Component {
 
           <Grid>
             <Grid.Column width={12}>
-              <Segment className='raised'>
+              <Segment>
                 <Label as='a' color='blue' ribbon>Deterministic finite automaton</Label>
                 <div id='dfa-viz' style={{ height: 500 }}></div>
               </Segment>

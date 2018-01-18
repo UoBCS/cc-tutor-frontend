@@ -16,11 +16,10 @@ export default class InputData extends Component {
     },
 
     input: {
+      inputMethod: 'default',
       content: '',
-      inputMethod: 'default'
-    },
-
-    jsonEditor: null
+      jsonEditor: null
+    }
   }
 
   componentDidMount() {
@@ -29,13 +28,15 @@ export default class InputData extends Component {
 
   initializers = {
     createJsonEditor: () => {
-      const jsonEditor = new JSONEditor(document.getElementById('jsonEditor'), {
+      const input = this.state.input;
+
+      input.jsonEditor = new JSONEditor(document.getElementById('jsonEditor'), {
         mode: 'code',
         modes: ['code', 'tree'],
         search: true
       });
 
-      jsonEditor.set({
+      input.jsonEditor.set({
         "content": "int a = 10;",
         "token_types": [
           {
@@ -77,7 +78,7 @@ export default class InputData extends Component {
         ]
       });
 
-      this.setState({ jsonEditor });
+      this.setState({ input });
     }
   }
 
@@ -85,7 +86,7 @@ export default class InputData extends Component {
     handleNextClick: () => {
       const data = this.state.input.inputMethod === 'default'
                   ? this.getInputData()
-                  : this.state.jsonEditor.get();
+                  : this.state.input.jsonEditor.get();
 
       this.props.windowChangeHandler('viz', data);
     },

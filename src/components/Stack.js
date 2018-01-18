@@ -8,7 +8,7 @@ export default class Stack extends Component {
     const stack = this.props.stack.map(this.props.render);
 
     return (
-      <Segment className='Stack raised'>
+      <Segment className='Stack'>
         <Label as='a' color='teal' ribbon='right'>State stack</Label>
 
         {stack}

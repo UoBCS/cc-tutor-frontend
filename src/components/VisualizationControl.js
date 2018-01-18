@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Button } from 'semantic-ui-react';
-import objectPath from 'object-path';
-import misc from 'utils/misc';
 
 import './VisualizationControl.css';
 
@@ -13,66 +11,53 @@ export default class VisualizationControl extends Component {
   }
 
   breakpoint = {
-    //globalLength: 0,
-    //globalIndex: -1,
-
     getCurrent: () => {
-      //const path = this.breakpoint.getPath();
-      return this.props.breakpoint.data[this.props.breakpoint.index]; //objectPath.get(this.props.breakpoint.data, path);
+      return this.props.breakpoint.data[this.props.breakpoint.index];
+    },
+
+    getNext: () => {
+      return this.props.breakpoint.data[this.props.breakpoint.index + 1];
     },
 
     getIndex: () => {
-      return this.props.breakpoint.index; //misc.last(this.props.breakpoint.indexStack);
+      return this.props.breakpoint.index;
     },
 
     updateIndex: (direction = 1, cb = null) => {
       let breakpointsObj = this.props.breakpoint;
       breakpointsObj.index = breakpointsObj.index + direction;
 
-      /*if (direction === 1) {
-        breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]++;
-      } else {
-        breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]--;
-      }*/
-
       this.props.updateState({ breakpointsObj }, cb);
-    },
-
-    /*updateGlobalIndex: (direction = 1) => {
-      this.breakpoint.globalIndex = this.breakpoint.globalIndex + direction;
-
-      if (this.breakpoint.globalIndex === this.breakpoint.globalLength - 1) {
-        this.breakpoint.globalLength++;
-      }
-    }*/
+    }
   }
 
   eventHandlers = {
     handleForwardBtnClick: () => {
-      const breakpoint = this.breakpoint.getCurrent();
-
-      //this.breakpoint.updateGlobalIndex();
-      this.props.visualizeBreakpointForward(breakpoint);
-
       this.breakpoint.updateIndex(1, () => {
+        const breakpoint = this.breakpoint.getCurrent();
+
+        if (breakpoint !== undefined) {
+          this.props.visualizeBreakpointForward(breakpoint);
+        }
+
         this.setState({
-          backwardBtnActive: this.breakpoint.getIndex() > 0,
-          forwardBtnActive: this.breakpoint.getCurrent() !== undefined
+          forwardBtnActive: this.breakpoint.getNext() !== undefined,
+          backwardBtnActive: this.breakpoint.getIndex() >= 0
         });
       });
     },
 
     handleBackBtnClick: () => {
+      const breakpoint = this.breakpoint.getCurrent();
+
       this.breakpoint.updateIndex(-1, () => {
-        //this.breakpoint.updateGlobalIndex(-1);
-
-        const breakpoint = this.breakpoint.getCurrent();
-
-        this.props.visualizeBreakpointBackward(breakpoint);
+        if (breakpoint !== undefined) {
+          this.props.visualizeBreakpointBackward(breakpoint);
+        }
 
         this.setState({
-          backwardBtnActive: this.breakpoint.getIndex() > 0,
-          forwardBtnActive: breakpoint !== undefined
+          forwardBtnActive: breakpoint !== undefined,
+          backwardBtnActive: this.breakpoint.getIndex() >= 0
         });
       });
     },

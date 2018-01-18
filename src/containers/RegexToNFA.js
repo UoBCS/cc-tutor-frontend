@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, Segment, Header, Grid } from 'semantic-ui-react';
+import { Button, Input, Segment, Header, Grid, Label } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import api from 'api';
@@ -30,16 +30,16 @@ export default class RegexToNFA extends Component {
 
     breakpoint: {
       data: null,
-      scopeStack: [],
-      indexStack: [0],
+      index: -1
     },
 
     ui: clone(ui.state)
   }
 
   breakpoint = {
-    visualizeForward: (breakpoint, index) => {
-      let data = breakpoint.data;
+    visualizeForward: breakpoint => {
+      const data = breakpoint.data;
+      const index = this.state.breakpoint.index;
 
       switch (breakpoint.label) {
         case 'e':
@@ -103,8 +103,9 @@ export default class RegexToNFA extends Component {
       }
     },
 
-    visualizeBackward: (breakpoint, index) => {
-      let data = breakpoint.data;
+    visualizeBackward: breakpoint => {
+      const data = breakpoint.data;
+      const index = this.state.breakpoint.index;
 
       switch (breakpoint.label) {
         case 'e':
@@ -183,8 +184,7 @@ export default class RegexToNFA extends Component {
     },
 
     handleCheckAnswerClick: () => {
-      const index = misc.last(this.state.breakpoint.indexStack);
-      const breakpoint = this.state.breakpoint.data[index];
+      const breakpoint = this.state.breakpoint.data[this.state.breakpoint.index];
       const edges = this.userInteraction.edges;
       //const nodes = this.userInteraction.nodes;
       let valid;
@@ -235,8 +235,7 @@ export default class RegexToNFA extends Component {
           this.setState({
             breakpoint: {
               data: res.data.breakpoints,
-              scopeStack: [],
-              indexStack: [0],
+              index: -1
             },
             nfa: automata.createEmpty('nfa-viz', nfaOptions),
             regexTree: tree.visDataFormat('regex-tree-viz', res.data.regex_tree)
@@ -250,8 +249,8 @@ export default class RegexToNFA extends Component {
   }
 
   helpers = {
-    updateState: obj => {
-      this.setState(obj);
+    updateState: (obj, cb) => {
+      this.setState(obj, cb);
     }
   }
 
@@ -300,14 +299,14 @@ export default class RegexToNFA extends Component {
 
             <Grid columns={2}>
               <Grid.Column>
-                <Segment className='viz-area'>
-                  <Header as='h3' className='viz-area-title' content='Regular expression parse tree'/>
+                <Segment>
+                  <Label as='a' color='blue' ribbon>Regular expression parse tree</Label>
                   <div id='regex-tree-viz' style={{ height: 600 }}></div>
                 </Segment>
               </Grid.Column>
               <Grid.Column>
-                <Segment className='viz-area'>
-                  <Header as='h3' className='viz-area-title' content='Non-deterministic finite automaton'/>
+                <Segment>
+                  <Label as='a' color='blue' ribbon='right'>Non-deterministic finite automaton</Label>
                   <div id='nfa-viz' style={{ height: 600 }}></div>
                 </Segment>
               </Grid.Column>
