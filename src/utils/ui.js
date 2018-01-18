@@ -92,7 +92,7 @@ ui.obj.loader = {
  * Modal
  */
 ui.obj.modal = {
-  show: (comp, headerContent, mainContent, actionsContent, size) => {
+  show: (comp, headerContent, mainContent, actionsContent = null, size = 'small') => {
     let ui = comp.state.ui;
     ui.modal.open = true;
     ui.modal.headerContent = headerContent;
@@ -104,7 +104,12 @@ ui.obj.modal = {
   },
 
   render: comp => {
-    let modal = comp.state.ui.modal;
+    const modal = comp.state.ui.modal;
+    const actions = modal.actionsContent === null
+                    ? null
+                    : (<Modal.Actions>
+                        {modal.actionsContent}
+                    </Modal.Actions>);
 
     return (
       <Modal size={modal.size} open={modal.open} onClose={modal.handleClose(comp)}>
@@ -114,9 +119,7 @@ ui.obj.modal = {
         <Modal.Content>
           {modal.mainContent}
         </Modal.Content>
-        <Modal.Actions>
-          {modal.actionsContent}
-        </Modal.Actions>
+        {actions}
       </Modal>
     );
   }

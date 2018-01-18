@@ -13,88 +13,68 @@ export default class VisualizationControl extends Component {
   }
 
   breakpoint = {
-    globalLength: 0,
-    globalIndex: -1,
-
-    getPath: () => {
-      let path = '';
-
-      if (this.props.breakpoint.scopeStack.length === 0) {
-        return this.props.breakpoint.indexStack[this.props.breakpoint.indexStack.length - 1] + '';
-      }
-
-      for (var i = 0; i < this.props.breakpoint.scopeStack.length; i++) {
-        path += this.props.breakpoint.indexStack[i] + '.' + this.props.breakpoint.scopeStack[i] + '.'
-      }
-
-      path += this.props.breakpoint.indexStack[i];
-
-      return path;
-    },
+    //globalLength: 0,
+    //globalIndex: -1,
 
     getCurrent: () => {
-      const path = this.breakpoint.getPath();
-      return objectPath.get(this.props.breakpoint.data, path);
+      //const path = this.breakpoint.getPath();
+      return this.props.breakpoint.data[this.props.breakpoint.index]; //objectPath.get(this.props.breakpoint.data, path);
     },
 
     getIndex: () => {
-      return misc.last(this.props.breakpoint.indexStack);
+      return this.props.breakpoint.index; //misc.last(this.props.breakpoint.indexStack);
     },
 
-    updateIndex: (direction = 1) => {
+    updateIndex: (direction = 1, cb = null) => {
       let breakpointsObj = this.props.breakpoint;
+      breakpointsObj.index = breakpointsObj.index + direction;
 
-      if (direction === 1) {
+      /*if (direction === 1) {
         breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]++;
       } else {
         breakpointsObj.indexStack[breakpointsObj.indexStack.length - 1]--;
-      }
+      }*/
 
-      this.props.updateState({ breakpointsObj });
+      this.props.updateState({ breakpointsObj }, cb);
     },
 
-    updateGlobalIndex: (direction = 1) => {
+    /*updateGlobalIndex: (direction = 1) => {
       this.breakpoint.globalIndex = this.breakpoint.globalIndex + direction;
 
       if (this.breakpoint.globalIndex === this.breakpoint.globalLength - 1) {
         this.breakpoint.globalLength++;
       }
-    }
+    }*/
   }
 
   eventHandlers = {
     handleForwardBtnClick: () => {
       const breakpoint = this.breakpoint.getCurrent();
 
-      this.breakpoint.updateGlobalIndex();
+      //this.breakpoint.updateGlobalIndex();
+      this.props.visualizeBreakpointForward(breakpoint);
 
-      this.props.visualizeBreakpointForward(breakpoint, this.breakpoint.globalIndex);
-
-      this.breakpoint.updateIndex();
-
-      this.setState({
-        backwardBtnActive: this.breakpoint.getIndex() > 0,
-        forwardBtnActive: this.breakpoint.getCurrent() !== undefined
+      this.breakpoint.updateIndex(1, () => {
+        this.setState({
+          backwardBtnActive: this.breakpoint.getIndex() > 0,
+          forwardBtnActive: this.breakpoint.getCurrent() !== undefined
+        });
       });
     },
 
     handleBackBtnClick: () => {
-      this.breakpoint.updateIndex(-1);
+      this.breakpoint.updateIndex(-1, () => {
+        //this.breakpoint.updateGlobalIndex(-1);
 
-      this.breakpoint.updateGlobalIndex(-1);
+        const breakpoint = this.breakpoint.getCurrent();
 
-      const breakpoint = this.breakpoint.getCurrent();
+        this.props.visualizeBreakpointBackward(breakpoint);
 
-      this.props.visualizeBreakpointBackward(breakpoint, this.breakpoint.globalIndex);
-
-      this.setState({
-        backwardBtnActive: this.breakpoint.getIndex() > 0,
-        forwardBtnActive: breakpoint !== undefined
+        this.setState({
+          backwardBtnActive: this.breakpoint.getIndex() > 0,
+          forwardBtnActive: breakpoint !== undefined
+        });
       });
-    },
-
-    handleStepIntoBtnClick: () => {
-
     },
 
     handleSettingsBtnClick: () => {
@@ -122,11 +102,6 @@ export default class VisualizationControl extends Component {
             content='Settings'
             disabled={!this.props.active}
             onClick={this.eventHandlers.handleSettingsBtnClick}/>
-          <Button
-            icon='level down'
-            content='Step into'
-            disabled={!this.props.active}
-            onClick={this.eventHandlers.handleStepIntoBtnClick}/>
           <Button
             labelPosition='right'
             icon='right chevron'

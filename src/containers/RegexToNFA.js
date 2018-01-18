@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Container, Input, Segment, Header, Grid } from 'semantic-ui-react';
+import { Button, Input, Segment, Header, Grid } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import api from 'api';
@@ -186,7 +186,7 @@ export default class RegexToNFA extends Component {
       const index = misc.last(this.state.breakpoint.indexStack);
       const breakpoint = this.state.breakpoint.data[index];
       const edges = this.userInteraction.edges;
-      const nodes = this.userInteraction.nodes;
+      //const nodes = this.userInteraction.nodes;
       let valid;
 
       console.log(breakpoint);

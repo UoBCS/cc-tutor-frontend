@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { Button, Container, Header, Grid, Segment, Menu, Message } from 'semantic-ui-react';
+import { Button, Header, Grid, Segment, Menu } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
-import vis from 'vis';
 import api from 'api';
 import automata from 'utils/automata';
-import objectPath from 'object-path';
-import misc from 'utils/misc';
 import internal from './internal';
 
 export default class NfaToDfaViz extends Component {
@@ -26,8 +23,7 @@ export default class NfaToDfaViz extends Component {
 
     breakpoint: {
       data: null,
-      scopeStack: [],
-      indexStack: [0]
+      index: 0
     }
   }
 
@@ -37,8 +33,7 @@ export default class NfaToDfaViz extends Component {
         this.setState({
           breakpoint: {
             data: res.data.breakpoints,
-            scopeStack: [],
-            indexStack: [0]
+            index: 0
           }
         });
       })
@@ -55,10 +50,9 @@ export default class NfaToDfaViz extends Component {
   }
 
   breakpoint = {
-    visualizeForward: (breakpoint, index) => {
-      let data = breakpoint.data;
-
-      console.log(breakpoint);
+    visualizeForward: breakpoint => {
+      const data = breakpoint.data;
+      const index = this.state.breakpoint.index;
 
       switch (breakpoint.label) {
         case 'highlight_initial_nfa_state':
@@ -95,7 +89,7 @@ export default class NfaToDfaViz extends Component {
       }
     },
 
-    visualizeBackward: (breakpoint, index) => {
+    visualizeBackward: breakpoint => {
 
     }
   }

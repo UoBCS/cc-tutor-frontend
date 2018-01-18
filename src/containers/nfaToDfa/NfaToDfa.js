@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Container, Dropdown, Form, Icon, Input, Segment, Header, Menu, Grid } from 'semantic-ui-react';
 import InputNfa from './InputNfa';
 import NfaToDfaViz from './NfaToDfaViz';
-import misc from 'utils/misc';
 import ui from 'utils/ui';
 import clone from 'clone';
 
@@ -31,9 +29,6 @@ export default class NfaToDfa extends Component {
   }
 
   windowChangeHandler = (windowIndex, data) => {
-    /*return () => {
-      this.setCurrentWindow(windowIndex, data);
-    }*/
     this.setCurrentWindow(windowIndex, data);
   }
 

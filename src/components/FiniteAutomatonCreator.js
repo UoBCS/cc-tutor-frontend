@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'semantic-ui-react';
 import vis from 'vis';
 import 'vis/dist/vis-network.min.css';
 import './FiniteAutomatonCreator.css';

@@ -3,14 +3,6 @@ import _ from 'lodash';
 
 const internal = {};
 
-/*internal.stepInto = function () {
-  let breakpointData = this.state.breakpoint;
-  breakpointData.indexStack.push(0);
-  breakpointData.scopeStack.push('data');
-
-  this.setState({ breakpoint: breakpointData });
-};*/
-
 internal.forward = {};
 
 internal.forward.highlightInitialNfaState = function ({data, index}) {

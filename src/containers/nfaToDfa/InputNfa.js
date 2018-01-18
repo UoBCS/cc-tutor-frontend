@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Container, Segment, Header, Menu, Grid } from 'semantic-ui-react';
+import { Button, Header, Menu, Grid } from 'semantic-ui-react';
 import FiniteAutomatonCreator from 'components/FiniteAutomatonCreator';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
@@ -18,22 +18,24 @@ export default class InputNfa extends Component {
     this.createJsonEditor();
   }
 
-  handleInputMethodClick = event => {
-    this.setState({
-      inputMethod: event.target.getAttribute('method')
-    });
-  }
+  eventHandlers = {
+    handleInputMethodClick: event => {
+      this.setState({
+        inputMethod: event.target.getAttribute('method')
+      });
+    },
 
-  handleContinueClick = () => {
-    if (this.state.inputMethod === 'manual') {
-      this.setState({ finishedManualInput: true });
-    } else if (this.state.inputMethod === 'json') {
-      this.props.windowChangeHandler('viz', { nfa: this.state.jsonEditor.get() });
+    handleContinueClick: () => {
+      if (this.state.inputMethod === 'manual') {
+        this.setState({ finishedManualInput: true });
+      } else if (this.state.inputMethod === 'json') {
+        this.props.windowChangeHandler('viz', { nfa: this.state.jsonEditor.get() });
+      }
+    },
+
+    handleManualEditingFinish: edges => {
+      this.props.windowChangeHandler('viz', { nfa: automata.fromVis(edges) });
     }
-  }
-
-  handleManualEditingFinish = edges => {
-    this.props.windowChangeHandler('viz', { nfa: automata.fromVis(edges) });
   }
 
   createJsonEditor = () => {
@@ -106,7 +108,7 @@ export default class InputNfa extends Component {
               hidden={this.state.inputMethod !== 'manual'}
               containerElement='manualInput'
               finished={this.state.finishedManualInput}
-              onFinishEditing={this.handleManualEditingFinish}/>
+              onFinishEditing={this.eventHandlers.handleManualEditingFinish}/>
 
             <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
               <div id='jsonEditor' style={{ height: 600, margin: '10px auto' }}></div>
@@ -119,13 +121,13 @@ export default class InputNfa extends Component {
                 </Menu.Item>
                 <Menu.Item>
                   <Button.Group>
-                    <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.handleInputMethodClick}>Manual input</Button>
+                    <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.eventHandlers.handleInputMethodClick}>Manual input</Button>
                     <Button.Or />
-                    <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.handleInputMethodClick}>JSON input</Button>
+                    <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.eventHandlers.handleInputMethodClick}>JSON input</Button>
                   </Button.Group>
                 </Menu.Item>
                 <Menu.Item>
-                  <Button primary labelPosition='right' icon='right chevron' content='Continue' onClick={this.handleContinueClick} />
+                  <Button primary labelPosition='right' icon='right chevron' content='Continue' onClick={this.eventHandlers.handleContinueClick} />
                 </Menu.Item>
               </Menu.Menu>
             </Menu>

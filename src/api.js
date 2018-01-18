@@ -3,7 +3,9 @@ import axios from 'axios';
 const api = {};
 
 axios.defaults.baseURL = 'http://cc-tutor.backend';
-axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access_token').replace(/"/g, '')
+if (localStorage.getItem('access_token')) {
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access_token').replace(/"/g, '');
+}
 
 api.signUp = data => {
   return axios.post('/register', data);
@@ -32,5 +34,15 @@ api.regexToNfa = regex => {
 api.nfaToDfa = data => {
   return axios.post('/algorithms/nfa2dfa', data);
 }
+
+api.lexicalAnalysis = data => {
+  return axios.post('/phases/lexical-analysis', data);
+};
+
+api.ll = {};
+
+api.ll.initParser = data => {
+  return axios.post('/phases/syntax-analysis/ll/init-parser', data);
+};
 
 export default api;

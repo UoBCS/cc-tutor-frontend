@@ -1,0 +1,10 @@
+.ConsumableInput_content {
+  font-size: 1.3em;
+  font-family: monospace;
+}
+
+.ConsumableInput_selected {
+  color: #f00;
+  font-weight: 900;
+  border-bottom: 3px solid;
+}

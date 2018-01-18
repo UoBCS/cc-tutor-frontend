@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { Button, List } from 'semantic-ui-react';
-import misc from 'utils/misc';
 import ui from 'utils/ui';
 import clone from 'clone';
 
 import './ActionsHistory.css';
 
-class ActionsHistory extends Component {
+export default class ActionsHistory extends Component {
 
   addOrSelect = (idx, obj) => {
     let actions = this.state.actions;
@@ -17,10 +16,6 @@ class ActionsHistory extends Component {
     }
 
     index = idx;
-    if (index === 8) {
-      console.log(this.state.actions);
-      console.log(index);
-    }
 
     this.setState({ actions, index });
   }
@@ -76,5 +71,3 @@ class ActionsHistory extends Component {
   }
 
 }
-
-export default ActionsHistory;

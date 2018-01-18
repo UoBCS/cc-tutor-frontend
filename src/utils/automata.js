@@ -83,7 +83,8 @@ automata.visDataFormat = (container, data, options = {}) => {
       id: n.id,
       label: '' + n.id,
       color: {background: n.final ? highlightOptions.finalState.color.background : null},
-      final: n.final
+      final: n.final,
+      data: n.data
     }
   }));
 
@@ -103,7 +104,7 @@ automata.visDataFormat = (container, data, options = {}) => {
   let edges = new vis.DataSet(edgesData);
 
   return {
-    instance: new vis.Network(document.getElementById('nfa-viz'), { nodes, edges }, _.defaultsDeep(options, defaultOptions)),
+    instance: new vis.Network(document.getElementById(container), { nodes, edges }, _.defaultsDeep(options, defaultOptions)),
     nodes,
     edges
   };
