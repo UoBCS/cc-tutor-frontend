@@ -7,7 +7,8 @@ ui.state = {
   message: {
     headerContent: null,
     mainContent: null,
-    type: ''
+    type: '',
+    visible: true
   },
   loader: {
     main: false
@@ -28,6 +29,10 @@ ui.state = {
   }
 };
 
+ui.renderErrors = err => {
+  return <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>;
+};
+
 ui.obj = {};
 
 /**
@@ -43,11 +48,21 @@ ui.obj.message = {
     comp.setState({ ui });
   },
 
+  handleDismiss: comp => {
+    return () => {
+      let ui = comp.state.ui;
+      ui.message.visible = false;
+
+      comp.setState({ ui });
+    };
+  },
+
   hide: comp => {
     let ui = comp.state.ui;
     ui.message.type = '';
-    ui.message.headerContent = '';
-    ui.message.mainContent = '';
+    ui.message.headerContent = null;
+    ui.message.mainContent = null;
+    ui.message.visible = false;
 
     comp.setState({ ui });
   },
@@ -57,9 +72,9 @@ ui.obj.message = {
     opts[comp.state.ui.message.type] = undefined; // TODO: fix this
 
     return comp.state.ui.message.headerContent !== null ? (
-      <Message {...opts}>
+      <Message {...opts} onDismiss={ui.obj.message.handleDismiss(comp)}>
         <Message.Header>{comp.state.ui.message.headerContent}</Message.Header>
-        <p>{comp.state.ui.message.mainContent}</p>
+        {comp.state.ui.message.mainContent}
       </Message>
     ) : null;
   }

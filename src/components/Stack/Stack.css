@@ -3,11 +3,14 @@
   height: 100%;
 }
 
-.Stack > div {
+.Stack_wrapper {
   position: absolute;
   bottom: 40px;
   left: 5%;
   width: 90%;
+}
+
+.Stack_wrapper > div {
   background-color: #479BD4;
   color: #fafafa;
   font-weight: 900;
@@ -15,4 +18,7 @@
   font-size: 1.3em;
   padding: 10px 15px;
   text-align: center;
+  margin-top: 6px;
 }
+
+

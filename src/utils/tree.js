@@ -1,12 +1,13 @@
 import vis from 'vis';
+import objectPath from 'object-path';
 
 const tree = {};
 
-const traverseTree = (node, count, level, nodes, edges) => {
+const traverseTree = (node, count, level, nodes, edges, path) => {
   if (nodes.get(count) === null) {
     nodes.add({
       id: count,
-      label: node.name,
+      label: objectPath.get(node, path),
       level
     });
   }
@@ -22,17 +23,17 @@ const traverseTree = (node, count, level, nodes, edges) => {
       to: count + 1
     });
 
-    count = traverseTree(child, count + 1, level + 1, nodes, edges);
+    count = traverseTree(child, count + 1, level + 1, nodes, edges, path);
   }
 
   return count;
 }
 
-tree.visDataFormat = (container, data) => {
+tree.visDataFormat = (container, data, path = 'name') => {
   let nodes = new vis.DataSet();
   let edges = new vis.DataSet();
 
-  traverseTree(data, 0, 0, nodes, edges);
+  traverseTree(data, 0, 0, nodes, edges, path);
 
   const options = {
     edges: {

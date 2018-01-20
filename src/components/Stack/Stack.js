@@ -5,13 +5,16 @@ import './Stack.css';
 export default class Stack extends Component {
 
   render() {
-    const stack = this.props.stack.map(this.props.render);
+    const stack = this.props.stack !== null
+                  ? this.props.stack.map(this.props.render)
+                  : null;
 
     return (
       <Segment className='Stack'>
         <Label as='a' color='teal' ribbon='right'>State stack</Label>
-
-        {stack}
+        <div className='Stack_wrapper'>
+          {stack}
+        </div>
       </Segment>
     );
   }

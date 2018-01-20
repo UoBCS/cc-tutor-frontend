@@ -42,7 +42,21 @@ api.lexicalAnalysis = data => {
 api.ll = {};
 
 api.ll.initParser = data => {
-  return axios.post('/phases/syntax-analysis/ll/init-parser', data);
+  return axios.post('/phases/syntax-analysis/ll/init-parser', {
+    ll_run: data
+  });
+};
+
+api.ll.deleteRun = id => {
+  return axios.delete(`/phases/syntax-analysis/ll/${id}`);
+};
+
+api.ll.match = data => {
+  return axios.post('/phases/syntax-analysis/ll/match', data);
+};
+
+api.ll.predict = data => {
+  return axios.post('/phases/syntax-analysis/ll/predict', data);
 };
 
 export default api;

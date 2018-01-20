@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import InputData from './InputData';
+import InputData from '../InputData';
 import LLViz from './LLViz';
 import ui from 'utils/ui';
 import clone from 'clone';
@@ -16,7 +16,9 @@ export default class LL extends Component {
   }
 
   componentWillMount() {
-    this.setCurrentWindow('input');
+    this.setCurrentWindow('input', {
+      'nextWindow': 'viz'
+    });
   }
 
   setCurrentWindow = (index, data = null) => {
