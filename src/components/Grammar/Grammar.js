@@ -23,7 +23,7 @@ export default class Grammar extends Component {
             <Label key={'' + lhsIdx + rhsIdx}
                   as='a'
                   size='large'
-                  onClick={this.props.productionClickHandler(lhs, rhs)}>
+                  onClick={this.props.productionClickHandler ? this.props.productionClickHandler(lhs, rhs) : null}>
               {rhs === null ? 'ɛ' : rhs.join('')}
             </Label>
           ))}

@@ -13,8 +13,6 @@ export default class LLViz extends Component {
   state = {
     llRunId: null,
 
-    tokenTypes: null,
-
     grammar: null,
 
     stack: null,

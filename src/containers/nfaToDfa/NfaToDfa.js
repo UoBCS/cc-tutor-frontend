@@ -1,39 +1,19 @@
 import React, { Component } from 'react';
+import WindowManager from 'containers/WindowManager';
 import InputNfa from './InputNfa';
 import NfaToDfaViz from './NfaToDfaViz';
-import ui from 'utils/ui';
-import clone from 'clone';
 
-export default class NfaToDfa extends Component {
-
+export default class NfaToDfa extends WindowManager {
   state = {
     windows: {
       input: InputNfa,
       viz: NfaToDfaViz
     },
-    currentWindow: null,
-    ui: clone(ui.state)
+    currentWindow: null
   }
 
   componentWillMount() {
     this.setCurrentWindow('input');
   }
-
-  setCurrentWindow = (index, data = null) => {
-    let currentWindow = React.createElement(this.state.windows[index], {
-      data,
-      windowChangeHandler: this.windowChangeHandler
-    });
-
-    this.setState({ currentWindow });
-  }
-
-  windowChangeHandler = (windowIndex, data) => {
-    this.setCurrentWindow(windowIndex, data);
-  }
-
-  render() {
-    return !this.state.currentWindow ? null : this.state.currentWindow;
-  }
-
 }
+

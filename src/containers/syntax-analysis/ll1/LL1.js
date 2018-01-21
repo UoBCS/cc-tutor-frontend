@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
 import InputData from '../InputData';
-import LLViz from './LLViz';
+import LL1Viz from './LL1Viz';
 
-export default class LL extends WindowManager {
+export default class LL1 extends WindowManager {
   state = {
     windows: {
       input: InputData,
-      viz: LLViz
+      viz: LL1Viz
     }
   }
 

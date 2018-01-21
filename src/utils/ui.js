@@ -84,21 +84,21 @@ ui.obj.message = {
  * Loader
  */
 ui.obj.loader = {
-  show: (comp, which) => {
+  show: (comp, which = 'main') => {
     let ui = comp.state.ui;
     ui.loader[which] = true;
 
     comp.setState({ ui });
   },
 
-  hide: (comp, which) => {
+  hide: (comp, which = 'main') => {
     let ui = comp.state.ui;
     ui.loader[which] = false;
 
     comp.setState({ ui });
   },
 
-  render: (comp, which) => {
+  render: (comp, which = 'main') => {
     return comp.state.ui.loader[which] ? <Loader active inline='centered' /> : null;
   }
 };

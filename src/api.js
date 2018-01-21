@@ -59,4 +59,10 @@ api.ll.predict = data => {
   return axios.post('/phases/syntax-analysis/ll/predict', data);
 };
 
+api.ll1 = {};
+
+api.ll1.parse = data => {
+  return axios.post('/phases/syntax-analysis/ll1/parse', data);
+}
+
 export default api;

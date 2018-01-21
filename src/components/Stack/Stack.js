@@ -11,7 +11,7 @@ export default class Stack extends Component {
 
     return (
       <Segment className='Stack'>
-        <Label as='a' color='teal' ribbon='right'>State stack</Label>
+        <Label as='a' color='teal' ribbon='right'>{this.props.title || 'Stack'}</Label>
         <div className='Stack_wrapper'>
           {stack}
         </div>

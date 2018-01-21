@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Header, Grid, Segment, Menu, Label } from 'semantic-ui-react';
-import VisualizationControl from 'components/VisualizationControl';
+import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import api from 'api';
 import _ from 'lodash';

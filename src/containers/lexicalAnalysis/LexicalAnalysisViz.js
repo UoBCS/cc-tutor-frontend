@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Header, Icon, Grid, Segment, Label } from 'semantic-ui-react';
-import VisualizationControl from 'components/VisualizationControl';
+import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import TokensViz from 'components/TokensViz/TokensViz';
 import ConsumableInput from 'components/ConsumableInput/ConsumableInput';
