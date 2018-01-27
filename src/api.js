@@ -43,7 +43,7 @@ api.ll = {};
 
 api.ll.initParser = data => {
   return axios.post('/phases/syntax-analysis/ll/init-parser', {
-    ll_run: data
+    ndp_run: data
   });
 };
 
@@ -64,5 +64,25 @@ api.ll1 = {};
 api.ll1.parse = data => {
   return axios.post('/phases/syntax-analysis/ll1/parse', data);
 }
+
+api.lr = {};
+
+api.lr.initParser = data => {
+  return axios.post('/phases/syntax-analysis/lr/init-parser', {
+    ndp_run: data
+  });
+};
+
+api.lr.deleteRun = id => {
+  return axios.delete(`/phases/syntax-analysis/lr/${id}`);
+};
+
+api.lr.shift = data => {
+  return axios.post('/phases/syntax-analysis/lr/shift', data);
+};
+
+api.lr.reduce = data => {
+  return axios.post('/phases/syntax-analysis/lr/reduce', data);
+};
 
 export default api;

@@ -66,6 +66,10 @@ internal.forward.endFirstAll = function ({ data, index }) {
   this.setState({ first });
 };
 
+internal.forward.firstSetAddEpsilon = function ({ data, index }) {
+ // TODO: Finish this
+};
+
 internal.forward.predictChosenProduction = function ({ data, index }) {
   const lhs = data.production[0];
   const rhs = data.production[1].join('');

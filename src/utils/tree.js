@@ -3,7 +3,7 @@ import objectPath from 'object-path';
 
 const tree = {};
 
-const traverseTree = (node, count, level, nodes, edges, path) => {
+const traverseTreeTopDown = (node, count, level, nodes, edges, path) => {
   if (nodes.get(count) === null) {
     nodes.add({
       id: count,
@@ -23,17 +23,29 @@ const traverseTree = (node, count, level, nodes, edges, path) => {
       to: count + 1
     });
 
-    count = traverseTree(child, count + 1, level + 1, nodes, edges, path);
+    count = traverseTreeTopDown(child, count + 1, level + 1, nodes, edges, path);
   }
 
   return count;
+};
+
+const traverseTreeBottomUp = (data, nodes, edges, path) => {
+  let count = 0;
+
+  for (let node of data) {
+    traverseTreeTopDown(node, count++, 0, nodes, edges, path);
+  }
 }
 
-tree.visDataFormat = (container, data, path = 'name') => {
+tree.visDataFormat = (container, data, path = 'name', topDown = true) => {
   let nodes = new vis.DataSet();
   let edges = new vis.DataSet();
 
-  traverseTree(data, 0, 0, nodes, edges, path);
+  if (topDown) {
+    traverseTreeTopDown(data, 0, 0, nodes, edges, path);
+  } else {
+    traverseTreeBottomUp(data, nodes, edges, path);
+  }
 
   const options = {
     edges: {
