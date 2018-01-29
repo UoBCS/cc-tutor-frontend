@@ -24,7 +24,7 @@ export default class Grammar extends Component {
                   as='a'
                   size='large'
                   onClick={this.props.productionClickHandler ? this.props.productionClickHandler(lhs, rhs) : null}>
-              {rhs === null ? 'ɛ' : rhs.join('')}
+              {rhs === null ? 'ɛ' : rhs.join(' ')}
             </Label>
           ))}
         </div>

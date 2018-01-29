@@ -69,7 +69,7 @@ ui.obj.message = {
 
   render: comp => {
     let opts = {};
-    opts[comp.state.ui.message.type] = undefined; // TODO: fix this
+    opts[comp.state.ui.message.type] = true;
 
     return comp.state.ui.message.headerContent !== null ? (
       <Message {...opts} onDismiss={ui.obj.message.handleDismiss(comp)}>

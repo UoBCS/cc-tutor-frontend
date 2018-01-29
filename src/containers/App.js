@@ -16,6 +16,7 @@ import NfaToDfa from './nfaToDfa/NfaToDfa';
 import LL from './syntax-analysis/ll/LL';
 import LL1 from './syntax-analysis/ll1/LL1';
 import LR from './syntax-analysis/lr/LR';
+import LR0 from './syntax-analysis/lr0/LR0';
 import LexicalAnalysis from './lexicalAnalysis/LexicalAnalysis';
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
@@ -42,6 +43,7 @@ class App extends Component {
           <AppRoute exact path="/dashboard/ll" layout={MainLayout} component={LL} />
           <AppRoute exact path="/dashboard/ll1" layout={MainLayout} component={LL1} />
           <AppRoute exact path="/dashboard/lr" layout={MainLayout} component={LR} />
+          <AppRoute exact path="/dashboard/lr0" layout={MainLayout} component={LR0} />
 
           <AppRoute exact path="/dashboard/lexical-analysis" layout={MainLayout} component={LexicalAnalysis} />
 

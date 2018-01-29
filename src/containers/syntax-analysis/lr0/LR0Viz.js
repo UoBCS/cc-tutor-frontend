@@ -5,13 +5,14 @@ import Stack from 'components/Stack/Stack';
 import TokensViz from 'components/TokensViz/TokensViz';
 import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import api from 'api';
+import automata from 'utils/automata';
 import tree from 'utils/tree';
 import ui from 'utils/ui';
 import internal from './internal';
 import clone from 'clone';
 import _ from 'lodash';
 
-export default class LL1Viz extends Component {
+export default class LR0Viz extends Component {
 
   state = {
     grammar: null,
@@ -26,7 +27,11 @@ export default class LL1Viz extends Component {
       edges: null
     },
 
-    ff: null,
+    itemsDfa: {
+      instance: null,
+      nodes: null,
+      edges: null
+    },
 
     breakpoint: {
       data: null,
@@ -39,19 +44,20 @@ export default class LL1Viz extends Component {
   componentDidMount() {
     ui.obj.loader.show(this);
 
-    api.ll1.parse(this.props.data)
+    api.lr0.parse(this.props.data)
       .then(res => {
         this.initializers.setData(res.data);
         ui.obj.loader.hide(this);
       })
       .catch(err => {
-        console.log(err);
+        ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
         ui.obj.loader.hide(this);
       });
   }
 
   initializers = {
     setData: data => {
+      console.log(data);
       this.setState({
         breakpoint: {
           data: data.breakpoints,
@@ -61,7 +67,8 @@ export default class LL1Viz extends Component {
           data: data.tokens,
           index: 0
         },
-        grammar: this.props.data.grammar
+        grammar: this.props.data.grammar,
+        itemsDfa: automata.visDataFormat('dfa-viz', data.items_dfa.transitions)
       });
     }
   }
@@ -75,25 +82,6 @@ export default class LL1Viz extends Component {
   renderers = {
     renderStack: (s, idx) => {
       return <div key={idx}>{s}</div>;
-    },
-
-    renderFirstOrFollow: () => {
-      if (this.state.ff === null) {
-        return null;
-      }
-
-      const style = {
-        fontFamily: 'monospace',
-        fontWeight: 900
-      };
-
-      return (
-        <div>
-          <p style={style}>
-            {this.state.ff.type}({this.state.ff.argument.join(' ')}) = {`{${this.state.ff.result.join(', ')}}`}
-          </p>
-        </div>
-      );
     }
   }
 
@@ -105,7 +93,9 @@ export default class LL1Viz extends Component {
     },
 
     visualizeBackward: breakpoint => {
-
+      const data = breakpoint.data;
+      const index = this.state.breakpoint.index;
+      internal.backward[_.camelCase(breakpoint.label)].call(this, { data, index });
     }
   }
 
@@ -130,10 +120,10 @@ export default class LL1Viz extends Component {
               <Header
                 as='h1'
                 className='light-heading'>
-                LL(1) parsing
+                LR(0) parsing
               </Header>
               <p>
-                In this section you're going to use the LL(1) parser.
+                In this section you're going to use the LR(0) parser.
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
@@ -152,17 +142,12 @@ export default class LL1Viz extends Component {
 
           <TokensViz tokens={this.state.tokens}/>
 
-          <Grid>
-            <Grid.Column width={8}>
-              <Grammar grammar={this.state.grammar}/>
-            </Grid.Column>
-            <Grid.Column width={8}>
-              <Segment padded>
-                <Label as='a' color='blue' attached='top right'>First &amp; Follow</Label>
-                {this.renderers.renderFirstOrFollow()}
-              </Segment>
-            </Grid.Column>
-          </Grid>
+          <Grammar grammar={this.state.grammar}/>
+
+          <Segment>
+            <Label as='a' attached='top left' color='teal'>Dotted items DFA</Label>
+            <div id='dfa-viz' style={{ height: 500 }}></div>
+          </Segment>
 
           <Grid>
             <Grid.Column width={12}>

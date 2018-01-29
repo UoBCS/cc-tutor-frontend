@@ -85,4 +85,10 @@ api.lr.reduce = data => {
   return axios.post('/phases/syntax-analysis/lr/reduce', data);
 };
 
+api.lr0 = {};
+
+api.lr0.parse = data => {
+  return axios.post('phases/syntax-analysis/lr0/parse', data);
+};
+
 export default api;

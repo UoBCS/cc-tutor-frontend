@@ -58,7 +58,9 @@ export default class NfaToDfaViz extends Component {
     },
 
     visualizeBackward: breakpoint => {
-
+      const data = breakpoint.data;
+      const index = this.state.breakpoint.index;
+      internal.backward[_.camelCase(breakpoint.label)].call(this, { data, index });
     }
   }
 

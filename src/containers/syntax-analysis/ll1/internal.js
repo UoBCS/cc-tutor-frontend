@@ -15,73 +15,58 @@ internal.forward.preStep = function ({ data, index }) {
   tokens.index = data.input_index;
 
   this.setState({
+    ff: null,
     stack: data.stack,
     parseTree: tree.visDataFormat('parse-tree-viz', data.parse_tree, 'node'),
     tokens
-  })
+  });
+
+  ui.obj.message.hide(this);
 };
 
 internal.forward.initPredict = function ({ data, index }) {
   ui.obj.message.show(this, 'info', 'Algorithm information', 'Starting predict step because the top of the stack is a non-terminal.');
 };
 
-internal.forward.initFirstAll = function ({ data, index }) {
-  const first = this.state.first || {};
+internal.forward.first = function ({ data, index }) {
+  const ff = this.state.ff || {};
 
-  first.argument = data.alpha;
-  first.result = data.first_set;
+  ff.type = 'FIRST';
+  ff.argument = data.alpha.length === 0 ? [automata.EPSILON] : data.alpha;
+  ff.result = data.first_set;
 
-  this.setState({ first });
+  this.setState({ ff });
 };
 
-internal.forward.firstAllAccumulator = function ({ data, index }) {
-  const first = this.state.first;
-  const obj = {argument: data.grammar_entity, result: data.first};
+internal.forward.follow = function ({ data, index }) {
+  const ff = this.state.ff || {};
 
-  if (first.localExecution === undefined) {
-    first.localExecution = [obj];
-  } else {
-    first.localExecution.push(obj);
-  }
+  ff.type = 'FOLLOW';
+  ff.argument = [data.non_terminal];
+  ff.result = data.follow_set;
 
-  first.result = data.first_set;
-
-  this.setState({ first });
-};
-
-internal.forward.firstNoEpsilon = function ({ data, index }) {
-  const first = this.state.first;
-
-  first.message = 'No epsilon in first, therefore finish.';
-
-  this.setState({ first });
-};
-
-internal.forward.endFirstAll = function ({ data, index }) {
-  const first = this.state.first;
-
-  first.message = 'Finished processing first';
-  first.result = data.first_set;
-
-  this.setState({ first });
-};
-
-internal.forward.firstSetAddEpsilon = function ({ data, index }) {
- // TODO: Finish this
+  this.setState({ ff });
 };
 
 internal.forward.predictChosenProduction = function ({ data, index }) {
   const lhs = data.production[0];
-  const rhs = data.production[1].join('');
+  const rhs = data.production[1].length === 0 ? automata.EPSILON : data.production[1].join(' ');
   const token = this.state.tokens.data[this.state.tokens.index];
+  const input = token.type.name !== undefined ? token.type.name : token.type;
+  const type = data.type;
 
   const div = (
     <div style={{ marginTop: 16 }}>
       <p>
-        The algorithm chose this production because
+        The algorithm chose this production because {type === 'first' ?
         <span style={{ fontFamily: 'monospace', fontWeight: 900 }}>
-          {token.type.name !== undefined ? token.type.name : token.type} ∈ FIRST({rhs})
+          {input} ∈ FIRST({rhs})
         </span>
+        :
+        <span style={{ fontFamily: 'monospace', fontWeight: 900 }}>
+          {input} ∈ FOLLOW({lhs}) and {automata.EPSILON} ∈ FIRST({rhs}) and {input} ∉ FIRST({rhs})
+        </span>
+        }
       </p>
       <Label style={{ fontFamily: 'monospace' }} size='large'>{lhs}</Label>
       <Icon name='long arrow right'/>
@@ -92,8 +77,20 @@ internal.forward.predictChosenProduction = function ({ data, index }) {
   ui.obj.message.show(this, 'info', 'Algorithm information', div);
 };
 
-internal.forward.endPredict = function ({ data, index }) {
-  this.setState({ first: null });
+internal.forward.matchInputIndex = function ({ data, index }) {
+  const tokens = this.state.tokens;
+  tokens.index = data.input_index;
+  this.setState({ tokens });
+
+  ui.obj.message.show(this, 'info', 'Algorithm information', 'Matched input on top of the stack.');
+};
+
+internal.forward.parseError = function ({ data, index }) {
+
+};
+
+internal.forward.parseEnd = function ({ data, index }) {
+
 };
 
 internal.backward = {};
