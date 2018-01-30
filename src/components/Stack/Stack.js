@@ -11,9 +11,7 @@ export default class Stack extends Component {
 
     return (
       <div className='Stack'>
-        <div className='Stack_wrapper'>
-          {stack}
-        </div>
+        {stack}
       </div>
     );
   }

@@ -96,7 +96,7 @@ export default class LR0Viz extends Component {
 
   renderers = {
     renderStack: (s, idx) => {
-      return <div key={idx}>{s}</div>;
+      return <div key={idx}>{s.id}</div>;
     }
   }
 
