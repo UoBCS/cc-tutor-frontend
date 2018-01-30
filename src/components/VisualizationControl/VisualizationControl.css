@@ -1,3 +1,16 @@
-.viz-control {
+.VisualizationControl {
   margin: 20px auto;
+  z-index: 9999;
+}
+
+.VisualizationControl[fixed="true"] {
+  margin: 0;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.VisualizationControl_button_group button {
+  border-radius: 0 !important;
 }

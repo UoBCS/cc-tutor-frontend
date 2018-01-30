@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Header, Icon, Grid, Segment, Label, Message } from 'semantic-ui-react';
+import Window from 'components/Window/Window';
 import Grammar from 'components/Grammar/Grammar';
 import Stack from 'components/Stack/Stack';
 import TokensViz from 'components/TokensViz/TokensViz';
@@ -11,6 +12,12 @@ import ui from 'utils/ui';
 import internal from './internal';
 import clone from 'clone';
 import _ from 'lodash';
+import RGL, { WidthProvider } from 'react-grid-layout';
+
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+
+const ReactGridLayout = WidthProvider(RGL);
 
 export default class LR0Viz extends Component {
 
@@ -37,6 +44,14 @@ export default class LR0Viz extends Component {
       data: null,
       index: -1
     },
+
+    dashboardLayout: [
+      {i: 'tokens', x: 0, y: 0, w: 3, h: 4, minH: 3},
+      {i: 'grammar', x: 3, y: 0, w: 2, h: 4, minH: 4},
+      {i: 'dfa', x: 0, y: 1, w: 4, h: 14, minH: 14},
+      {i: 'stack', x: 4, y: 1, w: 1, h: 14},
+      {i: 'parseTree', x: 0, y: 2, w: 5, h: 14, minH: 14},
+    ],
 
     ui: clone(ui.state)
   }
@@ -127,11 +142,10 @@ export default class LR0Viz extends Component {
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
-              <Button
-                circular
-                icon='question'
-                color='blue'
-                style={{ float: 'right' }}/>
+              <Button.Group basic size='small' style={{ float: 'right' }}>
+                <Button icon='settings' />
+                <Button icon='question' />
+              </Button.Group>
               <br style={{ clear: 'both' }}/>
             </Grid.Column>
           </Grid>
@@ -140,28 +154,46 @@ export default class LR0Viz extends Component {
         <div className='dashboard-card-content'>
           {ui.obj.message.render(this)}
 
-          <TokensViz tokens={this.state.tokens}/>
+          <ReactGridLayout
+            className='layout'
+            layout={this.state.dashboardLayout}
+            cols={5}
+            rowHeight={30}
+            items={5}>
 
-          <Grammar grammar={this.state.grammar}/>
+            <div key='tokens'>
+              <Window title='Tokens'>
+                <TokensViz tokens={this.state.tokens}/>
+              </Window>
+            </div>
 
-          <Segment>
-            <Label as='a' attached='top left' color='teal'>Dotted items DFA</Label>
-            <div id='dfa-viz' style={{ height: 500 }}></div>
-          </Segment>
+            <div key='grammar'>
+              <Window title='Grammar'>
+                <Grammar grammar={this.state.grammar}/>
+              </Window>
+            </div>
 
-          <Grid>
-            <Grid.Column width={12}>
-              <Segment>
-                <Label as='a' color='blue' ribbon>Parse tree</Label>
+            <div key='dfa'>
+              <Window title='Dotted items DFA'>
+                <div id='dfa-viz' style={{ height: 500 }}></div>
+              </Window>
+            </div>
+
+            <div key='parseTree'>
+              <Window title='Parse tree' titleColor='blue'>
                 <div id='parse-tree-viz' style={{ height: 500 }}></div>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column width={4}>
-              <Stack
-                stack={this.state.stack}
-                render={this.renderers.renderStack}/>
-            </Grid.Column>
-          </Grid>
+              </Window>
+            </div>
+
+            <div key='stack'>
+              <Window title='Stack'>
+                <Stack
+                  stack={this.state.stack}
+                  render={this.renderers.renderStack}/>
+              </Window>
+            </div>
+
+          </ReactGridLayout>
 
           <VisualizationControl
             active

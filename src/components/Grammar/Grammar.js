@@ -31,12 +31,7 @@ export default class Grammar extends Component {
       ));
     }
 
-    return (
-      <Segment className='Grammar' padded>
-        <Label attached='top left' color='teal'>Grammar</Label>
-        {grammar}
-      </Segment>
-    );
+    return grammar;
   }
 
 }

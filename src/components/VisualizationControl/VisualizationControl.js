@@ -69,8 +69,10 @@ export default class VisualizationControl extends Component {
 
   render() {
     return (
-      <div className='viz-control text-center'>
-        <Button.Group>
+      <div
+          className='VisualizationControl text-center'
+          fixed={this.props.fixed === undefined ? 'true' : this.props.fixed.toString()}>
+        <Button.Group className='VisualizationControl_button_group' size='huge' secondary>
           <Button
             labelPosition='left'
             icon='left chevron'

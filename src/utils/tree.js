@@ -60,7 +60,10 @@ tree.visDataFormat = (container, data, path = 'name', topDown = true) => {
         direction: 'UD'
       }
     },
-    physics: false
+    physics: false,
+    interaction: {
+      navigationButtons: true
+    }
   };
 
   return {

@@ -10,7 +10,7 @@ export default class TokensViz extends Component {
       const currentIndex = this.props.tokens.index;
       tokens = this.props.tokens.data === null ? null
       : this.props.tokens.data.map((token, idx) => (
-        <Label key={idx} as='a' color={idx === currentIndex ? 'blue' : null}>
+        <Label style={{ marginBottom: 6 }} key={idx} as='a' color={idx === currentIndex ? 'blue' : null}>
           {token.text}
           <Label.Detail>
             {token.type.name !== undefined ? token.type.name : token.type} Line {token.line}, Column {token.column}
@@ -20,12 +20,9 @@ export default class TokensViz extends Component {
     }
 
     return (
-      <Segment className='TokensViz' padded>
-        <Label attached='top left' color='teal'>Tokens</Label>
-        <div>
-          {tokens}
-        </div>
-      </Segment>
+      <div>
+        {tokens}
+      </div>
     );
   }
 

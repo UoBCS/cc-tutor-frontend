@@ -26,6 +26,10 @@ const defaultOptions = {
     },
 
     width: 1
+  },
+
+  interaction: {
+    navigationButtons: true
   }
 };
 
