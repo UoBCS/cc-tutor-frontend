@@ -16,12 +16,7 @@ export default class ConsumableInput extends Component {
   }
 
   render() {
-    return (
-      <Segment className='ConsumableInput padded'>
-        <Label attached='top left' color={this.props.titleColor}>{this.props.title}</Label>
-        <p className='ConsumableInput_content' dangerouslySetInnerHTML={this.createMarkup()} />
-      </Segment>
-    );
+    return <p className='ConsumableInput_content' dangerouslySetInnerHTML={this.createMarkup()} />;
   }
 
 }

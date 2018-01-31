@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Header, Icon, Grid, Segment, Label } from 'semantic-ui-react';
+import Window from 'components/Window/Window';
 import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import TokensViz from 'components/TokensViz/TokensViz';
@@ -11,6 +12,12 @@ import clone from 'clone';
 import ui from 'utils/ui';
 import automata from 'utils/automata';
 import internal from './internal';
+import RGL, { WidthProvider } from 'react-grid-layout';
+
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+
+const ReactGridLayout = WidthProvider(RGL);
 
 export default class LexicalAnalysisViz extends Component {
 
@@ -37,6 +44,14 @@ export default class LexicalAnalysisViz extends Component {
       data: null,
       index: -1
     },
+
+    dashboardLayout: [
+      {i: 'history', x: 0, y: 0, w: 5, h: 4, minH: 4},
+      {i: 'input', x: 0, y: 1, w: 5, h: 3, minH: 3},
+      {i: 'dfa', x: 0, y: 2, w: 4, h: 14, minH: 14},
+      {i: 'stack', x: 4, y: 2, w: 1, h: 14},
+      {i: 'tokens', x: 0, y: 3, w: 5, h: 3},
+    ],
 
     ui: clone(ui.state)
   }
@@ -128,28 +143,47 @@ export default class LexicalAnalysisViz extends Component {
         </div>
 
         <div className='dashboard-card-content'>
-          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+          <ReactGridLayout
+            className='layout'
+            layout={this.state.dashboardLayout}
+            cols={5}
+            rowHeight={30}
+            items={5}
+            draggableHandle='.rgl-handle'>
 
-          <ConsumableInput
-            content={this.state.content}
-            title='Input'
-            titleColor='red'/>
+            <div key='history'>
+              <Window title='Actions history'>
+                <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+              </Window>
+            </div>
 
-          <Grid>
-            <Grid.Column width={12}>
-              <Segment>
-                <Label as='a' color='blue' ribbon>Deterministic finite automaton</Label>
+            <div key='input'>
+              <Window title='Input'>
+                <ConsumableInput content={this.state.content}/>
+              </Window>
+            </div>
+
+            <div key='dfa'>
+              <Window title='Deterministic finite automaton' titleColor='blue'>
                 <div id='dfa-viz' style={{ height: 500 }}></div>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column width={4}>
-              <Stack
-                stack={this.state.stateStack}
-                render={this.renderers.renderStack}/>
-            </Grid.Column>
-          </Grid>
+              </Window>
+            </div>
 
-          <TokensViz tokens={this.state.tokens} />
+            <div key='stack'>
+              <Window title='Stack'>
+                <Stack
+                  stack={this.state.stateStack}
+                  render={this.renderers.renderStack}/>
+              </Window>
+            </div>
+
+            <div key='tokens'>
+              <Window title='Tokens'>
+                <TokensViz tokens={this.state.tokens} />
+              </Window>
+            </div>
+
+          </ReactGridLayout>
 
           <VisualizationControl
             active

@@ -23,23 +23,6 @@ internal.forward.initialize = function ({ data, index }) {
   this.setState({ tokens });
 };
 
-/*
-"lr_item": {
-    "lhs": "t",
-    "rhs": [
-        "LPAREN",
-        "e",
-        "RPAREN"
-    ],
-    "dotIndex": 0
-},
-"transition": {
-    "src": 0,
-    "char": "LPAREN",
-    "dest": 1
-}
-*/
-
 const updateDataStructures = function (data) {
   automata.resetEdgesHighlight(this.state.itemsDfa);
   automata.highlightEdges(this.state.itemsDfa, [data.transition]);

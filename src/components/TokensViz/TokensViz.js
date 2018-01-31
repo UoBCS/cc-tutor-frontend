@@ -13,7 +13,7 @@ export default class TokensViz extends Component {
         <Label style={{ marginBottom: 6 }} key={idx} as='a' color={idx === currentIndex ? 'blue' : null}>
           {token.text}
           <Label.Detail>
-            {token.type.name !== undefined ? token.type.name : token.type} Line {token.line}, Column {token.column}
+            {token.type !== null && token.type.name !== undefined ? token.type.name : token.type} Line {token.line}, Column {token.column}
           </Label.Detail>
         </Label>
       ));
