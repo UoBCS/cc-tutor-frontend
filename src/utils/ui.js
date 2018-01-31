@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message, Modal, Loader } from 'semantic-ui-react';
+import { Message, Modal, Dimmer, Loader } from 'semantic-ui-react';
 
 const ui = {};
 
@@ -99,7 +99,8 @@ ui.obj.loader = {
   },
 
   render: (comp, which = 'main') => {
-    return comp.state.ui.loader[which] ? <Loader active inline='centered' /> : null;
+    //inline='centered'
+    return comp.state.ui.loader[which] ? <Dimmer active><Loader /></Dimmer> : null;
   }
 };
 

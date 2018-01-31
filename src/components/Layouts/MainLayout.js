@@ -77,7 +77,7 @@ export default class MainLayout extends Component {
                   </Menu.Menu>
                 </Menu.Item>
 
-                <Menu.Item name='ccAssistant' active={activeItem === 'ccAssistant'} onClick={this.handleItemClick}>
+                <Menu.Item name='ccAssistant' active={activeItem === 'ccAssistant'} onClick={this.handleItemClick} as={Link} to={'/cc-assistant'}>
                   CC Assistant
                 </Menu.Item>
 
