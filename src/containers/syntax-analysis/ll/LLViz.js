@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Header, Icon, Grid, Segment, Label } from 'semantic-ui-react';
+import Window from 'components/Window/Window';
 import Grammar from 'components/Grammar/Grammar';
 import Stack from 'components/Stack/Stack';
 import TokensViz from 'components/TokensViz/TokensViz';
@@ -7,6 +8,12 @@ import api from 'api';
 import tree from 'utils/tree';
 import ui from 'utils/ui';
 import clone from 'clone';
+import RGL, { WidthProvider } from 'react-grid-layout';
+
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+
+const ReactGridLayout = WidthProvider(RGL);
 
 export default class LLViz extends Component {
 
@@ -26,6 +33,13 @@ export default class LLViz extends Component {
     },
 
     chooseProduction: false,
+
+    dashboardLayout: [
+      {i: 'tokens', x: 0, y: 0, w: 2, h: 4, minH: 3},
+      {i: 'grammar', x: 2, y: 0, w: 2, h: 4, minH: 4},
+      {i: 'parseTree', x: 0, y: 1, w: 3, h: 14, minH: 14},
+      {i: 'stack', x: 3, y: 1, w: 1, h: 14},
+    ],
 
     ui: clone(ui.state)
   }
@@ -158,25 +172,43 @@ export default class LLViz extends Component {
 
           {ui.obj.message.render(this)}
 
-          <TokensViz tokens={this.state.tokens} />
+          <ReactGridLayout
+            className='layout'
+            layout={this.state.dashboardLayout}
+            cols={4}
+            rowHeight={30}
+            items={4}
+            draggableHandle='.rgl-handle'>
 
-          <Grammar
-            grammar={this.state.grammar}
-            productionClickHandler={this.eventHandlers.handleProductionClick}/>
+            <div key='tokens'>
+              <Window title='Tokens'>
+                <TokensViz tokens={this.state.tokens}/>
+              </Window>
+            </div>
 
-          <Grid>
-            <Grid.Column width={12}>
-              <Segment>
-                <Label as='a' color='blue' ribbon>Parse tree</Label>
+            <div key='grammar'>
+              <Window title='Grammar'>
+                <Grammar
+                  grammar={this.state.grammar}
+                  productionClickHandler={this.eventHandlers.handleProductionClick}/>
+              </Window>
+            </div>
+
+            <div key='parseTree'>
+              <Window title='Parse tree' titleColor='blue'>
                 <div id='parse-tree-viz' style={{ height: 500 }}></div>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column width={4}>
-              <Stack
-                stack={this.state.stack}
-                render={this.renderers.renderStack}/>
-            </Grid.Column>
-          </Grid>
+              </Window>
+            </div>
+
+            <div key='stack'>
+              <Window title='Stack'>
+                <Stack
+                  stack={this.state.stack}
+                  render={this.renderers.renderStack}/>
+              </Window>
+            </div>
+
+          </ReactGridLayout>
         </div>
 
         <div className='dashboard-card-footer'>
