@@ -2,3 +2,13 @@
   height: 100%;
   overflow: auto;
 }
+
+.Window_header {
+  position: relative;
+}
+
+.Window_actions {
+  display: inline-block;
+  position: absolute;
+  right: 7px;
+}

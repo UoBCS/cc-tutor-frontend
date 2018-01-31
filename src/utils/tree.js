@@ -55,6 +55,11 @@ tree.visDataFormat = (container, data, path = 'name', topDown = true) => {
         roundness: 0.4
       }
     },
+    nodes: {
+      font: {
+        face: 'monospace'
+      }
+    },
     layout: {
       hierarchical: {
         direction: 'UD'

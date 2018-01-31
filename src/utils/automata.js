@@ -17,6 +17,11 @@ const defaultOptions = {
       left: 10,
       right: 7,
       bottom: 7
+    },
+
+    font: {
+      face: 'monospace',
+      align: 'left'
     }
   },
 
@@ -25,7 +30,11 @@ const defaultOptions = {
       color: '#000'
     },
 
-    width: 1
+    width: 1,
+
+    font: {
+      face: 'monospace'
+    }
   },
 
   interaction: {
@@ -132,6 +141,26 @@ automata.fromVis = edges => {
   });
 
   return nfa;
+};
+
+automata.setNodeData = (fa, data, fn) => {
+  fa.instance.on('doubleClick', params => {
+    let nodeId = params.nodes[0];
+
+    for (const n of data) {
+      const nodeData = fa.nodes.get(nodeId).data || {renderData: false};
+
+      if (n.id === nodeId) {
+        nodeData.renderData = !nodeData.renderData;
+        fa.nodes.update({
+          id: nodeId,
+          label: nodeData.renderData ? fn(n) : nodeId + '',
+          data: nodeData
+        });
+        break;
+      }
+    }
+  });
 };
 
 automata.addNode = (fa, n) => {

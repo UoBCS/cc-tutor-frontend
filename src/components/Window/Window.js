@@ -6,8 +6,11 @@ export default class Window extends Component {
   render() {
     return (
       <Segment className='Window'>
-        <Label attached='top' color={this.props.titleColor}>
+        <Label className='Window_header' attached='top' color={this.props.titleColor}>
           {this.props.title}
+          <div className='Window_actions'>
+            <Icon link className='rgl-handle' name='move' />
+          </div>
         </Label>
 
         <div className='Window_content'>

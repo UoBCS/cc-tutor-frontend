@@ -84,6 +84,14 @@ export default class LR0Viz extends Component {
         },
         grammar: this.props.data.grammar,
         itemsDfa: automata.visDataFormat('dfa-viz', data.items_dfa.transitions)
+      }, () => {
+        automata.setNodeData(this.state.itemsDfa, data.items_dfa.states, data => {
+          return data.data.reduce((acc, item) => {
+            let rhs = _.cloneDeep(item.rhs);
+            rhs.splice(item.dot_index, 0, '•');
+            return acc + item.lhs + ' => ' + rhs.join(' ') + '\n';
+          }, '');
+        });
       });
     }
   }
@@ -159,7 +167,8 @@ export default class LR0Viz extends Component {
             layout={this.state.dashboardLayout}
             cols={5}
             rowHeight={30}
-            items={5}>
+            items={5}
+            draggableHandle='.rgl-handle'>
 
             <div key='tokens'>
               <Window title='Tokens'>
