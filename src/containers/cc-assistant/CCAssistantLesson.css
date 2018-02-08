@@ -1,0 +1,66 @@
+body.CCAssistantLesson_body {
+  background-color: #152B39;
+  color: #fafafa;
+}
+
+.CCAssistantLesson_contents {
+
+}
+
+.CCAssistantLesson_instructions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 19%;
+  bottom: 70px;
+  background-color: #fafafa;
+  color: #000;
+  overflow: auto;
+}
+
+.CCAssistantLesson_instructions_header {
+  background-color: #D4D5D6;
+  font-weight: 100 !important;
+  padding: 10px !important;
+}
+
+.CCAssistantLesson_code {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  width: 39%;
+}
+
+.CCAssistantLesson_terminal_wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  bottom: 70px;
+  overflow: auto;
+}
+
+.CCAssistantLesson_editor {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 70px;
+  left: 0;
+}
+
+.ReactBash {
+  border-radius: 0px !important;
+}
+
+.ReactBash > div:first-child {
+  display: none;
+}
+
+.CCAssistantLesson_actions {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 60px;
+  width: 100%;
+  background: #fafafa;
+}

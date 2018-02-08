@@ -50,7 +50,7 @@ export default class LexicalAnalysisViz extends Component {
       {i: 'input', x: 0, y: 1, w: 5, h: 3, minH: 3},
       {i: 'dfa', x: 0, y: 2, w: 4, h: 14, minH: 14},
       {i: 'stack', x: 4, y: 2, w: 1, h: 14},
-      {i: 'tokens', x: 0, y: 3, w: 5, h: 3},
+      {i: 'tokens', x: 0, y: 3, w: 5, h: 3}
     ],
 
     ui: clone(ui.state)

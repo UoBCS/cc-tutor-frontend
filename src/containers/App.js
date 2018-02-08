@@ -19,6 +19,8 @@ import LR from './syntax-analysis/lr/LR';
 import LR0 from './syntax-analysis/lr0/LR0';
 import LexicalAnalysis from './lexicalAnalysis/LexicalAnalysis';
 import CCAssistant from './cc-assistant/CCAssistant';
+import CCAssistantCourse from './cc-assistant/CCAssistantCourse';
+import CCAssistantLesson from './cc-assistant/CCAssistantLesson';
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
@@ -49,6 +51,8 @@ class App extends Component {
           <AppRoute exact path="/dashboard/lexical-analysis" layout={MainLayout} component={LexicalAnalysis} />
 
           <AppRoute exact path="/cc-assistant" layout={EmptyLayout} component={CCAssistant} />
+          <AppRoute exact path="/cc-assistant/courses/:id" layout={EmptyLayout} component={CCAssistantCourse} />
+          <AppRoute exact path="/cc-assistant/courses/:cid/lessons/:lid" layout={EmptyLayout} component={CCAssistantLesson} />
 
           <AppRoute exact path="*" layout={EmptyLayout} component={NotFound} />
         </Switch>

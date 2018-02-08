@@ -91,4 +91,26 @@ api.lr0.parse = data => {
   return axios.post('phases/syntax-analysis/lr0/parse', data);
 };
 
+api.cca = {};
+
+api.cca.getCourses = () => {
+  return axios.get('cca/courses');
+};
+
+api.cca.subscribeToCourse = courseId => {
+  return axios.post(`cca/courses/${courseId}/subscribe`);
+};
+
+api.cca.getLessons = courseId => {
+  return axios.get(`cca/courses/${courseId}/lessons`);
+};
+
+api.cca.getCurrentLesson = courseId => {
+  return axios.get(`cca/courses/${courseId}/current-lesson`);
+};
+
+api.cca.submitLesson = (courseId, lessonId, data) => {
+  return axios.post(`cca/courses/${courseId}/lessons/${lessonId}/submit`, data);
+};
+
 export default api;
