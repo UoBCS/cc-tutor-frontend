@@ -34,6 +34,16 @@ export default class CCAssistantLesson extends Component {
   }
 
   eventHandlers = {
+    editorOnChangeHandler: filename => {
+      return newVal => {
+        let lessonData = this.state.lessonData;
+
+        lessonData.files[filename] = newVal;
+
+        this.setState({ lessonData });
+      };
+    },
+
     submitClickHandler: () => {
       const params = this.props.match.params;
       const data = Object.keys(this.state.lessonData.files).map(filename => ({
@@ -45,6 +55,7 @@ export default class CCAssistantLesson extends Component {
       api.cca.submitLesson(params.cid, params.lid, { files: data })
         .then(res => {
           ui.obj.loader.hide(this, 'submitLesson');
+          console.log(res.data);
         })
         .catch(err => {
           ui.obj.loader.hide(this, 'submitLesson');
@@ -68,6 +79,7 @@ export default class CCAssistantLesson extends Component {
             theme='monokai'
             name={`code_editor_${idx}`}
             value={files[filename]}
+            onChange={this.eventHandlers.editorOnChangeHandler(filename)}
             enableBasicAutocompletion={true}
             enableLiveAutocompletion={true}
             fontSize={16}
