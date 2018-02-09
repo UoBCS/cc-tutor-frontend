@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, Card, Header, Button, Icon, Tab } from 'semantic-ui-react';
 import ui from 'utils/ui';
 import api from 'api';
@@ -18,14 +19,33 @@ export default class CCAssistantLesson extends Component {
   constructor(props) {
     super(props);
 
-    this.state = Object.assign({}, this.props.location.state, {
+    const lessonData = this.props.location.state === undefined
+                        ? { lessonData: null }
+                        : this.props.location.state;
+
+    this.state = Object.assign({}, lessonData, {
+      originalLessonFiles: lessonData.lessonData === null ? null : clone(lessonData.lessonData.files),
+      terminalHistory: [],
       ui: Object.assign({}, clone(ui.state), { loader: { main: false, submitLesson: false } })
     });
-
-    console.log(this.state);
   }
 
   componentDidMount() {
+    if (this.state.lessonData === null) {
+      const params = this.props.match.params;
+
+      api.cca.getLesson(params.cid, params.lid)
+        .then(res => {
+          this.setState({
+            lessonData: res.data,
+            originalLessonFiles: res.data.files
+          });
+        })
+        .catch(err => {
+
+        });
+    }
+
     document.body.classList.add('CCAssistantLesson_body');
   }
 
@@ -56,20 +76,34 @@ export default class CCAssistantLesson extends Component {
         .then(res => {
           ui.obj.loader.hide(this, 'submitLesson');
           console.log(res.data);
+
+          let terminalHistory = this.state.terminalHistory;
+          for (const line of res.data.output) {
+            terminalHistory.push({ value: line });
+          }
+
+          this.setState({ terminalHistory });
         })
         .catch(err => {
           ui.obj.loader.hide(this, 'submitLesson');
+          // TODO: handle error
         });
     },
 
-    resetFileClickHandler: (filename, editor) => {
+    resetFileClickHandler: () => {
+      let lessonData = this.state.lessonData;
 
+      Object.keys(lessonData.files).forEach(filename => {
+        lessonData.files[filename] = this.state.originalLessonFiles[filename];
+      });
+
+      this.setState({ lessonData });
     }
   }
 
   render() {
-    let files = this.state.lessonData.files;
-    const filePanes = Object.keys(files).map((filename, idx) => ({
+    const filePanes = this.state.lessonData === null ? null
+    : Object.keys(this.state.lessonData.files).map((filename, idx) => ({
       menuItem: filename,
       render: () => (
         <Tab.Pane style={{ position: 'relative', padding: 0, border: 'none', background: 'transparent' }}>
@@ -77,8 +111,9 @@ export default class CCAssistantLesson extends Component {
             className='CCAssistantLesson_editor'
             mode='java'
             theme='monokai'
+            width='auto'
             name={`code_editor_${idx}`}
-            value={files[filename]}
+            value={this.state.lessonData.files[filename]}
             onChange={this.eventHandlers.editorOnChangeHandler(filename)}
             enableBasicAutocompletion={true}
             enableLiveAutocompletion={true}
@@ -115,6 +150,11 @@ export default class CCAssistantLesson extends Component {
             <div className='CCAssistantLesson_instructions_content'>
 
             </div>
+
+            <Button.Group width='2' fluid>
+              <Button as={Link} to={`/cc-assistant/courses/${this.props.match.params.cid}`}>Back</Button>
+              <Button as={Link} to='/dashboard'>Dashboard</Button>
+            </Button.Group>
           </div>
 
           <div className='CCAssistantLesson_code'>
@@ -122,12 +162,18 @@ export default class CCAssistantLesson extends Component {
           </div>
 
           <div className='CCAssistantLesson_terminal_wrapper'>
-            <Terminal prefix='' theme={Terminal.Themes.DARK} className='CCAssistantLesson_terminal' />
+            <Terminal
+              prefix=''
+              theme={Terminal.Themes.DARK}
+              history={this.state.terminalHistory}
+              className='CCAssistantLesson_terminal' />
           </div>
 
           <div className='CCAssistantLesson_actions'>
             <Button loading={this.state.ui.loader.submitLesson} primary onClick={this.eventHandlers.submitClickHandler}>Submit</Button>
             <Button icon='refresh' onClick={this.eventHandlers.resetFileClickHandler} />
+            <Button floated='right'>Next</Button>
+            <Button floated='right'>Previous</Button>
           </div>
         </div>
       </div>

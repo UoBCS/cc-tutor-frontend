@@ -105,6 +105,10 @@ api.cca.getLessons = courseId => {
   return axios.get(`cca/courses/${courseId}/lessons`);
 };
 
+api.cca.getLesson = (courseId, lessonId) => {
+  return axios.get(`cca/courses/${courseId}/lessons/${lessonId}`);
+};
+
 api.cca.getCurrentLesson = courseId => {
   return axios.get(`cca/courses/${courseId}/current-lesson`);
 };

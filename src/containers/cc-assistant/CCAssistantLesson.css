@@ -1,3 +1,7 @@
+.CCAssistantLesson {
+  --bottom-bar-height: 50px;
+}
+
 body.CCAssistantLesson_body {
   background-color: #152B39;
   color: #fafafa;
@@ -12,7 +16,7 @@ body.CCAssistantLesson_body {
   top: 0;
   left: 0;
   width: 19%;
-  bottom: 70px;
+  bottom: var(--bottom-bar-height);
   background-color: #fafafa;
   color: #000;
   overflow: auto;
@@ -36,7 +40,7 @@ body.CCAssistantLesson_body {
   top: 0;
   right: 0;
   width: 40%;
-  bottom: 70px;
+  bottom: var(--bottom-bar-height);
   overflow: auto;
 }
 
@@ -44,7 +48,7 @@ body.CCAssistantLesson_body {
   position: absolute;
   top: 0;
   right: 0;
-  bottom: 70px;
+  bottom: var(--bottom-bar-height);
   left: 0;
 }
 
@@ -60,7 +64,19 @@ body.CCAssistantLesson_body {
   position: fixed;
   left: 0;
   bottom: 0;
-  height: 60px;
+  height: var(--bottom-bar-height - 10);
   width: 100%;
   background: #fafafa;
+}
+
+.CCAssistantLesson_actions .ui.button {
+  border-radius: 0;
+}
+
+.CCAssistantLesson .ui.tabular.menu {
+  border: none;
+}
+
+.CCAssistantLesson .ui.tabular.menu .item {
+  border-radius: 0 !important;
 }

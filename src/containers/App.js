@@ -13,6 +13,7 @@ import SignUp from './SignUp';
 import VerifyEmail from './VerifyEmail';
 import RegexToNFA from './RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
+import SyntaxAnalysis from './syntax-analysis/SyntaxAnalysis';
 import LL from './syntax-analysis/ll/LL';
 import LL1 from './syntax-analysis/ll1/LL1';
 import LR from './syntax-analysis/lr/LR';
@@ -43,6 +44,7 @@ class App extends Component {
           <AppRoute exact path="/dashboard" layout={MainLayout} component={Dashboard} />
           <AppRoute exact path="/dashboard/regex2nfa" layout={MainLayout} component={RegexToNFA} />
           <AppRoute exact path="/dashboard/nfa2dfa" layout={MainLayout} component={NfaToDfa} />
+          <AppRoute exact path="/dashboard/syntax-analysis" layout={MainLayout} component={SyntaxAnalysis} />
           <AppRoute exact path="/dashboard/ll" layout={MainLayout} component={LL} />
           <AppRoute exact path="/dashboard/ll1" layout={MainLayout} component={LL1} />
           <AppRoute exact path="/dashboard/lr" layout={MainLayout} component={LR} />
