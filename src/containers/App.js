@@ -6,6 +6,7 @@ import EmptyLayout from 'components/Layouts/EmptyLayout';
 import PortalAccessLayout from 'components/Layouts/PortalAccessLayout';
 
 import Dashboard from './Dashboard';
+import Profile from './Profile';
 import Homepage from './Homepage';
 import NotFound from './NotFound';
 import SignIn from './SignIn';
@@ -42,6 +43,7 @@ class App extends Component {
           <AppRoute exact path="/verify-email/:token" layout={EmptyLayout} component={VerifyEmail} />
 
           <AppRoute exact path="/dashboard" layout={MainLayout} component={Dashboard} />
+          <AppRoute exact path="/dashboard/profile" layout={MainLayout} component={Profile} />
           <AppRoute exact path="/dashboard/regex2nfa" layout={MainLayout} component={RegexToNFA} />
           <AppRoute exact path="/dashboard/nfa2dfa" layout={MainLayout} component={NfaToDfa} />
           <AppRoute exact path="/dashboard/syntax-analysis" layout={MainLayout} component={SyntaxAnalysis} />

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Menu, Card, Dimmer, Loader, Header, Button, Icon } from 'semantic-ui-react';
+import misc from 'utils/misc';
 import ui from 'utils/ui';
 import api from 'api';
 import clone from 'clone';
@@ -85,6 +86,28 @@ export default class CCAssistant extends Component {
           .then(success)
           .catch(error);
       }
+    },
+
+    resetProgressClickHandler: courseId => {
+      return () => {
+        const success = res => {
+          ui.obj.loader.hide(this);
+
+          this.setState({
+            userCourses: misc.removeWhere(this.state.userCourses, 'id', courseId)
+          });
+        };
+
+        const error = err => {
+          ui.obj.loader.hide(this);
+        }
+
+        ui.obj.loader.show(this);
+
+        api.cca.unsubscribeFromCourse(courseId)
+          .then(success)
+          .catch(error);
+      }
     }
   }
 
@@ -107,7 +130,9 @@ export default class CCAssistant extends Component {
                 </Card.Content>
                 <Card.Content extra>
                   <Button onClick={this.eventHandlers.resumeClickHandler(course.id)}>Resume</Button>
-                  <p style={{ display: 'inline-block', fontSize: 11, marginLeft: 13 }}><a><Icon name='refresh' /> Reset Progress</a></p>
+                  <p style={{ display: 'inline-block', fontSize: 11, marginLeft: 13 }}>
+                    <a onClick={this.eventHandlers.resetProgressClickHandler(course.id)}><Icon name='refresh' /> Reset Progress</a>
+                  </p>
                 </Card.Content>
               </Card>
             ))}

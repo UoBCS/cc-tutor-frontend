@@ -19,6 +19,10 @@ api.verifyEmail = token => {
   return axios.get(`/verify-email/${token}`);
 };
 
+api.getUserData = () => {
+  return axios.get('/user-data');
+};
+
 api.isAuthenticated = token => {
   return axios.get('/authenticated');
 };
@@ -100,6 +104,10 @@ api.cca.getCourses = () => {
 api.cca.subscribeToCourse = courseId => {
   return axios.post(`cca/courses/${courseId}/subscribe`);
 };
+
+api.cca.unsubscribeFromCourse = courseId => {
+  return axios.post(`cca/courses/${courseId}/unsubscribe`);
+}
 
 api.cca.getLessons = courseId => {
   return axios.get(`cca/courses/${courseId}/lessons`);

@@ -89,7 +89,7 @@ export default class MainLayout extends Component {
                   Exercises
                 </Menu.Item>
 
-                <Menu.Item name='profile' active={activeItem === 'profile'} onClick={this.handleItemClick}>
+                <Menu.Item name='profile' active={activeItem === 'profile'} as={Link} to={`${pref}/profile`} onClick={this.handleItemClick}>
                   Profile
                 </Menu.Item>
 
