@@ -68,6 +68,13 @@ export default class VisualizationControl extends Component {
   }
 
   render() {
+    const checkAnswerBtn = this.props.checkAnswerHandler === undefined ? null :
+      <Button
+        icon='check'
+        content='Check answer'
+        disabled={!this.props.active}
+        onClick={this.props.checkAnswerHandler}/>;
+
     return (
       <div
           className='VisualizationControl text-center'
@@ -79,11 +86,7 @@ export default class VisualizationControl extends Component {
             content='Back'
             disabled={!this.state.backwardBtnActive || !this.props.active}
             onClick={this.eventHandlers.handleBackBtnClick}/>
-          <Button
-            icon='check'
-            content='Check answer'
-            disabled={!this.props.active}
-            onClick={this.props.checkAnswerHandler}/>
+          {checkAnswerBtn}
           <Button
             icon='setting'
             content='Settings'

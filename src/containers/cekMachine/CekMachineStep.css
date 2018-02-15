@@ -1,0 +1,22 @@
+.CekMachineStep {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.CekMachineStep > div {
+  display: inline-block;
+  margin-right: 25px;
+}
+
+.CekMachineStep > div:last-child {
+  margin-right: 0;
+}
+
+.CekMachineStep span {
+  font-family: monospace;
+  font-size: 24px;
+}
+
+.CekMachineStep_highlight {
+  color: #f00;
+}

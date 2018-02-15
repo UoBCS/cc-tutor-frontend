@@ -8,85 +8,95 @@ if (localStorage.getItem('access_token')) {
 }
 
 api.signUp = data => {
-  return axios.post('/register', data);
+  return axios.post('register', data);
 };
 
 api.signIn = data => {
-  return axios.post('/login', data);
+  return axios.post('login', data);
 };
 
 api.verifyEmail = token => {
-  return axios.get(`/verify-email/${token}`);
+  return axios.get(`verify-email/${token}`);
 };
 
 api.getUserData = () => {
-  return axios.get('/user-data');
+  return axios.get('user-data');
 };
 
 api.isAuthenticated = token => {
-  return axios.get('/authenticated');
+  return axios.get('authenticated');
 };
 
 api.logOut = () => {
-  return axios.post('/logout');
+  return axios.post('logout');
 };
 
 api.regexToNfa = regex => {
-  return axios.get(`/algorithms/regex2nfa/${regex}`);
+  return axios.get(`algorithms/regex2nfa/${regex}`);
 };
 
 api.nfaToDfa = data => {
-  return axios.post('/algorithms/nfa2dfa', data);
+  return axios.post('algorithms/nfa2dfa', data);
+}
+
+api.cekMachineRun = content => {
+  const data = {
+    control: content,
+    environment: [],
+    continuation: []
+  };
+
+  return axios.post(`/algorithms/cek-machine/run`, { cek_machine: data });
 }
 
 api.lexicalAnalysis = data => {
-  return axios.post('/phases/lexical-analysis', data);
+  return axios.post('phases/lexical-analysis', data);
 };
 
 api.ll = {};
 
 api.ll.initParser = data => {
-  return axios.post('/phases/syntax-analysis/ll/init-parser', {
+  return axios.post('phases/syntax-analysis/ll/init-parser', {
     ndp_run: data
   });
 };
 
 api.ll.deleteRun = id => {
-  return axios.delete(`/phases/syntax-analysis/ll/${id}`);
+  return axios.delete(`phases/syntax-analysis/ll/${id}`);
 };
 
 api.ll.match = data => {
-  return axios.post('/phases/syntax-analysis/ll/match', data);
+  return axios.post('phases/syntax-analysis/ll/match', data);
 };
 
 api.ll.predict = data => {
-  return axios.post('/phases/syntax-analysis/ll/predict', data);
+  return axios.post('phases/syntax-analysis/ll/predict', data);
 };
 
 api.ll1 = {};
 
 api.ll1.parse = data => {
-  return axios.post('/phases/syntax-analysis/ll1/parse', data);
+  return axios.post('phases/syntax-analysis/ll1/parse', data);
 }
 
 api.lr = {};
 
 api.lr.initParser = data => {
-  return axios.post('/phases/syntax-analysis/lr/init-parser', {
+  return axios.post('phases/syntax-analysis/lr/init-parser', {
     ndp_run: data
   });
 };
 
 api.lr.deleteRun = id => {
-  return axios.delete(`/phases/syntax-analysis/lr/${id}`);
+  return axios.delete(`phases/syntax-analysis/lr/${id}`);
 };
 
 api.lr.shift = data => {
-  return axios.post('/phases/syntax-analysis/lr/shift', data);
+  return axios.post('phases/syntax-analysis/lr/shift', data);
 };
 
 api.lr.reduce = data => {
-  return axios.post('/phases/syntax-analysis/lr/reduce', data);
+  return axios.post('phases/syntax-analysis/lr/reduce', data);
 };
 
 api.lr0 = {};
