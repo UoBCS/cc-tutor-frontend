@@ -73,10 +73,14 @@ export default class CekMachine extends Component {
   render() {
     const { breakpoint } = this.state;
 
+    const label = breakpoint.index < 0 ? null : breakpoint.data[breakpoint.index].label;
+
+    const data = breakpoint.index < 0 ? null : breakpoint.data[breakpoint.index].data;
+
     const cekMachineStep = breakpoint.index < 0 ? null :
       <CekMachineStep
-        label={breakpoint.data[breakpoint.index].label}
-        data={breakpoint.data[breakpoint.index].data} />
+        label={label}
+        data={data} />
 
     return (
       <div className='CekMachine dashboard-card'>
@@ -105,13 +109,26 @@ export default class CekMachine extends Component {
         </div>
 
         <div className='dashboard-card-content'>
-          <Input
-            name='lambda'
-            size='large'
-            placeholder='Enter lambda...'
-            value={this.state.input.lambda}
-            onChange={this.eventHandlers.inputChangeHandler}
-            action={<Button onClick={this.eventHandlers.submitLambdaHandler}>Submit</Button>} />
+          <Grid divided>
+            <Grid.Column width={8}>
+              <Input
+                className='CekMachine_lambda_input'
+                name='lambda'
+                size='large'
+                placeholder='Enter lambda...'
+                value={this.state.input.lambda}
+                onChange={this.eventHandlers.inputChangeHandler}
+                action={<Button onClick={this.eventHandlers.submitLambdaHandler}>Submit</Button>} />
+            </Grid.Column>
+
+            <Grid.Column width={8} className='CekMachine_instructions'>
+              <pre className={label === 'VARIABLE' ? 'CekMachine_highlight' : null}>〈 x | E | K 〉⟼ 〈 lookup x in E | E | K 〉</pre>
+              <pre className={label === 'APPLICATION' ? 'CekMachine_highlight' : null}>〈 M<sub>1</sub> M<sub>2</sub> | E | K 〉⟼ 〈 M<sub>1</sub> | E | (◯ M<sub>2</sub> E) , K 〉</pre>
+              <pre className={label === 'FUNCTION' ? 'CekMachine_highlight' : null}>〈 λx.M | E | K 〉⟼ 〈 clos(λx.M, E) | E | K 〉</pre>
+              <pre className={label === 'VALUE_1' ? 'CekMachine_highlight' : null}>〈 W | E<sub>1</sub> | (◯ M E<sub>2</sub>) , K 〉⟼ 〈 M | E<sub>2</sub> | (W ◯) , K 〉</pre>
+              <pre className={label === 'VALUE_2' ? 'CekMachine_highlight' : null}>〈 W | E<sub>1</sub> | (clos(λx.M, E<sub>2</sub>) ◯) , K 〉⟼ 〈 M | E<sub>2</sub>[x ⟼ W] | K 〉</pre>
+            </Grid.Column>
+          </Grid>
 
           {cekMachineStep}
 
