@@ -7,7 +7,6 @@ import clone from 'clone';
 import _ from 'lodash';
 import ui from 'utils/ui';
 import automata from 'utils/automata';
-import internal from './internal';
 
 import './CekMachine.css';
 
@@ -27,17 +26,8 @@ export default class CekMachine extends Component {
   }
 
   breakpoint = {
-    visualizeForward: breakpoint => {
-      const data = breakpoint.data;
-      const index = this.state.breakpoint.index;
-      internal.forward[_.camelCase(breakpoint.label)].call(this, { data, index });
-    },
-
-    visualizeBackward: breakpoint => {
-      const data = breakpoint.data;
-      const index = this.state.breakpoint.index;
-      internal.backward[_.camelCase(breakpoint.label)].call(this, { data, index });
-    }
+    visualizeForward: breakpoint => {},
+    visualizeBackward: breakpoint => {}
   }
 
   eventHandlers = {

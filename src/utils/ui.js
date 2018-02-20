@@ -30,7 +30,7 @@ ui.state = {
 };
 
 ui.renderErrors = err => {
-  return <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>;
+  return !err.response ? null : <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>;
 };
 
 ui.obj = {};

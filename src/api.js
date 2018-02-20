@@ -105,6 +105,13 @@ api.lr0.parse = data => {
   return axios.post('phases/syntax-analysis/lr0/parse', data);
 };
 
+api.semanticAnalysis = {};
+
+api.semanticAnalysis.ast = (data, files, type = 'parsing') => {
+  let _data = Object.assign({}, data, { files }, { input_type: type });
+  return axios.post('phases/semantic-analysis/ast', _data);
+};
+
 api.cca = {};
 
 api.cca.getCourses = () => {

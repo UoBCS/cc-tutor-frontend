@@ -55,6 +55,7 @@ export default class MainLayout extends Component {
                   <Menu.Menu>
                     <Menu.Item name='lexicalAnalysis' active={activeItem === 'lexicalAnalysis'} as={Link} to={`${pref}/lexical-analysis`} onClick={this.handleItemClick}/>
                     <Menu.Item name='syntaxAnalysis' active={activeItem === 'syntaxAnalysis'} as={Link} to={`${pref}/syntax-analysis`} onClick={this.handleItemClick}/>
+                    <Menu.Item name='semanticAnalysis' active={activeItem === 'semanticAnalysis'} as={Link} to={`${pref}/semantic-analysis`} onClick={this.handleItemClick}/>
                     <Menu.Item name='garbageCollection' active={activeItem === 'garbageCollection'} onClick={this.handleItemClick}/>
                     <Menu.Item name='CEKMachine' active={activeItem === 'CEKMachine'} as={Link} to={`${pref}/cek-machine`} onClick={this.handleItemClick}/>
                   </Menu.Menu>

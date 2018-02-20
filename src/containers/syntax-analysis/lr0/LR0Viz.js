@@ -72,7 +72,6 @@ export default class LR0Viz extends Component {
 
   initializers = {
     setData: data => {
-      console.log(data);
       this.setState({
         breakpoint: {
           data: data.breakpoints,
@@ -137,6 +136,8 @@ export default class LR0Viz extends Component {
   render() {
     return (
       <div className='dashboard-card'>
+        {ui.obj.loader.render(this)}
+
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
             <Grid.Column floated='left' width={9} className='viz-heading-left '>
