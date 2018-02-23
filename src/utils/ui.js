@@ -29,8 +29,10 @@ ui.state = {
   }
 };
 
-ui.renderErrors = err => {
-  return !err.response ? null : <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>;
+ui.renderErrors = (err, fallbackStr = 'An error has occurred.') => {
+  return !err.response
+        ? <p>{fallbackStr}</p>
+        : <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>;
 };
 
 ui.obj = {};
@@ -44,6 +46,7 @@ ui.obj.message = {
     ui.message.type = type;
     ui.message.headerContent = headerContent;
     ui.message.mainContent = mainContent;
+    ui.message.visible = true;
 
     comp.setState({ ui });
   },
@@ -71,7 +74,7 @@ ui.obj.message = {
     let opts = {};
     opts[comp.state.ui.message.type] = true;
 
-    return comp.state.ui.message.headerContent !== null ? (
+    return comp.state.ui.message.headerContent !== null && comp.state.ui.message.visible ? (
       <Message {...opts} onDismiss={ui.obj.message.handleDismiss(comp)}>
         <Message.Header>{comp.state.ui.message.headerContent}</Message.Header>
         {comp.state.ui.message.mainContent}
@@ -100,7 +103,7 @@ ui.obj.loader = {
 
   render: (comp, which = 'main') => {
     //inline='centered'
-    return comp.state.ui.loader[which] ? <Dimmer active><Loader /></Dimmer> : null;
+    return comp.state.ui.loader[which] ? <Dimmer active page><Loader /></Dimmer> : null;
   }
 };
 

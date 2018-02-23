@@ -13,9 +13,35 @@ import 'brace/theme/monokai';
 
 const nodeFileContents = `import com.cctutor.app.ast.BaseNode;
 
-public class Node extends BaseNode {
-    public Expression toAst() {
-        return null;
+public class Node extends BaseNode<String, Object> {
+
+    /*
+     * Available variables:
+     *
+     * String value;
+     * BaseNode<String> parent;
+     * ArrayList<BaseNode<String>> children;
+     */
+
+    public Node(String filename, Class<?> classObj) throws Throwable {
+        super(filename, classObj);
+    }
+
+    public Node(String value) {
+        super(value);
+    }
+
+    /*
+     * Implement this
+     */
+    public Object toAst() {
+        if (value.equals("node value 1")) {
+            return null;
+        } else if (value.equals("node value 2")) {
+            return null;
+        } else {
+            return null;
+        }
     }
 }`
 ;
@@ -78,10 +104,35 @@ export default class BuildAst extends Component {
 
       files.push({
         name: this.state.input.newFile,
-        content: ''
+        content: `public class ${this.state.input.newFile.replace(/\.[^/.]+$/, '')} {\n\n}`
       });
 
-      input.newFile = null;
+      input.newFile = '';
+
+      this.setState({ files, input });
+    },
+
+    deleteFileHandler: () => {
+      let { files, input } = this.state;
+
+      if (input.newFile === 'Node.java') {
+        ui.obj.message.show(this, 'negative', 'Error', 'Cannot delete Node.java file.');
+        return;
+      }
+
+      let idx = -1;
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].name === input.newFile) {
+          idx = i;
+          break;
+        }
+      }
+
+      if (idx > -1) {
+        files.splice(idx, 1);
+      }
+
+      input.newFile = '';
 
       this.setState({ files, input });
     },
@@ -93,12 +144,17 @@ export default class BuildAst extends Component {
         .then(res => {
           ui.obj.loader.hide(this);
 
-          const data = {};
-          this.props.windowChangeHandler('typeChecking', data);
+          if (res.data.exit_code !== 0) {
+            ui.obj.message.show(this, 'negative', 'Error', 'An error has occurred.');
+          } else {
+            const data = res.data.output;
+            this.props.windowChangeHandler('typeChecking', data);
+          }
         })
         .catch(err => {
           ui.obj.loader.hide(this);
-          // TODO: handle
+
+          ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
         });
     },
 
@@ -118,7 +174,6 @@ export default class BuildAst extends Component {
         ui.obj.loader.hide(this);
       })
       .catch(err => {
-        console.log(err);
         ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
         ui.obj.loader.hide(this);
       });
@@ -175,6 +230,8 @@ export default class BuildAst extends Component {
         </div>
 
         <div className='dashboard-card-content'>
+          {ui.obj.message.render(this)}
+
           <Grid columns={2}>
             <Grid.Column>
               <Window title='Parse tree' titleColor='blue'>
@@ -183,12 +240,12 @@ export default class BuildAst extends Component {
             </Grid.Column>
 
             <Grid.Column>
-              <Input
-                name='newFile'
-                style={{ marginBottom: 20 }}
-                action={<Button onClick={this.eventHandlers.createFileHandler} >Create</Button>}
-                placeholder='New file...'
-                onChange={this.eventHandlers.handleInputChange} />
+              <Input type='text' placeholder='File...' action style={{ marginBottom: 20 }}>
+                <input name='newFile' value={this.state.input.newFile} onChange={this.eventHandlers.handleInputChange} />
+                <Button onClick={this.eventHandlers.createFileHandler}>Create</Button>
+                <Button onClick={this.eventHandlers.deleteFileHandler}>Delete</Button>
+              </Input>
+
               <Tab panes={filePanes} />
             </Grid.Column>
           </Grid>
