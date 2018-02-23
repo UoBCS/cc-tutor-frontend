@@ -41,6 +41,12 @@ api.logOut = () => {
   return axios.post('logout');
 };
 
+api.teacher = {};
+
+api.teacher.sendClassInvitationEmail = emails => {
+  return axios.post('teachers/send-class-invitation', { emails });
+};
+
 api.regexToNfa = regex => {
   return axios.get(`algorithms/regex2nfa/${regex}`);
 };
