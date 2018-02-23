@@ -14,21 +14,21 @@ import SignUp from './SignUp';
 import VerifyEmail from './VerifyEmail';
 import RegexToNFA from './RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
-import SyntaxAnalysis from './syntax-analysis/SyntaxAnalysis';
-import LL from './syntax-analysis/ll/LL';
-import LL1 from './syntax-analysis/ll1/LL1';
-import LR from './syntax-analysis/lr/LR';
-import LR0 from './syntax-analysis/lr0/LR0';
-import SemanticAnalysis from './semantic-analysis/SemanticAnalysis';
+import SyntaxAnalysis from './syntaxAnalysis/SyntaxAnalysis';
+import LL from './syntaxAnalysis/ll/LL';
+import LL1 from './syntaxAnalysis/ll1/LL1';
+import LR from './syntaxAnalysis/lr/LR';
+import LR0 from './syntaxAnalysis/lr0/LR0';
+import SemanticAnalysis from './semanticAnalysis/SemanticAnalysis';
 import LexicalAnalysis from './lexicalAnalysis/LexicalAnalysis';
 import CekMachine from './cekMachine/CekMachine';
-import CCAssistant from './cc-assistant/CCAssistant';
-import CCAssistantCourse from './cc-assistant/CCAssistantCourse';
-import CCAssistantLesson from './cc-assistant/CCAssistantLesson';
+import CCAssistant from './ccAssistant/CCAssistant';
+import CCAssistantCourse from './ccAssistant/CCAssistantCourse';
+import CCAssistantLesson from './ccAssistant/CCAssistantLesson';
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
-    <Layout>
+    <Layout {...props}>
       <Component {...props} />
     </Layout>
   )} />

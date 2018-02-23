@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Form, Header, Message, Segment, Radio } from 'semantic-ui-react';
 import api from 'api';
-import misc from 'utils/misc';
+import ui from 'utils/ui';
+import clone from 'clone';
 
 class SignUp extends Component {
   state = {
@@ -10,7 +11,7 @@ class SignUp extends Component {
     email: '',
     password: '',
     teacher: false,
-    ui: misc.lazyClone(this.props.uiState)
+    ui: clone(ui.state)
   }
 
   getFormData = () => {
@@ -44,16 +45,16 @@ class SignUp extends Component {
   }
 
   handleSignUpClick = () => {
-    this.props.ui.loader.show(this, 'main');
+    ui.obj.loader.show(this);
 
     api.signUp(this.getFormData())
       .then(res => {
-        this.props.ui.loader.hide(this, 'main');
-        this.props.ui.message.show(this, 'positive', 'You have been successfully signed up.', 'Check your email to activate your account.');
+        ui.obj.loader.hide(this);
+        ui.obj.message.show(this, 'positive', 'You have been successfully signed up.', 'Check your email to activate your account.');
       })
       .catch(err => {
-        this.props.ui.loader.hide(this, 'main');
-        this.props.ui.message.show(this, 'negative', 'An error has occurred.', 'An error has occurred when signing up.');
+        ui.obj.loader.hide(this);
+        ui.obj.message.show(this, 'negative', 'An error has occurred.', 'An error has occurred when signing up.');
       });
 
     this.resetInput();
@@ -62,8 +63,8 @@ class SignUp extends Component {
   render() {
     return (
       <div>
-        {this.props.ui.message.render(this)}
-        {this.props.ui.loader.render(this, 'main')}
+        {ui.obj.message.render(this)}
+        {ui.obj.loader.render(this, 'main')}
 
         <Header as='h2' color='teal' textAlign='center'>
           Sign-up to CC Tutor

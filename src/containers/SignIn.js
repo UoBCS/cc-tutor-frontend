@@ -29,16 +29,17 @@ class SignIn extends Component {
   }
 
   handleSignInClick = () => {
-    ui.obj.loader.show(this, 'main');
+    ui.obj.loader.show(this);
 
     api.signIn(this.getFormData())
       .then(res => {
-        ui.obj.loader.hide(this, 'main');
+        ui.obj.loader.hide(this);
         storage.set('access_token', res.data.access_token);
+        storage.set('user_data', res.data.user_data);
         this.props.history.push('/dashboard');
       })
       .catch(err => {
-        ui.obj.loader.hide(this, 'main');
+        ui.obj.loader.hide(this);
         ui.obj.message.show(this, 'negative', 'An error has occurred.', err.response.data.errors[0].detail);
       });
   }
@@ -47,7 +48,7 @@ class SignIn extends Component {
     return (
       <div>
         {ui.obj.message.render(this)}
-        {ui.obj.loader.render(this, 'main')}
+        {ui.obj.loader.render(this)}
 
         <Header as='h2' color='teal' textAlign='center'>
           Log-in to your account

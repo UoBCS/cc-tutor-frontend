@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
-import InputData from 'containers/syntax-analysis/InputData';
+import InputData from 'containers/syntaxAnalysis/InputData';
 import BuildAst from './BuildAst';
 import TypeChecking from './TypeChecking';
 

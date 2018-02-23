@@ -3,9 +3,19 @@ import axios from 'axios';
 const api = {};
 
 axios.defaults.baseURL = 'http://cc-tutor.backend';
+
 if (localStorage.getItem('access_token')) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access_token').replace(/"/g, '');
 }
+
+api.updateAuthToken = () => {
+  if (localStorage.getItem('access_token')) {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access_token').replace(/"/g, '');
+    return true;
+  }
+
+  return false;
+};
 
 api.signUp = data => {
   return axios.post('register', data);

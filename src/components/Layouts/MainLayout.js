@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Header, Grid, Icon, Menu } from 'semantic-ui-react';
+import auth from 'utils/auth';
+import api from 'api';
 import './MainLayout.css';
 
 export default class MainLayout extends Component {
   state = {
     activeItem: 'dashboard',
-    sidebarClosed: false
+    sidebarClosed: false,
+    user: null
   }
 
   handleItemClick = (e, { name }) => {
@@ -16,6 +19,18 @@ export default class MainLayout extends Component {
   eventHandlers = {
     toggleSidebarCloseHandler: () => {
       this.setState({ sidebarClosed: !this.state.sidebarClosed });
+    }
+  }
+
+  componentWillMount() {
+    if (!api.updateAuthToken()) {
+      this.props.history.push('/sign-in');
+    }
+  }
+
+  componentDidUpdate() {
+    if (!api.updateAuthToken()) {
+      this.props.history.push('/sign-in');
     }
   }
 
@@ -33,7 +48,7 @@ export default class MainLayout extends Component {
         }}>
           <Icon name='lab'/>
           <Header.Content>
-            CC Tutor
+            <Link as='a' to='/' style={{ color: '#62717E' }}>CC Tutor</Link>
           </Header.Content>
         </Header>
 
