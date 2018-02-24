@@ -37,6 +37,10 @@ export default class Assignments extends Component {
   eventHandlers = {
     createAssignment: () => {
       this.props.history.push('/dashboard/assignments/create');
+    },
+
+    viewAssignment: id => () => {
+      this.props.history.push(`/dashboard/assignments/${id}`);
     }
   }
 
@@ -57,10 +61,17 @@ export default class Assignments extends Component {
           <Choose.Otherwise>
             <Card.Group>
               <For of={this.state.assignments} render={(assignment, index) => (
-                <Card>
-                  <Card.Header content={assignment.title} />
-                  <Card.Meta content={`issued by ${assignment.teacher.name}`} />
-                  <Card.Description content={assignment.description} />
+                <Card key={index}>
+                  <Card.Content>
+                    <Card.Header content={assignment.title} />
+                    <Card.Meta content={`issued by ${assignment.teacher.name}`} />
+                    <Card.Description content={assignment.description} />
+                  </Card.Content>
+                  <Card.Content extra>
+                    <div className='ui'>
+                      <Button basic color='blue' onClick={this.eventHandlers.viewAssignment(assignment.id)}>View</Button>
+                    </div>
+                  </Card.Content>
                 </Card>
               )}/>
             </Card.Group>

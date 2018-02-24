@@ -25,6 +25,7 @@ import LexicalAnalysis from './lexicalAnalysis/LexicalAnalysis';
 import CekMachine from './cekMachine/CekMachine';
 import Assignments from './assignments/Assignments';
 import CreateAssignment from './assignments/CreateAssignment';
+import Assignment from './assignments/Assignment';
 import CCAssistant from './ccAssistant/CCAssistant';
 import CCAssistantCourse from './ccAssistant/CCAssistantCourse';
 import CCAssistantLesson from './ccAssistant/CCAssistantLesson';
@@ -63,6 +64,7 @@ class App extends Component {
 
           <AppRoute exact path="/dashboard/assignments" layout={MainLayout} component={Assignments} />
           <AppRoute exact path="/dashboard/assignments/create" layout={MainLayout} component={CreateAssignment} />
+          <AppRoute exact path="/dashboard/assignments/:id" layout={MainLayout} component={Assignment} />
 
           <AppRoute exact path="/cc-assistant" layout={EmptyLayout} component={CCAssistant} />
           <AppRoute exact path="/cc-assistant/courses/:id" layout={EmptyLayout} component={CCAssistantCourse} />

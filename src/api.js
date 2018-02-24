@@ -71,6 +71,10 @@ api.assignments.create = data => {
   return axios.post('assignments', data);
 };
 
+api.assignments.get = id => {
+  return axios.get(`assignments/${id}`);
+};
+
 api.regexToNfa = regex => {
   return axios.get(`algorithms/regex2nfa/${regex}`);
 };
