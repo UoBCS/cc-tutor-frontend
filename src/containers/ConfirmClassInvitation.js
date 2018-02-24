@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { Container, Header } from 'semantic-ui-react';
 import api from 'api';
 
-export default class VerifyEmail extends Component {
+export default class ConfirmClassInvitation extends Component {
   componentWillMount() {
-    api.verifyEmail(this.props.match.params.token)
+    api.confirmClassInvitation(this.props.match.params.token)
       .then(res => {
         console.log(res.data);
       })
@@ -19,12 +19,12 @@ export default class VerifyEmail extends Component {
       <Container>
         <Header
           as='h1'
-          content='Welcome to CC Tutor'
+          content='You have successfully been registered to the class'
           style={{ fontSize: '4em', fontWeight: 'normal', marginTop: '1.3em' }}
         />
 
         <Header as='h2'>
-          Your email has been verified. Now you can <Link to='/sign-in'>sign in</Link>.
+          Head over to the <Link to='/dashboard'>CC Tutor dashboard</Link>.
         </Header>
       </Container>
     );

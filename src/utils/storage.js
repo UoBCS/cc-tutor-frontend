@@ -1,7 +1,9 @@
 const storage = {};
 
 storage.get = key => {
-  return JSON.parse(localStorage.getItem(key));
+  return localStorage.getItem(key) === 'undefined'
+    ? undefined
+    : JSON.parse(localStorage.getItem(key));
 };
 
 storage.set = (key, val) => {

@@ -43,8 +43,32 @@ api.logOut = () => {
 
 api.teacher = {};
 
+api.teacher.getStudents = () => {
+  return axios.get('students');
+};
+
 api.teacher.sendClassInvitationEmail = emails => {
   return axios.post('teachers/send-class-invitation', { emails });
+};
+
+api.student = {};
+
+api.student.getTeachers = () => {
+  return axios.get('teachers');
+};
+
+api.student.confirmClassInvitation = token => {
+  return axios.get(`students/class-invitation/${token}`);
+};
+
+api.assignments = {};
+
+api.assignments.getAll = () => {
+  return axios.get('assignments?includes[]=teacher');
+};
+
+api.assignments.create = data => {
+  return axios.post('assignments', data);
 };
 
 api.regexToNfa = regex => {

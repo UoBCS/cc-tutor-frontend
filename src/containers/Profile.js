@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Header, Button, List, Icon, Input } from 'semantic-ui-react';
+import { Card, Grid, Header, Button, List, Icon, Input } from 'semantic-ui-react';
 import { For, If } from 'react-extras';
 import auth from 'utils/auth';
 import ui from 'utils/ui';
@@ -10,30 +10,46 @@ export default class Profile extends Component {
 
   state = {
     user: null,
+    users: [],
     emailFields: [''],
     ui: clone(ui.state)
   }
 
   componentWillMount() {
     ui.obj.loader.show(this);
-    this.initializers.getData();
+    this.initializers.getData(
+      this.initializers.getUsersData
+    );
   }
 
   initializers = {
-    getData: () => {
+    getData: cb => {
       auth.getUserData()
         .then(res => {
-          ui.obj.loader.hide(this);
-
           this.setState({
             user: res.data
-          }, () => {
-            ui.obj.loader.hide(this);
-          });
+          }, cb);
         })
         .catch(err => {
           ui.obj.loader.hide(this);
-          console.log(err);
+          ui.obj.message.showError('An error has occurred when retrieving user data.');
+        });
+    },
+
+    getUsersData: () => {
+      const isTeacher = this.state.user.teacher;
+      const namespace = isTeacher ? 'teacher' : 'student';
+      const method = isTeacher ? 'getStudents' : 'getTeachers';
+
+      api[namespace][method]()
+        .then(res => {
+          ui.obj.loader.hide(this);
+
+          this.setState({ users: res.data });
+        })
+        .catch(err => {
+          ui.obj.loader.hide(this);
+          ui.obj.message.showError(`An error has occurred when retrieving ${isTeacher ? 'students' : 'teachers'}.`);
         });
     }
   }
@@ -80,38 +96,55 @@ export default class Profile extends Component {
         return null;
       }
 
+      const isTeacher = user.teacher === 1;
+
       return (
-        <List>
-          <List.Item content={user.email} />
+        <div>
+          <List>
+            <List.Item content={user.email} />
 
-          <If condition={user.teacher === 1}>
-            <List.Item>
-              Class invitation token:
-              <Button onClick={this.eventHandlers.openSendEmailModal}>{user.class_invitation_token}</Button>
-            </List.Item>
+            <If condition={isTeacher}>
+              <List.Item>
+                Class invitation token: {user.class_invitation_token}
+              </List.Item>
 
-            <For of={this.state.emailFields} render={(email, index) => (
-              <Input
-                key={index}
-                value={email}
-                style={{ margin: '5px 10px 5px 0px' }}
-                placeholder='Email...'
-                onChange={this.eventHandlers.changeEmailField(index)}
-                action={<Button icon='close' />} />
+              <For of={this.state.emailFields} render={(email, index) => (
+                <Input
+                  key={index}
+                  value={email}
+                  style={{ margin: '5px 10px 5px 0px' }}
+                  placeholder='Email...'
+                  onChange={this.eventHandlers.changeEmailField(index)}
+                  action={<Button icon='close' />} />
+              )}/>
+
+              <Button basic onClick={this.eventHandlers.addEmailField}>
+                Add
+              </Button>
+
+              <Button
+                primary
+                icon='send'
+                labelPosition='right'
+                content='Send'
+                onClick={this.eventHandlers.sendInvitationEmail} />
+            </If>
+          </List>
+
+          <Header as='h3'>{isTeacher ? 'Students' : 'Teachers'}</Header>
+
+          <Card.Group>
+            <For of={this.state.users} render={(user, index) => (
+              <Card key={index}>
+                <Card.Content>
+                  <Card.Header>{user.name}</Card.Header>
+                  <Card.Meta>{user.teacher ? 'Teacher' : 'Student'}</Card.Meta>
+                  <Card.Description>Email: {user.email}</Card.Description>
+                </Card.Content>
+              </Card>
             )}/>
-
-            <Button basic onClick={this.eventHandlers.addEmailField}>
-              Add
-            </Button>
-
-            <Button
-              primary
-              icon='send'
-              labelPosition='right'
-              content='Send'
-              onClick={this.eventHandlers.sendInvitationEmail} />
-          </If>
-        </List>
+          </Card.Group>
+        </div>
       );
     }
   }
@@ -132,6 +165,8 @@ export default class Profile extends Component {
         </div>
 
         <div className='dashboard-card-content'>
+          {ui.obj.message.render(this)}
+
           {this.renderers.userContent(user)}
         </div>
       </div>

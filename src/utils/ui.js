@@ -30,9 +30,9 @@ ui.state = {
 };
 
 ui.renderErrors = (err, fallbackStr = 'An error has occurred.') => {
-  return !err.response
-        ? <p>{fallbackStr}</p>
-        : <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>;
+  return err.response && err.response.data && err.response.data.errors
+        ? <ul>{err.response.data.errors.map((e, i) => <li key={i}>{e.detail}</li>)}</ul>
+        : <p>{fallbackStr}</p>;
 };
 
 ui.obj = {};
@@ -49,6 +49,14 @@ ui.obj.message = {
     ui.message.visible = true;
 
     comp.setState({ ui });
+  },
+
+  showError: (comp, mainContent) => {
+    ui.obj.message.show(comp, 'negative', 'Error', mainContent);
+  },
+
+  showInfo: (comp, mainContent) => {
+    ui.obj.message.show(comp, 'info', 'Info', mainContent);
   },
 
   handleDismiss: comp => {

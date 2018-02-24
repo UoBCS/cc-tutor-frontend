@@ -26,12 +26,16 @@ export default class MainLayout extends Component {
     if (!api.updateAuthToken()) {
       this.props.history.push('/sign-in');
     }
+
+    auth.updateUserData();
   }
 
   componentDidUpdate() {
     if (!api.updateAuthToken()) {
       this.props.history.push('/sign-in');
     }
+
+    auth.updateUserData();
   }
 
   render() {
@@ -96,7 +100,7 @@ export default class MainLayout extends Component {
                   CC Assistant
                 </Menu.Item>
 
-                <Menu.Item name='assignments' active={activeItem === 'assignments'} onClick={this.handleItemClick}>
+                <Menu.Item name='assignments' active={activeItem === 'assignments'} onClick={this.handleItemClick} as={Link} to={`${pref}/assignments`}>
                   Assignments
                 </Menu.Item>
 

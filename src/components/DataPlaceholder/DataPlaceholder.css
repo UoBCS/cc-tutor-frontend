@@ -1,0 +1,18 @@
+.DataPlaceholder {
+  text-align: center;
+  margin: 45px auto;
+  width: 250px;
+}
+
+.DataPlaceholder_title {
+
+}
+
+.DataPlaceholder_subtitle {
+  color: #747474;
+  font-size: 1.1em;
+}
+
+.DataPlaceholder_action {
+  margin-top: 24px;
+}
