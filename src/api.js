@@ -67,12 +67,16 @@ api.assignments.getAll = () => {
   return axios.get('assignments?includes[]=teacher');
 };
 
+api.assignments.get = id => {
+  return axios.get(`assignments/${id}`);
+};
+
 api.assignments.create = data => {
   return axios.post('assignments', data);
 };
 
-api.assignments.get = id => {
-  return axios.get(`assignments/${id}`);
+api.assignments.delete = id => {
+  return axios.delete(`assignments/${id}`);
 };
 
 api.regexToNfa = regex => {

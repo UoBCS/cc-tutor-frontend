@@ -5,7 +5,7 @@ import api from 'api';
 
 export default class ConfirmClassInvitation extends Component {
   componentWillMount() {
-    api.confirmClassInvitation(this.props.match.params.token)
+    api.student.confirmClassInvitation(this.props.match.params.token)
       .then(res => {
         console.log(res.data);
       })

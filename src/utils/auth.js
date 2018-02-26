@@ -15,12 +15,16 @@ auth.getUserData = () => {
     : new Promise((resolve, _) => resolve(userData));
 };
 
-auth.updateUserData = () => {
+auth.updateUserData = (cb = null) => {
   auth.getUserData()
     .then(res => {
       storage.set('user_data', res.data ? res.data : res);
+
+      if (cb !== null) {
+        cb();
+      }
     })
-    .catch(err => {});
+    .catch(cb);
 };
 
 export default auth;

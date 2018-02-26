@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Card, Grid, Header, Button, List, Icon, Input } from 'semantic-ui-react';
-import { For, If } from 'react-extras';
+import { Choose, For, If } from 'react-extras';
+import DataPlaceholder from 'components/DataPlaceholder/DataPlaceholder';
 import auth from 'utils/auth';
+import storage from 'utils/storage';
 import ui from 'utils/ui';
 import api from 'api';
 import clone from 'clone';
@@ -24,19 +26,20 @@ export default class Profile extends Component {
 
   initializers = {
     getData: cb => {
-      auth.getUserData()
-        .then(res => {
-          this.setState({
-            user: res.data
-          }, cb);
-        })
-        .catch(err => {
-          ui.obj.loader.hide(this);
-          ui.obj.message.showError('An error has occurred when retrieving user data.');
-        });
+      auth.updateUserData(() => {
+        ui.obj.loader.hide(this);
+        this.setState({
+          user: storage.get('user_data')
+        }, cb);
+      });
     },
 
-    getUsersData: () => {
+    getUsersData: err => {
+      if (err !== undefined) {
+
+        return;
+      }
+
       const isTeacher = this.state.user.teacher;
       const namespace = isTeacher ? 'teacher' : 'student';
       const method = isTeacher ? 'getStudents' : 'getTeachers';
@@ -131,19 +134,33 @@ export default class Profile extends Component {
             </If>
           </List>
 
-          <Header as='h3'>{isTeacher ? 'Students' : 'Teachers'}</Header>
+          <Choose>
+            <Choose.When condition={this.state.users.length === 0}>
+              <DataPlaceholder
+                title={user.teacher ? 'No students' : 'No teachers'}
+                subtitle={user.teacher
+                    ? 'Send class invitation to your students using the above form'
+                    : 'Check your email for invitations from your lecturer'}
+                icon='user'
+              />
+            </Choose.When>
 
-          <Card.Group>
-            <For of={this.state.users} render={(user, index) => (
-              <Card key={index}>
-                <Card.Content>
-                  <Card.Header>{user.name}</Card.Header>
-                  <Card.Meta>{user.teacher ? 'Teacher' : 'Student'}</Card.Meta>
-                  <Card.Description>Email: {user.email}</Card.Description>
-                </Card.Content>
-              </Card>
-            )}/>
-          </Card.Group>
+            <Choose.Otherwise>
+              <Header as='h3'>{isTeacher ? 'Students' : 'Teachers'}</Header>
+
+              <Card.Group>
+                <For of={this.state.users} render={(user, index) => (
+                  <Card key={index}>
+                    <Card.Content>
+                      <Card.Header>{user.name}</Card.Header>
+                      <Card.Meta>{user.teacher ? 'Teacher' : 'Student'}</Card.Meta>
+                      <Card.Description>Email: {user.email}</Card.Description>
+                    </Card.Content>
+                  </Card>
+                )}/>
+              </Card.Group>
+            </Choose.Otherwise>
+          </Choose>
         </div>
       );
     }
@@ -160,7 +177,7 @@ export default class Profile extends Component {
           <Header
             as='h1'
             className='light-heading'>
-            {user === null ? null : `${user.name} - ${user.teacher ? 'Teacher' : 'Student'}`}
+            {!user ? null : `${user.name} - ${user.teacher ? 'Teacher' : 'Student'}`}
           </Header>
         </div>
 

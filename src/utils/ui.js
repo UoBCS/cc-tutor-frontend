@@ -55,6 +55,10 @@ ui.obj.message = {
     ui.obj.message.show(comp, 'negative', 'Error', mainContent);
   },
 
+  showErrorFromData: (comp, err) => {
+    ui.obj.message.showError(comp, ui.renderErrors(err));
+  },
+
   showInfo: (comp, mainContent) => {
     ui.obj.message.show(comp, 'info', 'Info', mainContent);
   },

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Card, Grid, Header, Button, List, Icon, Input } from 'semantic-ui-react';
-import { Choose, For } from 'react-extras';
+import { Choose, For, If } from 'react-extras';
 import DataPlaceholder from 'components/DataPlaceholder/DataPlaceholder';
 import clone from 'clone';
 import api from 'api';
@@ -26,10 +26,7 @@ export default class Assignments extends Component {
         })
         .catch(err => {
           ui.obj.loader.hide(this);
-          ui.obj.message.showError(
-            this,
-            ui.renderErrors(err, 'An error has occurred while retrieving assignments.')
-          );
+          ui.obj.message.showErrorFromData(this, err);
         });
     }
   }
@@ -41,6 +38,21 @@ export default class Assignments extends Component {
 
     viewAssignment: id => () => {
       this.props.history.push(`/dashboard/assignments/${id}`);
+    },
+
+    deleteAssignment: (id, index) => () => {
+      ui.obj.loader.show(this);
+
+      api.assignments.delete(id)
+        .then(res => {
+          ui.obj.loader.hide(this);
+          ui.obj.message.showInfo(this, 'Assignment deleted successfully');
+          this.setState({ assignments: this.state.assignments.filter((_, i) => i !== index) });
+        })
+        .catch(err => {
+          ui.obj.loader.hide(this);
+          ui.obj.message.showErrorFromData(this, err);
+        })
     }
   }
 
@@ -68,8 +80,22 @@ export default class Assignments extends Component {
                     <Card.Description content={assignment.description} />
                   </Card.Content>
                   <Card.Content extra>
-                    <div className='ui'>
-                      <Button basic color='blue' onClick={this.eventHandlers.viewAssignment(assignment.id)}>View</Button>
+                    <div className='ui two buttons'>
+                      <Button
+                        basic
+                        color='blue'
+                        onClick={this.eventHandlers.viewAssignment(user.teacher ? assignment.id : assignment.assignment_id)}>
+                        View
+                      </Button>
+
+                      <If condition={user.teacher === 1}>
+                        <Button
+                          basic
+                          color='red'
+                          onClick={this.eventHandlers.deleteAssignment(user.teacher ? assignment.id : assignment.assignment_id, index)}>
+                          Delete
+                        </Button>
+                      </If>
                     </div>
                   </Card.Content>
                 </Card>
@@ -77,6 +103,20 @@ export default class Assignments extends Component {
             </Card.Group>
           </Choose.Otherwise>
         </Choose>
+      );
+    },
+
+    footer: () => {
+      return (
+        <div>
+          <Button animated primary floated='right' onClick={this.eventHandlers.createAssignment}>
+            <Button.Content visible>New</Button.Content>
+            <Button.Content hidden>
+              <Icon name='add' />
+            </Button.Content>
+          </Button>
+          <br style={{ clear: 'both' }}/>
+        </div>
       );
     }
   }
@@ -103,6 +143,12 @@ export default class Assignments extends Component {
 
           {this.renderers.content()}
         </div>
+
+        <If condition={this.state.user.teacher === 1}>
+          <div className='dashboard-card-footer'>
+            {this.renderers.footer()}
+          </div>
+        </If>
       </div>
     );
   }

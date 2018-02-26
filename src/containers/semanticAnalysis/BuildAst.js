@@ -215,7 +215,7 @@ export default class BuildAst extends Component {
                 Create AST
               </Header>
               <p>
-                Blah blah blah
+                Create the AST classes/types for the parse tree.
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
