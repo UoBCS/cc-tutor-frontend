@@ -23,7 +23,8 @@
     "react-tag-input": "^4.7.2",
     "semantic-ui-css": "^2.2.12",
     "semantic-ui-react": "^0.77.1",
-    "shortid": "^2.2.8"
+    "shortid": "^2.2.8",
+    "vis": "^4.21.0"
   },
   "scripts": {
     "start": "NODE_PATH=src react-scripts start",

@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { Button, Form, Header, Icon, Tab, Grid } from 'semantic-ui-react';
 import { If } from 'react-extras';
 import DateTime from 'react-datetime';
-import Editor from 'components/Editor/Editor';
+import JavaEditor from 'components/JavaEditor/JavaEditor';
 import clone from 'clone';
 import api from 'api';
 import ui from 'utils/ui';
+import strings from 'utils/strings';
 
 import 'components/ReactDateTime/react-datetime.css';
 
@@ -136,7 +137,9 @@ export default class CreateAssignment extends Component {
       return (
         <div style={{ marginTop: 30 }}>
           <Header as='h4'>Test files</Header>
-          <Editor ref='editor' />
+          <JavaEditor
+            ref='editor'
+            initialContent={strings.javaEditorInitialContent}/>
         </div>
       );
     },

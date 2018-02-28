@@ -79,6 +79,10 @@ api.assignments.delete = id => {
   return axios.delete(`assignments/${id}`);
 };
 
+api.assignments.update = (id, data) => {
+  return axios.patch(`assignments/${id}`, data);
+};
+
 api.regexToNfa = regex => {
   return axios.get(`algorithms/regex2nfa/${regex}`);
 };

@@ -6,10 +6,10 @@ import AceEditor from 'react-ace';
 import 'brace/mode/java';
 import 'brace/theme/monokai';
 
-export default class Editor extends Component {
+export default class JavaEditor extends Component {
 
   state = {
-    files: [],
+    files: this.props.files ? this.props.files : [],
 
     input: {
       file: ''
@@ -26,10 +26,13 @@ export default class Editor extends Component {
 
     createFile: () => {
       let { files, input } = this.state;
+      let className = this.state.input.file.replace(/\.[^/.]+$/, '');
 
       files.push({
         name: this.state.input.file,
-        content: `public class ${this.state.input.file.replace(/\.[^/.]+$/, '')} {\n\n}`
+        content: this.props.initialContent
+          ? this.props.initialContent.replace('|{className}|', className)
+          : `public class ${className} {\n\n}`
       });
 
       input.file = '';
