@@ -37,7 +37,7 @@ export default class Assignment extends Component {
   }
 
   eventHandlers = {
-    submitAssignment: () => {
+    saveAssignment: () => {
       const { user, assignment } = this.state;
 
       const data = {
@@ -48,10 +48,24 @@ export default class Assignment extends Component {
 
       ui.obj.loader.show(this);
 
-      api.assignments.update(user.teacher ? assignment.id : assignment.assignment_id, { assignment: data })
+      api.assignments.update(this.props.match.params.id, { assignment: data })
         .then(res => {
           ui.obj.loader.hide(this);
-          console.log(res);
+          ui.obj.message.showInfo(this, 'The assignment has been updated');
+        })
+        .catch(err => {
+          ui.obj.loader.hide(this);
+          ui.obj.message.showErrorFromData(this, err);
+        });
+    },
+
+    submitAssignment: () => {
+      ui.obj.loader.show(this);
+
+      api.assignments.submit(this.props.match.params.id)
+        .then(res => {
+          ui.obj.loader.hide(this);
+          ui.obj.message.showInfo(this, 'The assignment has been submitted');
         })
         .catch(err => {
           ui.obj.loader.hide(this);
@@ -60,7 +74,7 @@ export default class Assignment extends Component {
     },
 
     viewSubmissions: () => {
-
+      this.props.history.push(`/dashboard/assignments/${this.props.match.params.id}/submissions`);
     },
 
     back: () => {
@@ -117,8 +131,8 @@ export default class Assignment extends Component {
           </Button.Content>
         </Button>
 
-        <Button animated primary floated='right' onClick={this.eventHandlers.submitAssignment}>
-          <Button.Content visible>Submit</Button.Content>
+        <Button animated primary floated='right' onClick={this.eventHandlers.saveAssignment}>
+          <Button.Content visible>Save</Button.Content>
           <Button.Content hidden>
             <Icon name='upload' />
           </Button.Content>
@@ -129,6 +143,13 @@ export default class Assignment extends Component {
             View submissions
           </Button>
         </If>
+
+        <If condition={this.state.user.teacher === 0}>
+          <Button basic color='blue' floated='right' onClick={this.eventHandlers.submitAssignment}>
+            Submit
+          </Button>
+        </If>
+
         <br style={{ clear: 'both' }}/>
       </div>
     )

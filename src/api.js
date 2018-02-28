@@ -83,6 +83,18 @@ api.assignments.update = (id, data) => {
   return axios.patch(`assignments/${id}`, data);
 };
 
+api.assignments.getSubmissions = id => {
+  return axios.get(`assignments/${id}/submissions`);
+};
+
+api.assignments.submit = id => {
+  return axios.post(`assignments/${id}/submit`);
+};
+
+api.assignments.runTests = (assignmentId, studentId) => {
+  return axios.post(`assignments/${assignmentId}/students/${studentId}/run-tests`);
+};
+
 api.regexToNfa = regex => {
   return axios.get(`algorithms/regex2nfa/${regex}`);
 };
