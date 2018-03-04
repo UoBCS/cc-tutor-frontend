@@ -1,33 +1,50 @@
 import React, { Component } from 'react';
-import { Button, Header, Icon } from 'semantic-ui-react';
-import { If } from 'react-extras';
+import { Button, Header, Icon, Form, Grid, Segment, Label, List } from 'semantic-ui-react';
+import { If, For } from 'react-extras';
+import Window from 'components/Window/Window';
+import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
+import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import JavaEditor from 'components/JavaEditor/JavaEditor';
 import clone from 'clone';
 import api from 'api';
 import ui from 'utils/ui';
+import breakpoints from 'utils/breakpoints';
 import storage from 'utils/storage';
 import strings from 'utils/strings';
+import automata from 'utils/automata';
 
 export default class Assignment extends Component {
 
   state = {
     assignment: null,
+
     contents: null,
+
     user: storage.get('user_data'),
+
     ui: clone(ui.state)
   }
 
   initializers = {
-    getData: () => {
+    getData: cb => {
+      const { user } = this.state;
+
       ui.obj.loader.show(this);
 
       api.assignments.get(this.props.match.params.id)
         .then(res => {
           ui.obj.loader.hide(this);
+
           this.setState({
             assignment: res.data.assignment,
-            contents: res.data.contents
-          });
+            contents: res.data.assignment.type === 'impl_general'
+              ? res.data.contents
+              : {
+                input: res.data.contents.input,
+                data: res.data.contents.breakpoints ? res.data.contents.breakpoints : [],
+                index: -1
+              }
+          }, cb);
         })
         .catch(err => {
           ui.obj.loader.hide(this);
@@ -43,7 +60,7 @@ export default class Assignment extends Component {
       const data = {
         extra: assignment.type === 'impl_general'
           ? this.refs.editor.getFiles()
-          : null // TODO: add other types
+          : this.state.contents.data
       };
 
       ui.obj.loader.show(this);
@@ -82,10 +99,10 @@ export default class Assignment extends Component {
     }
   }
 
-  renderers = {
+  renderers = Object.assign({}, {
     content: () => {
       let content = null;
-      let { assignment } = this.state;
+      let { assignment, user } = this.state;
 
       if (assignment === null) {
         return null;
@@ -93,16 +110,22 @@ export default class Assignment extends Component {
 
       switch (assignment.type) {
         case 'impl_general':
-          content = this.renderers.implGeneralContent()
+          content = this.renderers.implGeneralContent();
+          break;
+
+        case 'nfa_to_dfa':
+          content = this.renderers.nfaToDfaContent();
           break;
       }
 
       return (
         <div>
+          <Header as='h3'>Description</Header>
           <p>
-            {assignment.description} | {assignment.due_date}
+            {assignment.description}
           </p>
 
+          <Header as='h3'>Assignment content</Header>
           {content}
         </div>
       );
@@ -119,6 +142,35 @@ export default class Assignment extends Component {
           ref='editor'
           files={this.state.contents}
           initialContent={initialContent} />
+      );
+    },
+
+    nfaToDfaContent: () => {
+      return (
+        <div>
+          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+
+          <Grid columns={2}>
+            <Grid.Column>
+              <Window title='Non-deterministic finite automaton' titleColor='blue'>
+                <div id='nfa-viz' style={{ height: 500 }}></div>
+              </Window>
+            </Grid.Column>
+            <Grid.Column>
+              <Window title='Deterministic finite automaton' titleColor='blue'>
+                <div id='dfa-viz' style={{ height: 500 }}></div>
+              </Window>
+            </Grid.Column>
+          </Grid>
+
+          <VisualizationControl
+            active
+            breakpoint={this.state.contents}
+            visualizeBreakpointForward={breakpoints.eventHandlers.visualizeForward.bind(this)}
+            visualizeBreakpointBackward={breakpoints.eventHandlers.visualizeBackward.bind(this)}
+            addBreakpointHandler={breakpoints.eventHandlers.showActionChooser.bind(this)}
+            updateState={this.helpers.updateState}/>
+        </div>
       );
     },
 
@@ -153,10 +205,31 @@ export default class Assignment extends Component {
         <br style={{ clear: 'both' }}/>
       </div>
     )
+  },
+  Object.keys(breakpoints.renderers).reduce((prev, curr) => {
+    prev[curr] = breakpoints.renderers[curr].bind(this);
+    return prev;
+  }, {}))
+
+  helpers = {
+    updateState: (obj, cb) => {
+      this.setState(obj, cb);
+    }
   }
 
-  componentWillMount() {
-    this.initializers.getData();
+  componentDidMount() {
+    this.initializers.getData(() => {
+      const { assignment, contents } = this.state;
+
+      breakpoints.initializers.setAlgorithm(assignment.type);
+
+      if (assignment.type === 'nfa_to_dfa') {
+        this.setState({
+          nfa: automata.visDataFormat('nfa-viz', contents.input),
+          dfa: automata.createEmpty('dfa-viz')
+        });
+      }
+    });
   }
 
   render() {
@@ -166,13 +239,20 @@ export default class Assignment extends Component {
       <div className='dashboard-card'>
         {ui.obj.loader.render(this)}
 
+        {ui.obj.modal.render(this)}
+
         <div className='dashboard-card-header'>
           <Header
-              as='h1'
-              className='light-heading'>
+            as='h1'
+            className='light-heading'>
 
-              {assignment === null ? 'Assignment' : `Assignment: ${assignment.title}`}
-            </Header>
+            {assignment === null ? 'Assignment' : `Assignment: ${assignment.title}`}
+          </Header>
+          {
+            assignment === null
+            ? null
+            : <p style={{ padding: '0px 25px 10px 25px', color: '#676767', fontSize: '0.9em' }}>Due: {assignment.due_date}</p>
+          }
         </div>
 
         <div className='dashboard-card-content'>

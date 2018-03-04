@@ -5,23 +5,12 @@ import './VisualizationControl.css';
 
 export default class VisualizationControl extends Component {
 
-  state = {
-    forwardBtnActive: true,
-    backwardBtnActive: false
-  }
-
   breakpoint = {
-    getCurrent: () => {
-      return this.props.breakpoint.data[this.props.breakpoint.index];
-    },
+    getCurrent: () => this.props.breakpoint.data[this.props.breakpoint.index],
 
-    getNext: () => {
-      return this.props.breakpoint.data[this.props.breakpoint.index + 1];
-    },
+    getNext: () => this.props.breakpoint.data[this.props.breakpoint.index + 1],
 
-    getIndex: () => {
-      return this.props.breakpoint.index;
-    },
+    getIndex: () => this.props.breakpoint.index,
 
     updateIndex: (direction = 1, cb = null) => {
       let breakpointsObj = this.props.breakpoint;
@@ -39,11 +28,6 @@ export default class VisualizationControl extends Component {
         if (breakpoint !== undefined) {
           this.props.visualizeBreakpointForward(breakpoint);
         }
-
-        this.setState({
-          forwardBtnActive: this.breakpoint.getNext() !== undefined,
-          backwardBtnActive: this.breakpoint.getIndex() >= 0
-        });
       });
     },
 
@@ -54,11 +38,6 @@ export default class VisualizationControl extends Component {
         if (breakpoint !== undefined) {
           this.props.visualizeBreakpointBackward(breakpoint);
         }
-
-        this.setState({
-          forwardBtnActive: breakpoint !== undefined,
-          backwardBtnActive: this.breakpoint.getIndex() >= 0
-        });
       });
     },
 
@@ -75,6 +54,13 @@ export default class VisualizationControl extends Component {
         disabled={!this.props.active}
         onClick={this.props.checkAnswerHandler}/>;
 
+    const addBreakpointBtn = this.props.addBreakpointHandler === undefined ? null :
+      <Button
+        icon='plus'
+        content='Add breakpoint'
+        disabled={!this.props.active}
+        onClick={this.props.addBreakpointHandler}/>
+
     return (
       <div
           className='VisualizationControl text-center'
@@ -84,9 +70,10 @@ export default class VisualizationControl extends Component {
             labelPosition='left'
             icon='left chevron'
             content='Back'
-            disabled={!this.state.backwardBtnActive || !this.props.active}
+            disabled={this.breakpoint.getIndex() < 0 || !this.props.active}
             onClick={this.eventHandlers.handleBackBtnClick}/>
           {checkAnswerBtn}
+          {addBreakpointBtn}
           <Button
             icon='setting'
             content='Settings'
@@ -96,7 +83,7 @@ export default class VisualizationControl extends Component {
             labelPosition='right'
             icon='right chevron'
             content='Forward'
-            disabled={!this.state.forwardBtnActive || !this.props.active}
+            disabled={this.breakpoint.getNext() === undefined || !this.props.active}
             onClick={this.eventHandlers.handleForwardBtnClick}/>
         </Button.Group>
       </div>

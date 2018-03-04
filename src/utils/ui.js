@@ -134,7 +134,7 @@ ui.obj.modal = {
     comp.setState({ ui });
   },
 
-  hide: (comp) => {
+  hide: comp => {
     let ui = comp.state.ui;
     ui.modal.open = false;
 

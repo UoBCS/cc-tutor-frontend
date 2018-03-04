@@ -101,7 +101,7 @@ api.regexToNfa = regex => {
 
 api.nfaToDfa = data => {
   return axios.post('algorithms/nfa2dfa', data);
-}
+};
 
 api.cekMachineRun = content => {
   const data = {
@@ -111,7 +111,7 @@ api.cekMachineRun = content => {
   };
 
   return axios.post(`/algorithms/cek-machine/run`, { cek_machine: data });
-}
+};
 
 api.lexicalAnalysis = data => {
   return axios.post('phases/lexical-analysis', data);

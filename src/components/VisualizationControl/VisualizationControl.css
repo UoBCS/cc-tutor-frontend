@@ -11,6 +11,10 @@
   transform: translate(-50%);
 }
 
+.VisualizationControl[visible="false"] {
+  display: none;
+}
+
 .VisualizationControl_button_group button {
   border-radius: 0 !important;
 }

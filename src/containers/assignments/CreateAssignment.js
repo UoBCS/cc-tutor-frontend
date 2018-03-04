@@ -3,6 +3,7 @@ import { Button, Form, Header, Icon, Tab, Grid } from 'semantic-ui-react';
 import { If } from 'react-extras';
 import DateTime from 'react-datetime';
 import JavaEditor from 'components/JavaEditor/JavaEditor';
+import NfaEditor from 'components/NfaEditor/NfaEditor';
 import clone from 'clone';
 import api from 'api';
 import ui from 'utils/ui';
@@ -23,11 +24,10 @@ export default class CreateAssignment extends Component {
   }
 
   eventHandlers = {
-    inputChange: event => {
-      const target = event.target;
+    inputChange: (_, data) => {
       const { input } = this.state;
 
-      input[target.name] = target.value;
+      input[data.name] = data.value;
 
       this.setState({ input });
     },
@@ -47,11 +47,34 @@ export default class CreateAssignment extends Component {
 
       ui.obj.loader.show(this);
 
-      if (input.type === 'impl_general') {
-        assignment.extra = {};
-        assignment.extra.files = this.refs.editor.getFiles();
-      }
+      assignment.extra = {};
 
+      switch (input.type) {
+        case 'impl_general':
+          assignment.extra.files = this.refs.javaEditor.getFiles();
+          this.apiWrappers.createAssignment(assignment);
+          break;
+
+        case 'regex_to_nfa':
+
+          break;
+
+        case 'nfa_to_dfa':
+          this.refs.nfaEditor.getData(data => {
+            assignment.extra.content = data;
+            this.apiWrappers.createAssignment(assignment);
+          });
+          break;
+      }
+    },
+
+    back: () => {
+      this.props.history.push('/dashboard/assignments');
+    }
+  }
+
+  apiWrappers = {
+    createAssignment: assignment => {
       api.assignments.create({ assignment })
         .then(res => {
           ui.obj.loader.hide(this);
@@ -59,12 +82,8 @@ export default class CreateAssignment extends Component {
         })
         .catch(err => {
           ui.obj.loader.hide(this);
-          ui.obj.message.showError(this, ui.renderErrors(err));
+          ui.obj.message.showErrorFromData(this, err);
         });
-    },
-
-    back: () => {
-      this.props.history.push('/dashboard/assignments');
     }
   }
 
@@ -78,7 +97,7 @@ export default class CreateAssignment extends Component {
             Create assignment
           </Header>
           <p>
-            Create the AST classes/types for the parse tree.
+            Create an assignment of any type.
           </p>
         </Grid.Column>
         <Grid.Column floated='right' width={1}>
@@ -96,6 +115,7 @@ export default class CreateAssignment extends Component {
       const options = [
         {key: 'impl_general', text: 'Implementation', value: 'impl_general'},
         {key: 'regex_to_nfa', text: 'Regular expression to NFA', value: 'regex_to_nfa'},
+        {key: 'nfa_to_dfa', text: 'NFA to DFA', value: 'nfa_to_dfa'},
       ];
 
       const { input } = this.state;
@@ -126,23 +146,36 @@ export default class CreateAssignment extends Component {
 
       switch (this.state.input.type) {
         case 'impl_general':
-          content = this.renderers.editor();
+          content = this.renderers.implGeneralContent();
+          break;
+
+        case 'regex_to_nfa':
+          //content =
+          break;
+
+        case 'nfa_to_dfa':
+          content = this.renderers.nfaToDfaContent();
           break;
       }
 
       return <div style={{ marginTop: 30 }} >{content}</div>;
     },
 
-    editor: () => {
-      return (
-        <div style={{ marginTop: 30 }}>
-          <Header as='h4'>Test files</Header>
-          <JavaEditor
-            ref='editor'
-            initialContent={strings.javaEditorInitialContent}/>
-        </div>
-      );
-    },
+    implGeneralContent: () => (
+      <div style={{ marginTop: 30 }}>
+        <Header as='h4'>Test files</Header>
+        <JavaEditor
+          ref='javaEditor'
+          initialContent={strings.javaEditorInitialContent}/>
+      </div>
+    ),
+
+    nfaToDfaContent: () => (
+      <div>
+        <Header as='h4'>NFA editor</Header>
+        <NfaEditor ref='nfaEditor' />
+      </div>
+    ),
 
     footer: () => (
       <div>

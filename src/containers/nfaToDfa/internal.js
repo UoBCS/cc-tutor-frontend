@@ -8,10 +8,12 @@ internal.forward = {};
 internal.forward.highlightInitialNfaState = function ({data, index}) {
   automata.highlightNodes(this.state.nfa, [data.state.id]);
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: 'Consider the initial NFA state',
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: 'Consider the initial NFA state',
+      breakpoint: data
+    });
+  }
 };
 
 internal.forward.initialStateEpsilonClosure = function ({data, index}) {
@@ -20,10 +22,12 @@ internal.forward.initialStateEpsilonClosure = function ({data, index}) {
   let reachableStates = data.reachable_states.map(s => s.id);
   automata.highlightNodes(this.state.nfa, reachableStates);
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: `ε-closure of NFA state ${data.initial.id}: {${reachableStates.join(', ')}}`,
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `ε-closure of NFA state ${data.initial.id}: {${reachableStates.join(', ')}}`,
+      breakpoint: data
+    });
+  }
 };
 
 internal.forward.initialDfaState = function ({data, index}) {
@@ -41,10 +45,12 @@ internal.forward.initialDfaState = function ({data, index}) {
     title: `Corresponding NFA states: {${nfaStates.join(', ')}}`
   }]);
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: `Initial DFA state ${data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`,
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `Initial DFA state ${data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`,
+      breakpoint: data
+    });
+  }
 };
 
 internal.forward.possibleInputs = function ({data, index}) {
@@ -59,10 +65,12 @@ internal.forward.possibleInputs = function ({data, index}) {
   automata.highlightNodes(this.state.nfa, data.dfa_state_contents);
   automata.highlightEdges(this.state.nfa, edges);
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: `NFA states {${data.dfa_state_contents}} give the possible inputs to follow: {${data.possible_inputs}}`,
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `NFA states {${data.dfa_state_contents}} give the possible inputs to follow: {${data.possible_inputs}}`,
+      breakpoint: data
+    });
+  }
 };
 
 internal.forward.moveStates = function ({data, index}) {
@@ -74,19 +82,23 @@ internal.forward.moveStates = function ({data, index}) {
           ? `no state: there is no '${data.char}' transition`
           : `{${data.connected_states.map(s => s.id).join(', ')}}`}`;
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: `Move action: NFA state ${data.state.id} moves to ${connectedStatesString}`,
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `Move action: NFA state ${data.state.id} moves to ${connectedStatesString}`,
+      breakpoint: data
+    });
+  }
 };
 
 internal.forward.epsilonClosure = function ({ data, index }) {
   automata.highlightNodes(this.state.nfa, data.output.map(s => s.id), automata.highlightOptions.highlightState[1].color.background);
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: `ε-closure of NFA states {${data.input.map(s => s.id).join(', ')}}: {${data.output.map(s => s.id).join(', ')}}`,
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `ε-closure of NFA states {${data.input.map(s => s.id).join(', ')}}: {${data.output.map(s => s.id).join(', ')}}`,
+      breakpoint: data
+    });
+  }
 };
 
 internal.forward.newDfaTransition = function ({ data, index }) {
@@ -99,10 +111,12 @@ internal.forward.newDfaTransition = function ({ data, index }) {
   }]);
   automata.addEdge(this.state.dfa, data.src, data.dest, data.char);
 
-  this.refs.actionsHistory.addOrSelect(index, {
-    title: `New DFA state ${data.dest.id} formed by NFA states {${nfaStates}}`,
-    breakpoint: data
-  });
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `New DFA state ${data.dest.id} formed by NFA states {${nfaStates}}`,
+      breakpoint: data
+    });
+  }
 };
 
 internal.backward = {};

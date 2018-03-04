@@ -20,7 +20,6 @@ export default class AssignmentSubmissions extends Component {
       api.assignments.getSubmissions(this.props.match.params.id)
         .then(res => {
           ui.obj.loader.hide(this);
-          console.log(res.data);
           this.setState({ submissions: res.data });
         })
         .catch(err => {
@@ -31,18 +30,39 @@ export default class AssignmentSubmissions extends Component {
   }
 
   eventHandlers = {
-    runTests: studentId => () => {
+    runTests: (studentId, index) => () => {
       ui.obj.loader.show(this);
 
       api.assignments.runTests(this.props.match.params.id, studentId)
         .then(res => {
           ui.obj.loader.hide(this);
-          console.log(res.data);
+
+          this.setState({
+            submissions: this.state.submissions.map((s, i) => {
+              if (index === i) {
+                s.log = res.data.output;
+              }
+
+              return s;
+            })
+          });
+
+          if (res.data.exit_code) {
+            ui.obj.message.show(this, 'negative', 'Failed tests', 'Some tests have not been passed. Check the log for more details.');
+          } else {
+            ui.obj.message.show(this, 'positive', 'Passed tests', '');
+          }
         })
         .catch(err => {
           ui.obj.loader.hide(this);
           ui.obj.message.showErrorFromData(this, err);
         });
+    },
+
+    viewLog: index => () => {
+      let { log } = this.state.submissions[index];
+      log = log.map((line, i) => <p style={{ lineHeight: 1 }} key={i}>{line}</p>);
+      ui.obj.modal.show(this, 'Tests log', <div style={{ fontFamily: 'monospace' }}>{log}</div>, null, 'large');
     },
 
     back: () => {
@@ -76,12 +96,23 @@ export default class AssignmentSubmissions extends Component {
                     <Card.Meta content={submission.student.email} />
                   </Card.Content>
                   <Card.Content extra>
-                    <Button
-                        basic
-                        color='blue'
-                        onClick={this.eventHandlers.runTests(submission.student.id)}>
-                        Run tests
-                    </Button>
+                    <div className="ui two buttons">
+                      <Button
+                          basic
+                          color='blue'
+                          onClick={this.eventHandlers.runTests(submission.student.id, index)}>
+                          Run tests
+                      </Button>
+
+                      <If condition={submission.log !== undefined}>
+                        <Button
+                            basic
+                            color='blue'
+                            onClick={this.eventHandlers.viewLog(index)}>
+                            View log
+                        </Button>
+                      </If>
+                    </div>
                   </Card.Content>
                 </Card>
               )}/>
@@ -109,6 +140,8 @@ export default class AssignmentSubmissions extends Component {
     return (
       <div className='dashboard-card'>
         {ui.obj.loader.render(this)}
+
+        {ui.obj.modal.render(this)}
 
         <div className='dashboard-card-header'>
           <Header

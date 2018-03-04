@@ -97,7 +97,8 @@ automata.visDataFormat = (container, data, options = {}) => {
       label: '' + n.id,
       color: {background: n.final ? highlightOptions.finalState.color.background : null},
       final: n.final,
-      data: n.data
+      data: n.data,
+      json: n
     }
   }));
 
@@ -329,5 +330,17 @@ automata.isConnected = (fa, n) => {
 
   return connectedNodes.has(n);
 };
+
+automata.search = (fa, n) => {
+  let node = null;
+
+  fa.nodes.forEach(_node => {
+    if (_node.id === n) {
+      node = _node.json;
+    }
+  });
+
+  return node;
+}
 
 export default automata;
