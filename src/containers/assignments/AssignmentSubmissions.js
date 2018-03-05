@@ -62,7 +62,23 @@ export default class AssignmentSubmissions extends Component {
     viewLog: index => () => {
       let { log } = this.state.submissions[index];
       log = log.map((line, i) => <p style={{ lineHeight: 1 }} key={i}>{line}</p>);
-      ui.obj.modal.show(this, 'Tests log', <div style={{ fontFamily: 'monospace' }}>{log}</div>, null, 'large');
+
+      ui.obj.modal.show(this, 'Tests log', (
+        <Choose>
+          <Choose.When condition={log.length === 0}>
+            <DataPlaceholder
+              title='No logs available'
+              subtitle=''
+              icon='book'
+            />
+          </Choose.When>
+          <Choose.Otherwise>
+            <div style={{ fontFamily: 'monospace' }}>
+              {log}
+            </div>
+          </Choose.Otherwise>
+        </Choose>
+      ), null, 'large');
     },
 
     back: () => {
