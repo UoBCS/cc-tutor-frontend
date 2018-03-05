@@ -5,6 +5,7 @@ import AceEditor from 'react-ace';
 
 import 'brace/mode/java';
 import 'brace/theme/monokai';
+import 'brace/ext/language_tools';
 
 export default class JavaEditor extends Component {
 
@@ -88,12 +89,20 @@ export default class JavaEditor extends Component {
             theme='monokai'
             width='auto'
             name={`code_editor_${idx}`}
+            showPrintMargin={true}
+            showGutter={true}
+            highlightActiveLine={true}
             value={file.content}
             onChange={this.eventHandlers.editorChange(file.name)}
-            enableBasicAutocompletion={true}
-            enableLiveAutocompletion={true}
             fontSize={16}
-            editorProps={{$blockScrolling: true}}
+            editorProps={{$blockScrolling: Infinity}}
+            setOptions={{
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true,
+              enableSnippets: true,
+              showLineNumbers: true,
+              tabSize: 4
+            }}
           />
         </Tab.Pane>
       )

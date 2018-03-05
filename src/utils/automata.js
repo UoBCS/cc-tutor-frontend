@@ -1,5 +1,6 @@
 import vis from 'vis';
 import _ from 'lodash';
+import visUtils from './visUtils';
 
 const automata = {};
 
@@ -70,6 +71,8 @@ const highlightOptions = {
 automata.defaultOptions = defaultOptions;
 automata.highlightOptions = highlightOptions;
 automata.EPSILON = 'ε';
+
+automata.visUtils = visUtils;
 
 automata.createEmpty = (container, options = {}) => {
   const nodes = new vis.DataSet();

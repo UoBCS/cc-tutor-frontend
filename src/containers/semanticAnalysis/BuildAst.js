@@ -3,6 +3,7 @@ import { Button, Header, Menu, Grid, Icon, Tab, Input } from 'semantic-ui-react'
 import Window from 'components/Window/Window';
 import tree from 'utils/tree';
 import ui from 'utils/ui';
+import strings from 'utils/strings';
 import api from 'api';
 import clone from 'clone';
 import brace from 'brace';
@@ -11,7 +12,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/java';
 import 'brace/theme/monokai';
 
-const nodeFileContents = `import com.cctutor.app.ast.BaseNode;
+const examplenodeFileContents = `import com.cctutor.app.ast.BaseNode;
 
 public class Node extends BaseNode<String, Object> {
 
@@ -55,12 +56,9 @@ export default class BuildAst extends Component {
       edges: null
     },
 
-    files: [
-      {
-        name: 'Node.java',
-        content: nodeFileContents
-      }
-    ],
+    files: strings.buildAst.exampleFileContents.map((content, index) => (
+      { name: strings.buildAst.exampleFileNames[index], content }
+    )),
 
     input: {
       newFile: ''
@@ -78,32 +76,35 @@ export default class BuildAst extends Component {
   }
 
   eventHandlers = {
-    editorOnChangeHandler: filename => {
-      return newVal => {
-        let files = this.state.files;
+    editorChange: filename => newVal => {
+      let files = this.state.files;
 
-        for (let file of files) {
-          if (file.name === filename) {
-            file.content = newVal;
-          }
+      for (let file of files) {
+        if (file.name === filename) {
+          file.content = newVal;
         }
+      }
 
-        this.setState({ files });
-      };
+      this.setState({ files });
     },
 
-    handleInputChange: event => {
+    inputChange: event => {
       const target = event.target;
       let input = this.state.input;
       input[target.name] = target.value;
       this.setState({ input });
     },
 
-    createFileHandler: () => {
+    createFile: () => {
       let { files, input } = this.state;
 
+      if (input.newFile.trim() === '') {
+        ui.obj.message.showError(this, 'The filename is empty');
+        return;
+      }
+
       files.push({
-        name: this.state.input.newFile,
+        name: input.newFile,
         content: `public class ${this.state.input.newFile.replace(/\.[^/.]+$/, '')} {\n\n}`
       });
 
@@ -112,7 +113,7 @@ export default class BuildAst extends Component {
       this.setState({ files, input });
     },
 
-    deleteFileHandler: () => {
+    deleteFile: () => {
       let { files, input } = this.state;
 
       if (input.newFile === 'Node.java') {
@@ -137,7 +138,7 @@ export default class BuildAst extends Component {
       this.setState({ files, input });
     },
 
-    handleNextClick: () => {
+    nextClick: () => {
       ui.obj.loader.show(this);
 
       api.semanticAnalysis.ast(this.props.data, this.state.files)
@@ -147,7 +148,7 @@ export default class BuildAst extends Component {
           if (res.data.exit_code !== 0) {
             ui.obj.message.show(this, 'negative', 'Error', 'An error has occurred.');
           } else {
-            const data = res.data.output;
+            const data = JSON.parse(res.data.output[0]);
             this.props.windowChangeHandler('typeChecking', data);
           }
         })
@@ -158,7 +159,7 @@ export default class BuildAst extends Component {
         });
     },
 
-    handlePreviousClick: () => {
+    previousClick: () => {
       this.props.windowChangeHandler('input', {
         'nextWindow': 'buildAst'
       });
@@ -192,7 +193,7 @@ export default class BuildAst extends Component {
             width='auto'
             name={`code_editor_${idx}`}
             value={file.content}
-            onChange={this.eventHandlers.editorOnChangeHandler(file.name)}
+            onChange={this.eventHandlers.editorChange(file.name)}
             enableBasicAutocompletion={true}
             enableLiveAutocompletion={true}
             fontSize={16}
@@ -241,9 +242,9 @@ export default class BuildAst extends Component {
 
             <Grid.Column>
               <Input type='text' placeholder='File...' action style={{ marginBottom: 20 }}>
-                <input name='newFile' value={this.state.input.newFile} onChange={this.eventHandlers.handleInputChange} />
-                <Button onClick={this.eventHandlers.createFileHandler}>Create</Button>
-                <Button onClick={this.eventHandlers.deleteFileHandler}>Delete</Button>
+                <input name='newFile' value={this.state.input.newFile} onChange={this.eventHandlers.inputChange} />
+                <Button onClick={this.eventHandlers.createFile}>Create</Button>
+                <Button onClick={this.eventHandlers.deleteFile}>Delete</Button>
               </Input>
 
               <Tab panes={filePanes} />
@@ -252,14 +253,14 @@ export default class BuildAst extends Component {
         </div>
 
         <div className='dashboard-card-footer'>
-          <Button animated onClick={this.eventHandlers.handlePreviousClick}>
+          <Button animated onClick={this.eventHandlers.previousClick}>
             <Button.Content visible>Previous</Button.Content>
             <Button.Content hidden>
               <Icon name='left arrow' />
             </Button.Content>
           </Button>
 
-          <Button animated primary floated='right' onClick={this.eventHandlers.handleNextClick}>
+          <Button animated primary floated='right' onClick={this.eventHandlers.nextClick}>
             <Button.Content visible>Next</Button.Content>
             <Button.Content hidden>
               <Icon name='right arrow' />
