@@ -185,7 +185,7 @@ automata.addNode = (fa, n) => {
   });
 };
 
-automata.removeNode = (fa, n) => {
+automata.removeNode = automata.removeNodes = (fa, n) => {
   fa.nodes.remove(n);
 };
 

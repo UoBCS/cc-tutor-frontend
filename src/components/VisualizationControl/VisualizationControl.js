@@ -6,9 +6,9 @@ import './VisualizationControl.css';
 export default class VisualizationControl extends Component {
 
   breakpoint = {
-    getCurrent: () => this.props.breakpoint.data[this.props.breakpoint.index],
+    getCurrent: () => this.props.breakpoint.data ? this.props.breakpoint.data[this.props.breakpoint.index] : undefined,
 
-    getNext: () => this.props.breakpoint.data[this.props.breakpoint.index + 1],
+    getNext: () => this.props.breakpoint.data ? this.props.breakpoint.data[this.props.breakpoint.index + 1] : undefined,
 
     getIndex: () => this.props.breakpoint.index,
 
@@ -21,7 +21,7 @@ export default class VisualizationControl extends Component {
   }
 
   eventHandlers = {
-    handleForwardBtnClick: () => {
+    forward: () => {
       this.breakpoint.updateIndex(1, () => {
         const breakpoint = this.breakpoint.getCurrent();
 
@@ -31,7 +31,7 @@ export default class VisualizationControl extends Component {
       });
     },
 
-    handleBackBtnClick: () => {
+    back: () => {
       const breakpoint = this.breakpoint.getCurrent();
 
       this.breakpoint.updateIndex(-1, () => {
@@ -71,7 +71,7 @@ export default class VisualizationControl extends Component {
             icon='left chevron'
             content='Back'
             disabled={this.breakpoint.getIndex() < 0 || !this.props.active}
-            onClick={this.eventHandlers.handleBackBtnClick}/>
+            onClick={this.eventHandlers.back}/>
           {checkAnswerBtn}
           {addBreakpointBtn}
           <Button
@@ -84,7 +84,7 @@ export default class VisualizationControl extends Component {
             icon='right chevron'
             content='Forward'
             disabled={this.breakpoint.getNext() === undefined || !this.props.active}
-            onClick={this.eventHandlers.handleForwardBtnClick}/>
+            onClick={this.eventHandlers.forward}/>
         </Button.Group>
       </div>
     );

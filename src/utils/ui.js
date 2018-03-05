@@ -1,5 +1,6 @@
 import React from 'react';
 import { Message, Modal, Dimmer, Loader } from 'semantic-ui-react';
+import { If } from 'react-extras';
 
 const ui = {};
 
@@ -143,21 +144,24 @@ ui.obj.modal = {
 
   render: comp => {
     const modal = comp.state.ui.modal;
-    const actions = modal.actionsContent === null
-                    ? null
-                    : (<Modal.Actions>
-                        {modal.actionsContent}
-                    </Modal.Actions>);
 
     return (
       <Modal size={modal.size} open={modal.open} onClose={modal.handleClose(comp)}>
-        <Modal.Header>
-          {modal.headerContent}
-        </Modal.Header>
+        <If condition={modal.headerContent !== null}>
+          <Modal.Header>
+            {modal.headerContent}
+          </Modal.Header>
+        </If>
+
         <Modal.Content>
           {modal.mainContent}
         </Modal.Content>
-        {actions}
+
+        <If condition={modal.actionsContent !== null}>
+          <Modal.Actions>
+            {modal.actionsContent}
+          </Modal.Actions>
+        </If>
       </Modal>
     );
   }

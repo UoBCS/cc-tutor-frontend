@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Menu, Card, Dimmer, Loader, Header, Button, Icon } from 'semantic-ui-react';
+import { Container, Menu, Card, Header, Button, Icon } from 'semantic-ui-react';
+import DataPlaceholder from 'components/DataPlaceholder/DataPlaceholder';
 import misc from 'utils/misc';
 import ui from 'utils/ui';
 import api from 'api';
@@ -16,102 +17,98 @@ export default class CCAssistant extends Component {
     ui: clone(ui.state)
   }
 
-  componentWillMount() {
-    ui.obj.loader.show(this);
-    this.initializers.getData();
-  }
-
   initializers = {
     getData: () => {
+      ui.obj.loader.show(this);
+      console.log(this.state.courses);
+
       api.cca.getCourses()
         .then(res => {
+          ui.obj.loader.hide(this);
+
           this.setState({
             courses: res.data.courses,
             userCourses: res.data.user_courses
-          }, () => {
-            ui.obj.loader.hide(this);
           });
         })
         .catch(err => {
           ui.obj.loader.hide(this);
-          // TODO: error
+          ui.obj.message.showErrorFromData(this, err);
         });
     }
   }
 
   eventHandlers = {
-    submitToCourseClickHandler: courseId => {
-      return () => {
-        //this.props.history.push(`/cc-assistant/courses/${courseId}`);
+    submitToCourse: courseId => () => {
+      const success = res => {
+        ui.obj.loader.hide(this);
 
-        const success = res => {
-          ui.obj.loader.hide(this);
+        this.props.history.push({
+          pathname: `/cc-assistant/courses/${courseId}/lessons/${res.data.id}`,
+          state: { lessonData: res.data }
+        });
+      };
 
-          this.props.history.push({
-            pathname: `/cc-assistant/courses/${courseId}/lessons/${res.data.id}`,
-            state: { lessonData: res.data }
-          });
-        };
+      const error = err => {
+        ui.obj.loader.hide(this);
+      };
 
-        const error = err => {
-          ui.obj.loader.hide(this);
-        };
+      ui.obj.loader.show(this);
 
-        ui.obj.loader.show(this);
-
-        api.cca.subscribeToCourse(courseId)
-          .then(success)
-          .catch(error);
-      }
+      api.cca.subscribeToCourse(courseId)
+        .then(success)
+        .catch(error);
     },
 
-    resumeClickHandler: courseId => {
-      return () => {
-        const success = res => {
-          ui.obj.loader.hide(this);
+    resume: courseId => () => {
+      const success = res => {
+        ui.obj.loader.hide(this);
 
-          this.props.history.push({
-            pathname: `/cc-assistant/courses/${courseId}/lessons/${res.data.id}`,
-            state: { lessonData: res.data }
-          });
-        };
+        this.props.history.push({
+          pathname: `/cc-assistant/courses/${courseId}/lessons/${res.data.id}`,
+          state: { lessonData: res.data }
+        });
+      };
 
-        const error = err => {
-          ui.obj.loader.hide(this);
-        };
+      const error = err => {
+        ui.obj.loader.hide(this);
+      };
 
-        ui.obj.loader.show(this);
+      ui.obj.loader.show(this);
 
-        api.cca.getCurrentLesson(courseId)
-          .then(success)
-          .catch(error);
-      }
+      api.cca.getCurrentLesson(courseId)
+        .then(success)
+        .catch(error);
     },
 
-    resetProgressClickHandler: courseId => {
-      return () => {
-        const success = res => {
-          ui.obj.loader.hide(this);
+    resetProgress: courseId => () => {
+      const success = res => {
+        ui.obj.loader.hide(this);
 
-          this.setState({
-            userCourses: misc.removeWhere(this.state.userCourses, 'id', courseId)
-          });
-        };
+        this.setState({
+          userCourses: misc.removeWhere(this.state.userCourses, 'id', courseId)
+        });
+      };
 
-        const error = err => {
-          ui.obj.loader.hide(this);
-        }
-
-        ui.obj.loader.show(this);
-
-        api.cca.unsubscribeFromCourse(courseId)
-          .then(success)
-          .catch(error);
+      const error = err => {
+        ui.obj.loader.hide(this);
       }
+
+      ui.obj.loader.show(this);
+
+      api.cca.unsubscribeFromCourse(courseId)
+        .then(success)
+        .catch(error);
     }
   }
 
+  componentWillMount() {
+    this.initializers.getData();
+  }
+
   render() {
+    //TODO: use DataPlaceHolder;
+
     const userCoursesContent = this.state.userCourses && this.state.userCourses.length !== 0 ?
       (
         <div style={{ marginBottom: 44 }}>
@@ -129,9 +126,9 @@ export default class CCAssistant extends Component {
                   </Card.Description>
                 </Card.Content>
                 <Card.Content extra>
-                  <Button onClick={this.eventHandlers.resumeClickHandler(course.id)}>Resume</Button>
+                  <Button onClick={this.eventHandlers.resume(course.id)}>Resume</Button>
                   <p style={{ display: 'inline-block', fontSize: 11, marginLeft: 13 }}>
-                    <a onClick={this.eventHandlers.resetProgressClickHandler(course.id)}><Icon name='refresh' /> Reset Progress</a>
+                    <a onClick={this.eventHandlers.resetProgress(course.id)}><Icon name='refresh' /> Reset Progress</a>
                   </p>
                 </Card.Content>
               </Card>
@@ -140,7 +137,13 @@ export default class CCAssistant extends Component {
         </div>
       )
       :
-      null;
+      (
+        <DataPlaceholder
+          title='No courses subscribed to'
+          subtitle='Subscribe to an existing course.'
+          icon='book'
+        />
+      );
 
     const coursesContent = this.state.courses && this.state.courses.length !== 0 ?
       (
@@ -159,7 +162,7 @@ export default class CCAssistant extends Component {
                   </Card.Description>
                 </Card.Content>
                 <Card.Content extra>
-                  <Button onClick={this.eventHandlers.submitToCourseClickHandler(course.id)}>Start</Button>
+                  <Button onClick={this.eventHandlers.submitToCourse(course.id)}>Start</Button>
                 </Card.Content>
               </Card>
             ))}
@@ -167,7 +170,13 @@ export default class CCAssistant extends Component {
         </div>
       )
       :
-      null;
+      (
+        <DataPlaceholder
+          title='No courses available'
+          subtitle='Upcoming courses will be displayed here.'
+          icon='book'
+        />
+      );
 
     return (
       <Container style={{ marginTop: 30 }}>

@@ -13,7 +13,7 @@ import SignIn from './SignIn';
 import SignUp from './SignUp';
 import VerifyEmail from './VerifyEmail';
 import ConfirmClassInvitation from './ConfirmClassInvitation';
-import RegexToNFA from './RegexToNFA';
+import RegexToNFA from './regexToNfa/RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
 import SyntaxAnalysis from './syntaxAnalysis/SyntaxAnalysis';
 import LL from './syntaxAnalysis/ll/LL';
