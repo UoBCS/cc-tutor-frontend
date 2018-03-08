@@ -93,9 +93,9 @@ userInteraction.checkAnswer = function () {
       label: automata.EPSILON
     };
 
-    valid = adders.nodes === 0
+    valid = adders.nodes.length === 0
       && adders.edges.length === 2
-      && misc.contains(adders.edges, edge1, edge2, (e1, e2) => e1.from === e2.from && e1.to === e2.to && e1.label === e2.label);
+      && misc.contains(adders.edges, [edge1, edge2], (e1, e2) => e1.from === e2.from && e1.to === e2.to && e1.label === e2.label);
   } else if (breakpoint.label === 'or3') {
     valid = adders.nodes.length === 1 && adders.edges.length === 0;
   } else if (breakpoint.label === 'or4') {
@@ -112,9 +112,9 @@ userInteraction.checkAnswer = function () {
       label: automata.EPSILON
     };
 
-    valid = adders.nodes === 0
+    valid = adders.nodes.length === 0
       && adders.edges.length === 2
-      && misc.contains(adders.edges, edge1, edge2, (e1, e2) => e1.from === e2.from && e1.to === e2.to && e1.label === e2.label);
+      && misc.contains(adders.edges, [edge1, edge2], (e1, e2) => e1.from === e2.from && e1.to === e2.to && e1.label === e2.label);
   }
 
   if (valid) {

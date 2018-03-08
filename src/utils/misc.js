@@ -13,8 +13,6 @@ misc.updateState = function (obj, cb) {
   this.setState(obj, cb);
 };
 
-misc.contains = (arr1, arr2, comparator = _.isEqual) => {
-  return _.differenceWith(arr2, arr1, comparator).length === 0;
-};
+misc.contains = (arr1, arr2, comparator = _.isEqual) => _.differenceWith(arr2, arr1, comparator).length === 0;
 
 export default misc;
