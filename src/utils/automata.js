@@ -86,11 +86,16 @@ automata.createEmpty = (container, options = {}) => {
 };
 
 automata.visDataFormat = (container, data, options = {}) => {
-  let nodesData = new Set();
+  const nodesData = new Set();
+  const structured = data.states !== undefined;
 
-  data.forEach(e => {
-    nodesData.add(JSON.stringify(e.src));
-    nodesData.add(JSON.stringify(e.dest));
+  (structured ? data.states : data).forEach(e => {
+    if (structured) {
+      nodesData.add(JSON.stringify(e));
+    } else {
+      nodesData.add(JSON.stringify(e.src));
+      nodesData.add(JSON.stringify(e.dest));
+    }
   });
 
   let nodes = new vis.DataSet([...nodesData].map(node => {
@@ -107,11 +112,14 @@ automata.visDataFormat = (container, data, options = {}) => {
 
   let edgesData = [];
 
-  data.forEach(e => {
+  (structured ? data.transitions : data).forEach(e => {
+    const src = structured ? e.src : e.src.id;
+    const dest = structured ? e.dest : e.dest.id;
+
     edgesData.push({
-      id: `${e.src.id}-${e.char}-${e.dest.id}`,
-      from: e.src.id,
-      to: e.dest.id,
+      id: `${src}-${e.char}-${dest}`,
+      from: src,
+      to: dest,
       arrows:'to',
       label: e.char,
       font: {align: 'top'}
@@ -127,8 +135,31 @@ automata.visDataFormat = (container, data, options = {}) => {
   };
 };
 
-automata.fromVis = edges => {
-  let nfa = [];
+automata.fromVis = (edges, nodes = null) => {
+  let nfa = nodes !== null ? {} : [];
+
+  if (nodes !== null) {
+    nfa.states = [];
+
+    nodes.forEach(n => {
+      nfa.states.push({
+        id: n.id,
+        final: n.final
+      });
+    });
+
+    nfa.transitions = [];
+
+    edges.forEach(e => {
+      nfa.transitions.push({
+        src: e.from,
+        char: e.label,
+        dest: e.to
+      });
+    });
+
+    return nfa;
+  }
 
   edges.forEach(e => {
     nfa.push({

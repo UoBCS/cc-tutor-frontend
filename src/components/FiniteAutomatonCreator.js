@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import automata from 'utils/automata';
 import vis from 'vis';
+
 import 'vis/dist/vis-network.min.css';
 import './FiniteAutomatonCreator.css';
 
@@ -14,10 +16,8 @@ class FiniteAutomatonCreator extends Component {
     this.createAutomaton();
   }
 
-  componentDidUpdate() {
-    if (this.props.finished) {
-      this.props.onFinishEditing(this.edges);
-    }
+  getFiniteAutomaton = () => {
+    return automata.fromVis(this.edges, this.nodes);
   }
 
   createAutomaton = () => {
@@ -47,6 +47,22 @@ class FiniteAutomatonCreator extends Component {
             else {
               cb(data);
             }
+          },
+          deleteNode: true,
+          deleteEdge: true,
+          editNode: (data, cb) => {
+            const final = prompt('Is this state final?').toLowerCase() === 'yes';
+
+            const faObj = {
+              instance: this.fa,
+              edges: this.edges,
+              nodes: this.nodes
+            };
+
+            automata.updateNodesAttr(faObj, [{id: data.id, final }]);
+            automata.resetNodesHighlight(faObj);
+
+            cb(data);
           }
         }
       }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Header, Menu, Grid } from 'semantic-ui-react';
+import { Button, Header, Icon, Menu, Grid } from 'semantic-ui-react';
 import FiniteAutomatonCreator from 'components/FiniteAutomatonCreator';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
@@ -10,7 +10,6 @@ export default class InputNfa extends Component {
   state = {
     inputMethod: 'manual',
     jsonEditor: null,
-    finishedManualInput: false,
     nfaData: null
   }
 
@@ -19,22 +18,18 @@ export default class InputNfa extends Component {
   }
 
   eventHandlers = {
-    handleInputMethodClick: event => {
+    inputMethodClick: event => {
       this.setState({
         inputMethod: event.target.getAttribute('method')
       });
     },
 
-    handleContinueClick: () => {
-      if (this.state.inputMethod === 'manual') {
-        this.setState({ finishedManualInput: true });
-      } else if (this.state.inputMethod === 'json') {
-        this.props.windowChangeHandler('viz', { nfa: this.state.jsonEditor.get() });
-      }
-    },
+    nextClick: () => {
+      const nfa = this.state.inputMethod === 'manual'
+        ? this.refs.finiteAutomatonCreator.getFiniteAutomaton()
+        : this.state.jsonEditor.get();
 
-    handleManualEditingFinish: edges => {
-      this.props.windowChangeHandler('viz', { nfa: automata.fromVis(edges) });
+      this.props.windowChangeHandler('viz', { nfa });
     }
   }
 
@@ -104,32 +99,29 @@ export default class InputNfa extends Component {
 
         <div className='dashboard-card-content'>
           <FiniteAutomatonCreator
+            ref='finiteAutomatonCreator'
             hidden={this.state.inputMethod !== 'manual'}
-            containerElement='manualInput'
-            finished={this.state.finishedManualInput}
-            onFinishEditing={this.eventHandlers.handleManualEditingFinish}/>
+            containerElement='manualInput'/>
 
           <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
             <div id='jsonEditor' style={{ height: 600, margin: '10px auto' }}></div>
           </div>
+        </div>
 
-          <Menu secondary>
-            <Menu.Menu style={{ margin: '0 auto' }}>
-              <Menu.Item>
-                <Button disabled labelPosition='left' icon='left chevron' content='Go back'/>
-              </Menu.Item>
-              <Menu.Item>
-                <Button.Group>
-                  <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.eventHandlers.handleInputMethodClick}>Manual input</Button>
-                  <Button.Or />
-                  <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.eventHandlers.handleInputMethodClick}>JSON input</Button>
-                </Button.Group>
-              </Menu.Item>
-              <Menu.Item>
-                <Button primary labelPosition='right' icon='right chevron' content='Continue' onClick={this.eventHandlers.handleContinueClick} />
-              </Menu.Item>
-            </Menu.Menu>
-          </Menu>
+        <div className='dashboard-card-footer'>
+            <Button.Group>
+              <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.eventHandlers.inputMethodClick}>Manual input</Button>
+              <Button.Or />
+              <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.eventHandlers.inputMethodClick}>JSON input</Button>
+            </Button.Group>
+
+            <Button animated primary floated='right' onClick={this.eventHandlers.nextClick}>
+              <Button.Content visible>Next</Button.Content>
+              <Button.Content hidden>
+                <Icon name='right arrow' />
+              </Button.Content>
+            </Button>
+            <br style={{ clear: 'both' }}/>
         </div>
       </div>
     );
