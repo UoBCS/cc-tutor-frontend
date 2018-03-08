@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Menu, Card, Header, Button, Icon } from 'semantic-ui-react';
+import DataPlaceholder from 'components/DataPlaceholder/DataPlaceholder';
 import ui from 'utils/ui';
 import api from 'api';
 import clone from 'clone';
@@ -24,23 +25,20 @@ export default class CCAssistantCourse extends Component {
 
       api.cca.getLessons(courseId)
         .then(res => {
-          this.setState({ lessons: res.data }, () => {
-            ui.obj.loader.hide(this);
-          });
+          ui.obj.loader.hide(this);
+          this.setState({ lessons: res.data });
         })
         .catch(err => {
           ui.obj.loader.hide(this);
-          // TODO: error
+          ui.obj.message.showErrorFromData(this, err);
         });
     }
   }
 
   eventHandlers = {
-    openLessonClickHandler: lessonId => {
-      return () => {
-        const courseId = this.props.match.params.id;
-        this.props.history.push(`/cc-assistant/courses/${courseId}/lessons/${lessonId}`);
-      }
+    openLessonClickHandler: lessonId => () => {
+      const courseId = this.props.match.params.id;
+      this.props.history.push(`/cc-assistant/courses/${courseId}/lessons/${lessonId}`);
     }
   }
 
@@ -70,7 +68,13 @@ export default class CCAssistantCourse extends Component {
         </div>
       )
       :
-      null;
+      (
+        <DataPlaceholder
+          title='No lessons available'
+          subtitle='Upcoming lessons will be displayed here.'
+          icon='book'
+        />
+      );
 
     return (
       <Container style={{ marginTop: 30 }}>

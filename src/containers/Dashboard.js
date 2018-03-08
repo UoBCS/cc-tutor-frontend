@@ -15,7 +15,7 @@ class Dashboard extends Component {
           />
         </Card.Group>
 
-        <Header as='h3'>Algorithms</Header>
+        <Header as='h3'>Algorithms and phases</Header>
         <Card.Group>
           <Card
             href='/dashboard/regex2nfa'
@@ -25,6 +25,36 @@ class Dashboard extends Component {
           <Card
             href='/dashboard/nfa2dfa'
             header='NFA to DFA'
+            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+          />
+          <Card
+            href='/dashboard/dfa-minimization'
+            header='DFA minimization'
+            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+          />
+          <Card
+            href='/dashboard/ll'
+            header='LL parsing'
+            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+          />
+          <Card
+            href='/dashboard/ll1'
+            header='LL(1) parsing'
+            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+          />
+          <Card
+            href='/dashboard/lr'
+            header='LR parsing'
+            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+          />
+          <Card
+            href='/dashboard/lr0'
+            header='LR(0) parsing'
+            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+          />
+          <Card
+            href='/dashboard/semantic-analysis'
+            header='Semantic analysis'
             description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
           />
         </Card.Group>

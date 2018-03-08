@@ -298,6 +298,24 @@ automata.removeEdge = (fa, n1, n2, transition, removeNodesIfNotConnected = true)
   }
 };
 
+automata.removeEdges = (fa, edges) => {
+  fa.edges.remove(edges.map(e => e.id));
+};
+
+automata.containsEdges = (fa, edges) => {
+  let foundEdges = [];
+
+  fa.edges.forEach(e => {
+    for (const edge of edges) {
+      if (e.from === edge.from && e.to === edge.to) {
+        foundEdges.push(e);
+      }
+    }
+  });
+
+  return foundEdges.length === edges.length;
+};
+
 automata.highlightEdges = (fa, edges, color = highlightOptions.highlightTransition[0].color.color) => {
   if (edges.length > 0) {
     fa.edges.update(edges.map(e => ({

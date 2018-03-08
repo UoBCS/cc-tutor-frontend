@@ -1,6 +1,7 @@
 import shortid from 'shortid';
 import automata from 'utils/automata';
 import ui from 'utils/ui';
+import misc from 'utils/misc';
 
 const userInteraction = {};
 
@@ -24,10 +25,10 @@ userInteraction.nfa.addNode = function (data, cb) {
 };
 
 userInteraction.nfa.addEdge = function (data, cb) {
-  data.id = `${data.from}-${data.to}`;
   data.arrows = 'to';
   data.label = prompt('Please enter the transition character:', 'ε');
   data.font = {align: 'top'};
+  data.id = `${data.from}-${data.label}-${data.to}`;
 
   userInteraction.nfa.adders.edges.push({
     id: data.id,
@@ -79,7 +80,41 @@ userInteraction.checkAnswer = function () {
   } else if (breakpoint.label === 'or1') {
     valid = adders.nodes.length === 1 && adders.edges.length === 0;
   } else if (breakpoint.label === 'or2') {
-    //valid =
+    const entry = breakpoint.data.entry;
+    const [choice1, choice2] = breakpoint.data.choices;
+    const edge1 = {
+      from: entry.id,
+      to: choice1.id,
+      label: automata.EPSILON
+    };
+    const edge2 = {
+      from: entry.id,
+      to: choice2.id,
+      label: automata.EPSILON
+    };
+
+    valid = adders.nodes === 0
+      && adders.edges.length === 2
+      && misc.contains(adders.edges, edge1, edge2, (e1, e2) => e1.from === e2.from && e1.to === e2.to && e1.label === e2.label);
+  } else if (breakpoint.label === 'or3') {
+    valid = adders.nodes.length === 1 && adders.edges.length === 0;
+  } else if (breakpoint.label === 'or4') {
+    const exit = breakpoint.data.exit;
+    const [choice1, choice2] = breakpoint.data.choices;
+    const edge1 = {
+      from: choice1.id,
+      to: exit.id,
+      label: automata.EPSILON
+    };
+    const edge2 = {
+      from: choice2.id,
+      to: exit.id,
+      label: automata.EPSILON
+    };
+
+    valid = adders.nodes === 0
+      && adders.edges.length === 2
+      && misc.contains(adders.edges, edge1, edge2, (e1, e2) => e1.from === e2.from && e1.to === e2.to && e1.label === e2.label);
   }
 
   if (valid) {
@@ -90,19 +125,29 @@ userInteraction.checkAnswer = function () {
 };
 
 userInteraction.accept = function () {
-  const { adders, getters } = userInteraction.nfa;
+  let { adders, getters } = userInteraction.nfa;
 
   ui.obj.modal.show(this, null, 'Correct answer!', null, 'mini');
 
   automata.removeNodes(this.state.nfa, adders.nodes);
+  automata.removeEdges(this.state.nfa, adders.edges);
+
+  adders.nodes = [];
+  adders.edges = [];
+
   this.refs.visualizationControl.eventHandlers.forward();
 };
 
 userInteraction.refuse = function () {
-  const { adders, getters } = userInteraction.nfa;
+  let { adders, getters } = userInteraction.nfa;
 
   ui.obj.modal.show(this, null, 'Wrong answer! Please retry.', null, 'mini');
+
   automata.removeNodes(this.state.nfa, adders.nodes);
+  automata.removeEdges(this.state.nfa, adders.edges);
+
+  adders.nodes = [];
+  adders.edges = [];
 };
 
 export default userInteraction;

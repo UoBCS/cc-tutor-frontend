@@ -20,7 +20,6 @@ export default class CCAssistant extends Component {
   initializers = {
     getData: () => {
       ui.obj.loader.show(this);
-      console.log(this.state.courses);
 
       api.cca.getCourses()
         .then(res => {

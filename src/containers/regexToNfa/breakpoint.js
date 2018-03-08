@@ -111,8 +111,8 @@ breakpoint.backward.or1 = function ({data, index}) {
 };
 
 breakpoint.backward.or2 = function ({data, index}) {
-  automata.removeEdge(this.state.nfa, data.entry, data.choices[0], automata.EPSILON);
-  automata.removeEdge(this.state.nfa, data.entry, data.choices[1], automata.EPSILON);
+  automata.removeEdge(this.state.nfa, data.entry, data.choices[0], automata.EPSILON, false);
+  automata.removeEdge(this.state.nfa, data.entry, data.choices[1], automata.EPSILON, false);
   this.refs.actionsHistory.addOrSelect(index);
 };
 
@@ -122,8 +122,8 @@ breakpoint.backward.or3 = function ({data, index}) {
 };
 
 breakpoint.backward.or4 = function ({data, index}) {
-  automata.removeEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON);
-  automata.removeEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON);
+  automata.removeEdge(this.state.nfa, data.choices[0], data.exit, automata.EPSILON, false);
+  automata.removeEdge(this.state.nfa, data.choices[1], data.exit, automata.EPSILON, false);
   this.refs.actionsHistory.addOrSelect(index);
 };
 
