@@ -1,7 +1,12 @@
 import automata from 'utils/automata';
+import clone from 'clone';
 import _ from 'lodash';
 
 const breakpoint = {};
+
+/**
+ * Forward
+ */
 
 breakpoint.forward = {};
 
@@ -119,7 +124,63 @@ breakpoint.forward.newDfaTransition = function ({ data, index }) {
   }
 };
 
-breakpoint.backward = {};
+/**
+ * Visualization states
+ */
+
+breakpoint.visualizationStates = {};
+
+breakpoint.visualizationStates.commit = function () {
+  let { visualizationStates } = this.state;
+
+  visualizationStates.push({
+    nfa: {
+      nodes: clone(this.state.nfa.nodes),
+      edges: clone(this.state.nfa.edges)
+    },
+    dfa: {
+      nodes: clone(this.state.dfa.nodes),
+      edges: clone(this.state.dfa.edges)
+    }
+  });
+
+  this.setState({ visualizationStates });
+};
+
+breakpoint.visualizationStates.rollback = function () {
+  let { visualizationStates } = this.state;
+
+  let visualizationState = visualizationStates.pop();
+
+  const nfaNodes = clone(visualizationState.nfa.nodes);
+  const nfaEdges = clone(visualizationState.nfa.edges);
+  const dfaNodes = clone(visualizationState.dfa.nodes);
+  const dfaEdges = clone(visualizationState.dfa.edges);
+
+  this.state.nfa.instance.setData({
+    nodes: nfaNodes,
+    edges: nfaEdges
+  });
+
+  this.state.dfa.instance.setData({
+    nodes: dfaNodes,
+    edges: dfaEdges
+  });
+
+  this.setState({
+    nfa: {
+      instance: this.state.nfa.instance,
+      nodes: nfaNodes,
+      edges: nfaEdges
+    },
+    dfa: {
+      instance: this.state.dfa.instance,
+      nodes: dfaNodes,
+      edges: dfaEdges
+    },
+    visualizationStates
+  });
+};
 
 /**
  * Event handlers
@@ -128,6 +189,8 @@ breakpoint.backward = {};
 breakpoint.eventHandlers = {};
 
 breakpoint.eventHandlers.visualizeForward = function (b) {
+  breakpoint.visualizationStates.commit.call(this);
+
   breakpoint.forward[_.camelCase(b.label)].call(this, {
     label: b.label,
     data: b.data,
@@ -136,11 +199,16 @@ breakpoint.eventHandlers.visualizeForward = function (b) {
 };
 
 breakpoint.eventHandlers.visualizeBackward = function (b) {
-  breakpoint.backward[_.camelCase(b.label)].call(this, {
-    label: b.label,
-    data: b.data,
-    index: this.state.breakpoint.index
-  });
+  if (breakpoint.backward !== undefined && breakpoint.backward[_.camelCase(b.label)] !== undefined) {
+    breakpoint.backward[_.camelCase(b.label)].call(this, {
+      label: b.label,
+      data: b.data,
+      index: this.state.breakpoint.index
+    });
+  } else {
+    breakpoint.visualizationStates.rollback.call(this);
+    this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
+  }
 };
 
 export default breakpoint;

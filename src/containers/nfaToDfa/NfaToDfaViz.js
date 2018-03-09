@@ -32,6 +32,8 @@ export default class NfaToDfaViz extends Component {
       index: -1
     },
 
+    visualizationStates: [],
+
     ui: clone(ui.state)
   }
 
@@ -103,10 +105,11 @@ export default class NfaToDfaViz extends Component {
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
-              <Button.Group basic size='small' style={{ float: 'right' }}>
-                <Button icon='settings' />
-                <Button icon='question' />
-              </Button.Group>
+              <Button
+                circular
+                icon='question'
+                color='blue'
+                style={{ float: 'right' }}/>
               <br style={{ clear: 'both' }}/>
             </Grid.Column>
           </Grid>
