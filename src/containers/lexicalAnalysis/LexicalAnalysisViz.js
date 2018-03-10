@@ -10,8 +10,9 @@ import _ from 'lodash';
 import api from 'api';
 import clone from 'clone';
 import ui from 'utils/ui';
+import misc from 'utils/misc';
 import automata from 'utils/automata';
-import internal from './internal';
+import breakpoint from './breakpoint';
 import RGL, { WidthProvider } from 'react-grid-layout';
 
 import 'react-grid-layout/css/styles.css';
@@ -98,7 +99,7 @@ export default class LexicalAnalysisViz extends Component {
   }
 
   eventHandlers = {
-    handleBackClick: () => {
+    backClick: () => {
       this.props.windowChangeHandler('input');
     }
   }
@@ -109,37 +110,32 @@ export default class LexicalAnalysisViz extends Component {
     }
   }
 
-  breakpoint = {
-    visualizeForward: breakpoint => {
-      const data = breakpoint.data;
-      const index = this.state.breakpoint.index;
-      internal.forward[_.camelCase(breakpoint.label)].call(this, { data, index });
-    },
-
-    visualizeBackward: breakpoint => {
-
-    }
-  }
-
-  userInteraction = {
-    handleCheckAnswerClick: () => {
-
-    }
-  }
-
-  helpers = {
-    updateState: (obj, cb) => {
-      this.setState(obj, cb);
-    }
-  }
-
   render() {
     return (
       <div className='dashboard-card'>
         {ui.obj.modal.render(this)}
 
         <div className='dashboard-card-header'>
-          <Header as='h1'>Lexical analysis</Header>
+          <Grid className='viz-heading'>
+            <Grid.Column floated='left' width={9} className='viz-heading-left'>
+              <Header
+                as='h1'
+                className='light-heading'>
+                Lexical analysis visualization
+              </Header>
+              <p>
+                Some nice description right here please.
+              </p>
+            </Grid.Column>
+            <Grid.Column floated='right' width={1}>
+              <Button
+                circular
+                icon='question'
+                color='blue'
+                style={{ float: 'right' }}/>
+              <br style={{ clear: 'both' }}/>
+            </Grid.Column>
+          </Grid>
         </div>
 
         <div className='dashboard-card-content'>
@@ -188,14 +184,13 @@ export default class LexicalAnalysisViz extends Component {
           <VisualizationControl
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={this.breakpoint.visualizeForward}
-            visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
-            checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
-            updateState={this.helpers.updateState}/>
+            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
+            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            updateState={misc.updateState.bind(this)}/>
         </div>
 
         <div className='dashboard-card-footer'>
-          <Button animated onClick={this.eventHandlers.handleBackClick}>
+          <Button animated onClick={this.eventHandlers.backClick}>
             <Button.Content visible>Back</Button.Content>
             <Button.Content hidden>
               <Icon name='left arrow' />

@@ -7,19 +7,6 @@ import './ActionsHistory.css';
 
 export default class ActionsHistory extends Component {
 
-  addOrSelect = (idx, obj) => {
-    let actions = this.state.actions;
-    let index = this.state.index;
-
-    if (idx === this.state.actions.length) {
-      actions.push(obj);
-    }
-
-    index = idx;
-
-    this.setState({ actions, index });
-  }
-
   state = {
     actions: [],
     index: 0,
@@ -27,7 +14,7 @@ export default class ActionsHistory extends Component {
   }
 
   eventHandlers = {
-    handleShowHistoryClick: () => {
+    showHistoryClick: () => {
       const mainContent = this.state.actions.map((action, index) =>
         <List.Item key={index}>
           <List.Content>
@@ -47,23 +34,37 @@ export default class ActionsHistory extends Component {
     }
   }
 
+  addOrSelect = (idx, obj) => {
+    let { actions, index } = this.state;
+
+    if (idx === this.state.actions.length) {
+      actions.push(obj);
+    }
+
+    index = idx;
+
+    this.setState({ actions, index });
+  }
+
   render() {
+    const { actions, index } = this.state;
+
     return (
       <div>
         {ui.obj.modal.render(this)}
 
         <div className='viz-history'>
-          <p className='viz-history-current left'>
-            {this.state.actions
-              && this.state.actions.length > 0
-              && this.state.actions[this.state.index] !== undefined
-              ? this.state.actions[this.state.index].title
+          <div className='viz-history-current left'>
+            {actions
+              && actions.length > 0
+              && actions[index] !== undefined
+              ? (actions[index].title !== undefined ? actions[index].title : actions[index])
               : 'A description of the algorithm steps will be shown here.'
             }
-          </p>
+          </div>
 
           <List bulleted horizontal className='viz-history-options right'>
-            <List.Item as='a' onClick={this.eventHandlers.handleShowHistoryClick}>Show history</List.Item>
+            <List.Item as='a' onClick={this.eventHandlers.showHistoryClick}>Show history</List.Item>
             <List.Item as='a'>Close</List.Item>
           </List>
           <br style={{ clear: 'both' }}/>
