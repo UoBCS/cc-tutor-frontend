@@ -106,34 +106,30 @@ export default class LRViz extends Component {
       ui.obj.message.show(this, 'info', 'Reduce', 'Choose a production for the reduce step');
     },
 
-    handleProductionClick: (lhs, rhs) => {
-      return () => {
-        if (!this.state.chooseProduction) {
-          return;
-        }
-
-        api.lr.reduce({
-          run_id: this.state.lrRunId,
-          lhs,
-          rhs
-        })
-        .then(res => {
-          this.setState({ chooseProduction: false });
-          ui.obj.message.hide(this);
-
-          this.updaters.updateRun(res);
-        })
-        .catch(err => {
-          ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
-        });
+    handleProductionClick: (lhs, rhs) => () => {
+      if (!this.state.chooseProduction) {
+        return;
       }
+
+      api.lr.reduce({
+        run_id: this.state.lrRunId,
+        lhs,
+        rhs
+      })
+      .then(res => {
+        this.setState({ chooseProduction: false });
+        ui.obj.message.hide(this);
+
+        this.updaters.updateRun(res);
+      })
+      .catch(err => {
+        ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
+      });
     }
   }
 
   renderers = {
-    renderStack: (s, idx) => {
-      return <div key={idx}>{s}</div>;
-    }
+    renderStack: (s, idx) => <div key={idx}>{s}</div>
   }
 
   render() {
@@ -164,11 +160,13 @@ export default class LRViz extends Component {
         </div>
 
         <div className='dashboard-card-content'>
-          <Button.Group size='large'>
-            <Button onClick={this.eventHandlers.handleShiftClick}>Shift</Button>
-            <Button.Or />
-            <Button onClick={this.eventHandlers.handleReduceClick}>Reduce</Button>
-          </Button.Group>
+          <div style={{ margin: '30px auto', textAlign: 'center' }}>
+            <Button.Group size='large'>
+              <Button onClick={this.eventHandlers.handleShiftClick}>Shift</Button>
+              <Button.Or />
+              <Button onClick={this.eventHandlers.handleReduceClick}>Reduce</Button>
+            </Button.Group>
+          </div>
 
           {ui.obj.message.render(this)}
 

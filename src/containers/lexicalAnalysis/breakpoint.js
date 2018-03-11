@@ -164,8 +164,7 @@ breakpoint.visualizationStates.commit = function () {
     tokens: clone(this.state.tokens),
     stateStack: clone(this.state.stateStack),
     content: clone(this.state.content)
-  });    console.log('asdasiduiasd');
-
+  });
 
   this.setState({ visualizationStates });
 };
@@ -228,6 +227,5 @@ breakpoint.eventHandlers.visualizeBackward = function (b) {
     this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
   }
 };
-
 
 export default breakpoint;

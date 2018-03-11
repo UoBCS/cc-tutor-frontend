@@ -5,11 +5,13 @@ import Grammar from 'components/Grammar/Grammar';
 import Stack from 'components/Stack/Stack';
 import TokensViz from 'components/TokensViz/TokensViz';
 import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
+import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import api from 'api';
 import automata from 'utils/automata';
 import tree from 'utils/tree';
 import ui from 'utils/ui';
-import internal from './internal';
+import misc from 'utils/misc';
+import breakpoint from './breakpoint';
 import clone from 'clone';
 import _ from 'lodash';
 import RGL, { WidthProvider } from 'react-grid-layout';
@@ -46,11 +48,12 @@ export default class LR0Viz extends Component {
     },
 
     dashboardLayout: [
-      {i: 'tokens', x: 0, y: 0, w: 3, h: 4, minH: 3},
-      {i: 'grammar', x: 3, y: 0, w: 2, h: 4, minH: 4},
-      {i: 'dfa', x: 0, y: 1, w: 4, h: 14, minH: 14},
-      {i: 'stack', x: 4, y: 1, w: 1, h: 14},
-      {i: 'parseTree', x: 0, y: 2, w: 5, h: 14, minH: 14},
+      {i: 'history', x: 0, y: 0, w: 5, h: 4, minH: 4},
+      {i: 'tokens', x: 0, y: 1, w: 3, h: 4, minH: 3},
+      {i: 'grammar', x: 3, y: 1, w: 2, h: 4, minH: 4},
+      {i: 'dfa', x: 0, y: 2, w: 4, h: 14, minH: 14},
+      {i: 'stack', x: 4, y: 2, w: 1, h: 14},
+      {i: 'parseTree', x: 0, y: 3, w: 5, h: 14, minH: 14},
     ],
 
     ui: clone(ui.state)
@@ -61,12 +64,12 @@ export default class LR0Viz extends Component {
 
     api.lr0.parse(this.props.data)
       .then(res => {
-        this.initializers.setData(res.data);
         ui.obj.loader.hide(this);
+        this.initializers.setData(res.data);
       })
       .catch(err => {
-        ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
         ui.obj.loader.hide(this);
+        ui.obj.message.showErrorFromData(this, err);
       });
   }
 
@@ -96,41 +99,13 @@ export default class LR0Viz extends Component {
   }
 
   eventHandlers = {
-    handleBackClick: () => {
+    backClick: () => {
       this.props.windowChangeHandler('input');
     }
   }
 
   renderers = {
-    renderStack: (s, idx) => {
-      return <div key={idx}>{s.id}</div>;
-    }
-  }
-
-  breakpoint = {
-    visualizeForward: breakpoint => {
-      const data = breakpoint.data;
-      const index = this.state.breakpoint.index;
-      internal.forward[_.camelCase(breakpoint.label)].call(this, { data, index });
-    },
-
-    visualizeBackward: breakpoint => {
-      const data = breakpoint.data;
-      const index = this.state.breakpoint.index;
-      internal.backward[_.camelCase(breakpoint.label)].call(this, { data, index });
-    }
-  }
-
-  userInteraction = {
-    handleCheckAnswerClick: () => {
-
-    }
-  }
-
-  helpers = {
-    updateState: (obj, cb) => {
-      this.setState(obj, cb);
-    }
+    renderStack: (s, idx) => <div key={idx}>{s.id}</div>
   }
 
   render() {
@@ -168,8 +143,14 @@ export default class LR0Viz extends Component {
             layout={this.state.dashboardLayout}
             cols={5}
             rowHeight={30}
-            items={5}
+            items={6}
             draggableHandle='.rgl-handle'>
+
+            <div key='history'>
+              <Window title='Actions history'>
+                <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+              </Window>
+            </div>
 
             <div key='tokens'>
               <Window title='Tokens'>
@@ -208,15 +189,13 @@ export default class LR0Viz extends Component {
           <VisualizationControl
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={this.breakpoint.visualizeForward}
-            visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
-            checkAnswerHandler={this.userInteraction.handleCheckAnswerClick}
-            updateState={this.helpers.updateState}/>
-
+            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
+            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            updateState={misc.updateState.bind(this)}/>
         </div>
 
         <div className='dashboard-card-footer'>
-          <Button animated onClick={this.eventHandlers.handleBackClick}>
+          <Button animated onClick={this.eventHandlers.backClick}>
             <Button.Content visible>Back</Button.Content>
             <Button.Content hidden>
               <Icon name='left arrow' />

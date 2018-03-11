@@ -41,7 +41,7 @@ export default class InputData extends Component {
             "name": "A",
             "regex": "a",
             "skippable": false,
-            "priority": 0
+            "priority": 1
           },
           {
             "name": "B",
@@ -65,7 +65,7 @@ export default class InputData extends Component {
   }
 
   eventHandlers = {
-    handleInputMethodClick: event => {
+    inputMethodClick: event => {
       let input = this.state.input;
 
       input.inputMethod = event.target.getAttribute('method');
@@ -73,7 +73,7 @@ export default class InputData extends Component {
       this.setState({ input });
     },
 
-    handleAddTokenClick: () => {
+    addTokenCLick: () => {
       const input = this.state.input;
 
       input.tokens.components.push({
@@ -85,14 +85,14 @@ export default class InputData extends Component {
       this.setState({ input });
     },
 
-    handleInputChange: event => {
+    inputChange: event => {
       const target = event.target;
       let input = this.state.input;
       input[target.name] = target.value;
       this.setState({ input });
     },
 
-    handleNextClick: () => {
+    nextClick: () => {
       const data = this.state.input.inputMethod === 'default'
                   ? this.getInputData()
                   : this.state.input.jsonEditor.get();
@@ -101,9 +101,7 @@ export default class InputData extends Component {
     }
   }
 
-  getInputData = () => {
-    return this.refs.grammar;
-  }
+  getInputData = () => this.refs.grammar;
 
   render() {
     return (
@@ -139,7 +137,7 @@ export default class InputData extends Component {
                 <TokenInput id={c.key} key={c.key} ref={c.ref} />
               )}
 
-              <Button animated='vertical' onClick={this.eventHandlers.handleAddTokenClick}>
+              <Button animated='vertical' onClick={this.eventHandlers.addTokenCLick}>
                 <Button.Content hidden>Token</Button.Content>
                 <Button.Content visible>
                   <Icon name='plus' />
@@ -158,7 +156,7 @@ export default class InputData extends Component {
                 name='content'
                 placeholder='Insert content to split into tokens...'
                 style={{ fontFamily: 'monospace' }}
-                onChange={this.eventHandlers.handleInputChange}/>
+                onChange={this.eventHandlers.inputChange}/>
             </div>
           </Form>
 
@@ -170,12 +168,12 @@ export default class InputData extends Component {
 
         <div className='dashboard-card-footer'>
           <Button.Group>
-            <Button positive={this.state.input.inputMethod === 'default'} method='default' onClick={this.eventHandlers.handleInputMethodClick}>Default</Button>
+            <Button positive={this.state.input.inputMethod === 'default'} method='default' onClick={this.eventHandlers.inputMethodClick}>Default</Button>
             <Button.Or />
-            <Button positive={this.state.input.inputMethod === 'json'} method='json' onClick={this.eventHandlers.handleInputMethodClick}>JSON</Button>
+            <Button positive={this.state.input.inputMethod === 'json'} method='json' onClick={this.eventHandlers.inputMethodClick}>JSON</Button>
           </Button.Group>
 
-          <Button animated primary floated='right' onClick={this.eventHandlers.handleNextClick}>
+          <Button animated primary floated='right' onClick={this.eventHandlers.nextClick}>
             <Button.Content visible>Next</Button.Content>
             <Button.Content hidden>
               <Icon name='right arrow' />

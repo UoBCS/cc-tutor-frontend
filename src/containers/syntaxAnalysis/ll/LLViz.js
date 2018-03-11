@@ -44,20 +44,6 @@ export default class LLViz extends Component {
     ui: clone(ui.state)
   }
 
-  componentDidMount() {
-    api.ll.initParser(this.props.data)
-      .then(res => {
-        this.initializers.initParser(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-  componentWillUnmount() {
-    api.ll.deleteRun(this.state.llRunId);
-  }
-
   initializers = {
     initParser: data => {
       this.setState({
@@ -89,11 +75,11 @@ export default class LLViz extends Component {
   }
 
   eventHandlers = {
-    handleBackClick: () => {
+    backClick: () => {
       this.props.windowChangeHandler('input');
     },
 
-    handleMatchClick: () => {
+    matchClick: () => {
       api.ll.match({ run_id: this.state.llRunId })
         .then(this.updaters.updateRun)
         .catch(err => {
@@ -101,39 +87,49 @@ export default class LLViz extends Component {
         });
     },
 
-    handlePredictClick: () => {
+    predictClick: () => {
       this.setState({ chooseProduction: true });
       ui.obj.message.show(this, 'info', 'Predict', 'Choose a production for the prediction step');
     },
 
-    handleProductionClick: (lhs, rhs) => {
-      return () => {
-        if (!this.state.chooseProduction) {
-          return;
-        }
-
-        api.ll.predict({
-          run_id: this.state.llRunId,
-          lhs,
-          rhs
-        })
-        .then(res => {
-          this.setState({ chooseProduction: false });
-          ui.obj.message.hide(this);
-
-          this.updaters.updateRun(res);
-        })
-        .catch(err => {
-          ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
-        });
+    productionClick: (lhs, rhs) => () => {
+      if (!this.state.chooseProduction) {
+        return;
       }
+
+      api.ll.predict({
+        run_id: this.state.llRunId,
+        lhs,
+        rhs
+      })
+      .then(res => {
+        this.setState({ chooseProduction: false });
+        ui.obj.message.hide(this);
+
+        this.updaters.updateRun(res);
+      })
+      .catch(err => {
+        ui.obj.message.show(this, 'negative', 'Error', ui.renderErrors(err));
+      });
     }
   }
 
   renderers = {
-    renderStack: (s, idx) => {
-      return <div key={idx}>{s}</div>;
-    }
+    renderStack: (s, idx) => <div key={idx}>{s}</div>
+  }
+
+  componentDidMount() {
+    api.ll.initParser(this.props.data)
+      .then(res => {
+        this.initializers.initParser(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  componentWillUnmount() {
+    api.ll.deleteRun(this.state.llRunId);
   }
 
   render() {
@@ -164,11 +160,13 @@ export default class LLViz extends Component {
         </div>
 
         <div className='dashboard-card-content'>
-          <Button.Group size='large'>
-            <Button onClick={this.eventHandlers.handleMatchClick}>Match</Button>
-            <Button.Or />
-            <Button onClick={this.eventHandlers.handlePredictClick}>Predict</Button>
-          </Button.Group>
+          <div style={{ margin: '30px auto', textAlign: 'center' }}>
+            <Button.Group size='large'>
+              <Button onClick={this.eventHandlers.matchClick}>Match</Button>
+              <Button.Or />
+              <Button onClick={this.eventHandlers.predictClick}>Predict</Button>
+            </Button.Group>
+          </div>
 
           {ui.obj.message.render(this)}
 
@@ -190,7 +188,7 @@ export default class LLViz extends Component {
               <Window title='Grammar'>
                 <Grammar
                   grammar={this.state.grammar}
-                  productionClickHandler={this.eventHandlers.handleProductionClick}/>
+                  productionClickHandler={this.eventHandlers.productionClick}/>
               </Window>
             </div>
 
@@ -212,7 +210,7 @@ export default class LLViz extends Component {
         </div>
 
         <div className='dashboard-card-footer'>
-          <Button animated onClick={this.eventHandlers.handleBackClick}>
+          <Button animated onClick={this.eventHandlers.backClick}>
             <Button.Content visible>Back</Button.Content>
             <Button.Content hidden>
               <Icon name='left arrow' />

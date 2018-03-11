@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Header, Button } from 'semantic-ui-react';
+import { Card, Grid, Header, Button } from 'semantic-ui-react';
 
 export default class SyntaxAnalysis extends Component {
 
@@ -15,7 +15,8 @@ export default class SyntaxAnalysis extends Component {
                 Syntax Analysis
               </Header>
               <p>
-                Bla bla
+                Select a parsing type. You can choose deterministic or non-deterministic ones. In each
+                one of them you can choose between top-down (LL) and bottom-up (LR) parsing.
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
@@ -30,7 +31,28 @@ export default class SyntaxAnalysis extends Component {
         </div>
 
         <div className='dashboard-card-content'>
-          <p>Some cards here</p>
+          <Card.Group>
+            <Card
+              href='/dashboard/ll'
+              header='Non-deterministic LL parsing'
+              description='Lets you control the parsing actions (predict and match).'
+            />
+            <Card
+              href='/dashboard/ll1'
+              header='LL(1) parsing'
+              description='LL parsing with one-symbol lookahead to make it deterministic.'
+            />
+            <Card
+              href='/dashboard/lr'
+              header='Non-deterministic LR parsing'
+              description='Lets you control the parsing actions (shift and reduce).'
+            />
+            <Card
+              href='/dashboard/lr0'
+              header='LR(0) parsing'
+              description='Deterministic LR parsing.'
+            />
+          </Card.Group>
         </div>
       </div>
     );
