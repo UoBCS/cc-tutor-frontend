@@ -15,4 +15,6 @@ misc.updateState = function (obj, cb) {
 
 misc.contains = (arr1, arr2, comparator = _.isEqual) => _.differenceWith(arr2, arr1, comparator).length === 0;
 
+misc.escape = str => str.replace(/\n/, "\\n").replace(/\r/, "\\r").replace(/\t/, "\\t");
+
 export default misc;

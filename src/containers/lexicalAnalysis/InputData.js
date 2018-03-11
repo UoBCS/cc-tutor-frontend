@@ -17,6 +17,7 @@ export default class InputData extends Component {
 
     input: {
       inputMethod: 'default',
+      dfaMinimized: true,
       content: '',
       jsonEditor: null
     }
@@ -83,15 +84,17 @@ export default class InputData extends Component {
   }
 
   eventHandlers = {
-    handleNextClick: () => {
+    nextClick: () => {
       const data = this.state.input.inputMethod === 'default'
                   ? this.getInputData()
                   : this.state.input.jsonEditor.get();
 
-      this.props.windowChangeHandler('viz', data);
+      const { dfaMinimized } = this.state.input;
+
+      this.props.windowChangeHandler('viz', Object.assign({}, data, {dfa_minimized: dfaMinimized}));
     },
 
-    handleAddTokenClick: () => {
+    addTokenClick: () => {
       let tokenInputs = this.state.tokenInputs;
 
       tokenInputs.components.push({
@@ -103,17 +106,25 @@ export default class InputData extends Component {
       this.setState({ tokenInputs });
     },
 
-    handleInputChange: event => {
+    inputChange: event => {
       const target = event.target;
-      let input = this.state.input;
+      const { input } = this.state;
       input[target.name] = target.value;
       this.setState({ input });
     },
 
-    handleInputMethodClick: event => {
-      let input = this.state.input;
+    inputMethodClick: event => {
+      const { input } = this.state;
 
       input.inputMethod = event.target.getAttribute('method');
+
+      this.setState({ input });
+    },
+
+    dfaMinimizedClick: event => {
+      const { input } = this.state;
+
+      input.dfaMinimized = event.target.getAttribute('value') === 'true';
 
       this.setState({ input });
     }
@@ -147,7 +158,7 @@ export default class InputData extends Component {
                 <TokenInput id={c.key} key={c.key} ref={c.ref} />
               )}
 
-              <Button animated='vertical' onClick={this.eventHandlers.handleAddTokenClick}>
+              <Button animated='vertical' onClick={this.eventHandlers.addTokenClick}>
                 <Button.Content hidden>Token</Button.Content>
                 <Button.Content visible>
                   <Icon name='plus' />
@@ -161,7 +172,7 @@ export default class InputData extends Component {
                 name='content'
                 placeholder='Insert content to split into tokens...'
                 style={{ fontFamily: 'monospace' }}
-                onChange={this.eventHandlers.handleInputChange}/>
+                onChange={this.eventHandlers.inputChange}/>
             </div>
           </Form>
 
@@ -172,13 +183,19 @@ export default class InputData extends Component {
         </div>
 
         <div className='dashboard-card-footer'>
-          <Button.Group>
-            <Button positive={this.state.input.inputMethod === 'default'} method='default' onClick={this.eventHandlers.handleInputMethodClick}>Default</Button>
+          <Button.Group style={{ marginRight: 20 }}>
+            <Button positive={this.state.input.inputMethod === 'default'} method='default' onClick={this.eventHandlers.inputMethodClick}>Default</Button>
             <Button.Or />
-            <Button positive={this.state.input.inputMethod === 'json'} method='json' onClick={this.eventHandlers.handleInputMethodClick}>JSON</Button>
+            <Button positive={this.state.input.inputMethod === 'json'} method='json' onClick={this.eventHandlers.inputMethodClick}>JSON</Button>
           </Button.Group>
 
-          <Button animated primary floated='right' onClick={this.eventHandlers.handleNextClick}>
+          <Button.Group>
+            <Button positive={this.state.input.dfaMinimized} value={true} onClick={this.eventHandlers.dfaMinimizedClick}>Minimized DFA</Button>
+            <Button.Or />
+            <Button positive={!this.state.input.dfaMinimized} value={false} onClick={this.eventHandlers.dfaMinimizedClick}>Non-minimized DFA</Button>
+          </Button.Group>
+
+          <Button animated primary floated='right' onClick={this.eventHandlers.nextClick}>
             <Button.Content visible>Next</Button.Content>
             <Button.Content hidden>
               <Icon name='right arrow' />

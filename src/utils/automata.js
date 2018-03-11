@@ -1,5 +1,6 @@
 import vis from 'vis';
 import _ from 'lodash';
+import misc from 'utils/misc';
 import visUtils from './visUtils';
 
 const automata = {};
@@ -121,7 +122,7 @@ automata.visDataFormat = (container, data, options = {}) => {
       from: src,
       to: dest,
       arrows:'to',
-      label: e.char,
+      label: misc.escape(e.char),
       font: {align: 'top'}
     });
   });
