@@ -51,22 +51,7 @@ jsonSchemas.applyTransformer = function (schema, res) {
     }
   }
 
-  if (schema.transform) {
-    return schema.transform.call(this, res);
-  } else {
-    return res;
-  }
-  /*const prop = schema.properties || (schema.items && schema.items.properties);
-
-  if (prop) {
-    Object.keys(prop).forEach(key => {
-      if (prop[key].transform) {
-        res[key] = prop[key].transform.call(this, res[key]);
-      }
-
-      jsonSchemas.applyTransformer(prop[key], res[key]);
-    });
-  }*/
+  return schema.transform ? schema.transform.call(this, res) : res;
 };
 
 jsonSchemas.nfa_to_dfa = {};

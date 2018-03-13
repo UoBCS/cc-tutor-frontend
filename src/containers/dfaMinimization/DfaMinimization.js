@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
 import InputFiniteAutomaton from '../inputFiniteAutomaton/InputFiniteAutomaton';
-import NfaToDfaViz from './NfaToDfaViz';
+import DfaMinimizationViz from './DfaMinimizationViz';
 
-export default class NfaToDfa extends WindowManager {
+export default class DfaMinimization extends WindowManager {
   state = {
     windows: {
       input: InputFiniteAutomaton,
-      viz: NfaToDfaViz
+      viz: DfaMinimizationViz
     },
     currentWindow: null
   }

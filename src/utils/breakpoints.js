@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, List } from 'semantic-ui-react';
 import { For } from 'react-extras';
 import Form from 'react-jsonschema-form';
-import internal from 'containers/nfaToDfa/internal';
+import { breakpoint as nfaToDfaBreakpoint } from 'containers/nfaToDfa/breakpoint';
 import _ from 'lodash';
 import clone from 'clone';
 import { lensPath, view, set } from 'ramda';
@@ -13,6 +13,10 @@ import { jsonSchemas, uiSchemas, formData } from './jsonSchemas';
 
 const breakpoints = {};
 
+const breakpointModule = {
+  nfa_to_dfa: nfaToDfaBreakpoint
+};
+
 breakpoints.initializers = {
   setAlgorithm: algo => {
     breakpoints.ALGORITHM = algo;
@@ -20,16 +24,12 @@ breakpoints.initializers = {
 }
 
 breakpoints.eventHandlers = {
-  visualizeForward: function (breakpoint) {
-    const data = breakpoint.data;
-    const index = this.state.contents.index;
-    internal.forward[_.camelCase(breakpoint.label)].call(this, { data, index });
+  visualizeForward: function (b) {
+    breakpointModule[breakpoints.ALGORITHM].visualizeForward.call(this, b);
   },
 
-  visualizeBackward: function (breakpoint) {
-    const data = breakpoint.data;
-    const index = this.state.contents.index;
-    internal.backward[_.camelCase(breakpoint.label)].call(this, { data, index });
+  visualizeBackward: function (b) {
+    breakpointModule[breakpoints.ALGORITHM].visualizeBackward.call(this, b);
   },
 
   showActionChooser: function () {
@@ -73,11 +73,11 @@ breakpoints.renderers = {
 
     return (
       <List divided relaxed>
-        <For of={breakpointTypes} render={(breakpoint, index) => (
+        <For of={breakpointTypes} render={(b, index) => (
           <List.Item key={index}>
             <List.Content>
               <List.Header as='a' onClick={breakpoints.eventHandlers.choose(index).bind(this)}>
-                {schema[breakpoint].title}
+                {schema[b].title}
               </List.Header>
             </List.Content>
           </List.Item>

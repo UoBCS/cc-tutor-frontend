@@ -7,7 +7,7 @@ import api from 'api';
 import clone from 'clone';
 import _ from 'lodash';
 import automata from 'utils/automata';
-import breakpoint from './breakpoint';
+import { breakpoint } from './breakpoint';
 import userInteraction from './userInteraction';
 import misc from 'utils/misc';
 import ui from 'utils/ui';

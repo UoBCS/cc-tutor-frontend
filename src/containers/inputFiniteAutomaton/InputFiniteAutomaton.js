@@ -5,12 +5,12 @@ import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
 import automata from 'utils/automata';
 
-export default class InputNfa extends Component {
+export default class InputFiniteAutomaton extends Component {
 
   state = {
     inputMethod: 'manual',
-    jsonEditor: null,
-    nfaData: null
+    jsonEditor: null
+    //nfaData: null
   }
 
   componentDidMount() {
@@ -25,11 +25,11 @@ export default class InputNfa extends Component {
     },
 
     nextClick: () => {
-      const nfa = this.state.inputMethod === 'manual'
+      const fa = this.state.inputMethod === 'manual'
         ? this.refs.finiteAutomatonCreator.getFiniteAutomaton()
         : this.state.jsonEditor.get();
 
-      this.props.windowChangeHandler('viz', { nfa });
+      this.props.windowChangeHandler('viz', { fa });
     }
   }
 
@@ -56,7 +56,7 @@ export default class InputNfa extends Component {
     this.setState({ jsonEditor });
   }
 
-  createNfaData = () => {
+  createFiniteAutomatonData = () => {
     let nfa;
 
     if (this.state.inputMethod === 'json') {
@@ -80,10 +80,10 @@ export default class InputNfa extends Component {
               <Header
                 as='h1'
                 className='light-heading'>
-                Create the non-deterministic finite automaton
+                Create the finite automaton
               </Header>
               <p>
-                Input the NFA either using the manual tingy or json
+                Input the finite automaton either using the manual input or JSON
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
@@ -109,19 +109,19 @@ export default class InputNfa extends Component {
         </div>
 
         <div className='dashboard-card-footer'>
-            <Button.Group>
-              <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.eventHandlers.inputMethodClick}>Manual input</Button>
-              <Button.Or />
-              <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.eventHandlers.inputMethodClick}>JSON input</Button>
-            </Button.Group>
+          <Button.Group>
+            <Button positive={this.state.inputMethod === 'manual'} method='manual' onClick={this.eventHandlers.inputMethodClick}>Manual input</Button>
+            <Button.Or />
+            <Button positive={this.state.inputMethod === 'json'} method='json' onClick={this.eventHandlers.inputMethodClick}>JSON input</Button>
+          </Button.Group>
 
-            <Button animated primary floated='right' onClick={this.eventHandlers.nextClick}>
-              <Button.Content visible>Next</Button.Content>
-              <Button.Content hidden>
-                <Icon name='right arrow' />
-              </Button.Content>
-            </Button>
-            <br style={{ clear: 'both' }}/>
+          <Button animated primary floated='right' onClick={this.eventHandlers.nextClick}>
+            <Button.Content visible>Next</Button.Content>
+            <Button.Content hidden>
+              <Icon name='right arrow' />
+            </Button.Content>
+          </Button>
+          <br style={{ clear: 'both' }}/>
         </div>
       </div>
     );

@@ -2,7 +2,7 @@ import automata from 'utils/automata';
 import clone from 'clone';
 import _ from 'lodash';
 
-const breakpoint = {};
+export const breakpoint = {};
 
 /**
  * Forward
@@ -210,5 +210,3 @@ breakpoint.eventHandlers.visualizeBackward = function (b) {
     this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
   }
 };
-
-export default breakpoint;
