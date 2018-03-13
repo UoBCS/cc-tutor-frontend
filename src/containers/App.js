@@ -15,6 +15,7 @@ import VerifyEmail from './VerifyEmail';
 import ConfirmClassInvitation from './ConfirmClassInvitation';
 import RegexToNFA from './regexToNfa/RegexToNFA';
 import NfaToDfa from './nfaToDfa/NfaToDfa';
+import DfaMinimization from './dfaMinimization/DfaMinimization';
 import SyntaxAnalysis from './syntaxAnalysis/SyntaxAnalysis';
 import LL from './syntaxAnalysis/ll/LL';
 import LL1 from './syntaxAnalysis/ll1/LL1';
@@ -54,6 +55,7 @@ class App extends Component {
           <AppRoute exact path="/dashboard/profile" layout={MainLayout} component={Profile} />
           <AppRoute exact path="/dashboard/regex2nfa" layout={MainLayout} component={RegexToNFA} />
           <AppRoute exact path="/dashboard/nfa2dfa" layout={MainLayout} component={NfaToDfa} />
+          <AppRoute exact path="/dashboard/dfa-minimization" layout={MainLayout} component={DfaMinimization} />
           <AppRoute exact path="/dashboard/lexical-analysis" layout={MainLayout} component={LexicalAnalysis} />
           <AppRoute exact path="/dashboard/syntax-analysis" layout={MainLayout} component={SyntaxAnalysis} />
           <AppRoute exact path="/dashboard/ll" layout={MainLayout} component={LL} />

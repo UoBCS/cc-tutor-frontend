@@ -17,4 +17,9 @@ misc.contains = (arr1, arr2, comparator = _.isEqual) => _.differenceWith(arr2, a
 
 misc.escape = str => str.replace(/\n/, "\\n").replace(/\r/, "\\r").replace(/\t/, "\\t");
 
+misc.changeKey = (obj, from, to) => {
+  obj[to] = obj[from];
+  delete obj[from];
+};
+
 export default misc;

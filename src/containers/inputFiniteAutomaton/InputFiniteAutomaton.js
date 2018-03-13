@@ -10,7 +10,6 @@ export default class InputFiniteAutomaton extends Component {
   state = {
     inputMethod: 'manual',
     jsonEditor: null
-    //nfaData: null
   }
 
   componentDidMount() {

@@ -67,7 +67,6 @@ breakpoint.forward.possibleInputs = function ({data, index}) {
     src: e.src.id, char: e.char, dest: dest.id
   }))));
 
-  automata.highlightNodes(this.state.nfa, data.dfa_state_contents);
   automata.highlightEdges(this.state.nfa, edges);
 
   if (this.refs.actionsHistory) {
@@ -148,7 +147,7 @@ breakpoint.visualizationStates.commit = function () {
 };
 
 breakpoint.visualizationStates.rollback = function () {
-  let { visualizationStates } = this.state;
+  let visualizationStates = this.state.visualizationStates || [];
 
   let visualizationState = visualizationStates.pop();
 

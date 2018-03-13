@@ -77,7 +77,6 @@ export default class MainLayout extends Component {
                     <Menu.Item name='lexicalAnalysis' active={url === `${pref}/lexical-analysis`} as={Link} to={`${pref}/lexical-analysis`} />
                     <Menu.Item name='syntaxAnalysis' active={url === `${pref}/syntax-analysis`} as={Link} to={`${pref}/syntax-analysis`} />
                     <Menu.Item name='semanticAnalysis' active={url === `${pref}/semantic-analysis`} as={Link} to={`${pref}/semantic-analysis`} />
-                    <Menu.Item name='garbageCollection' active={url === 'garbageCollection'} />
                     <Menu.Item name='CEKMachine' active={url === `${pref}/cek-machine`} as={Link} to={`${pref}/cek-machine`} />
                   </Menu.Menu>
                 </Menu.Item>
@@ -92,9 +91,6 @@ export default class MainLayout extends Component {
                     <Menu.Item name='LRParsing' active={url === `${pref}/lr`} as={Link} to={`${pref}/lr`} />
                     <Menu.Item name='LL(1)Parsing' active={url === `${pref}/ll1`} as={Link} to={`${pref}/ll1`} />
                     <Menu.Item name='LR(0)Parsing' active={url === `${pref}/lr0`} as={Link} to={`${pref}/lr0`} />
-                    <Menu.Item name='markAndSweep' active={url === 'markAndSweep'} />
-                    <Menu.Item name='markSweepCompact' active={url === 'markSweepCompact'} />
-                    <Menu.Item name='markAndCopy' active={url === 'markAndCopy'} />
                   </Menu.Menu>
                 </Menu.Item>
 

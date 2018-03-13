@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Header, Grid, Segment, Menu, Label } from 'semantic-ui-react';
+import { Button, Header, Icon, Grid, Segment, Menu, Label } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import Window from 'components/Window/Window';
@@ -8,7 +8,6 @@ import clone from 'clone';
 import _ from 'lodash';
 import automata from 'utils/automata';
 import { breakpoint } from './breakpoint';
-import userInteraction from './userInteraction';
 import misc from 'utils/misc';
 import ui from 'utils/ui';
 
@@ -37,10 +36,19 @@ export default class NfaToDfaViz extends Component {
     ui: clone(ui.state)
   }
 
+  eventHandlers = {
+    backClick: () => {
+      this.props.windowChangeHandler('input');
+    }
+  }
+
   componentWillMount() {
     ui.obj.loader.show(this);
 
-    api.nfaToDfa(this.props.data)
+    let data = clone(this.props.data);
+    misc.changeKey(data, 'fa', 'nfa');
+
+    api.nfaToDfa(data)
       .then(res => {
         ui.obj.loader.hide(this);
 
@@ -58,31 +66,10 @@ export default class NfaToDfaViz extends Component {
   }
 
   componentDidMount() {
-    const dfaOptions = {
-      manipulation: {
-        enabled: true,
-        initiallyActive: true,
-        addNode: userInteraction.dfa.addNode.bind(this),
-        addEdge: userInteraction.dfa.addEdge.bind(this)
-      }
-    };
-
     this.setState({
-      nfa: automata.visDataFormat('nfa-viz', this.props.data.nfa),
-      dfa: automata.createEmpty('dfa-viz', dfaOptions)
+      nfa: automata.visDataFormat('nfa-viz', this.props.data.fa),
+      dfa: automata.createEmpty('dfa-viz')
     });
-  }
-
-  eventHandlers = {
-    handleBackBtnClick: () => {
-      this.props.windowChangeHandler('input');
-    }
-  }
-
-  helpers = {
-    updateState: (obj, cb) => {
-      this.setState(obj, cb);
-    }
   }
 
   render() {
@@ -138,16 +125,16 @@ export default class NfaToDfaViz extends Component {
             breakpoint={this.state.breakpoint}
             visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
             visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
-            checkAnswerHandler={userInteraction.checkAnswer.bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>
 
         <div className='dashboard-card-footer'>
-          <Button
-            labelPosition='left'
-            icon='left chevron'
-            content='Back'
-            onClick={this.eventHandlers.handleBackBtnClick}/>
+          <Button animated onClick={this.eventHandlers.backClick}>
+            <Button.Content visible>Back</Button.Content>
+            <Button.Content hidden>
+              <Icon name='left arrow' />
+            </Button.Content>
+          </Button>
         </div>
       </div>
     );
