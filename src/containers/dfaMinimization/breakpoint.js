@@ -4,26 +4,9 @@ import _ from 'lodash';
 
 export const breakpoint = {};
 
-/**
- * Forward
- */
-
-breakpoint.forward = {};
-
-breakpoint.forward.reachableStates = function ({ data, index }) {
-
-  if (this.refs.actionsHistory) {
-    this.refs.actionsHistory.addOrSelect(index, {
-      title: `Reachable states: {${data.states.map(s => s.id).join(', ')}}`,
-      breakpoint: data
-    });
-  }
-};
-
-breakpoint.forward.initialTable = function ({ data, index }) {
-
-  const cols = data.table.cols.map(c => c.id);
-  const rows = data.table.rows.map(r => r.id);
+const updateTable = function (data) {
+  const cols = data.table.cols.map(c => c.id === -1 ? 'Error state' : c.id);
+  const rows = data.table.rows.map(r => r.id === -1 ? 'Error state' : r.id);
 
   this.setState({
     table: {
@@ -32,10 +15,90 @@ breakpoint.forward.initialTable = function ({ data, index }) {
       contents: data.table.contents
     }
   });
+};
+
+/**
+ * Forward
+ */
+
+breakpoint.forward = {};
+
+breakpoint.forward.inputDfa = function ({ data, index }) {
+  this.setState({
+    dfa: automata.visDataFormat('dfa-viz', data.dfa)
+  });
+
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: 'Consider the DFA to minimize',
+      breakpoint: data
+    });
+  }
+}
+
+breakpoint.forward.reachableStates = function ({ data, index }) {
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: `Reachable states: {${data.states.map(s => s.id === -1 ? 'Error state' : s.id).join(', ')}}`,
+      breakpoint: data
+    });
+  }
+};
+
+breakpoint.forward.initialTable = function ({ data, index }) {
+  updateTable.call(this, data);
 
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
       title: 'Initial table contents',
+      breakpoint: data
+    });
+  }
+};
+
+breakpoint.forward.updatedTable = function ({ data, index }) {
+  updateTable.call(this, data);
+
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: 'Update table contents',
+      breakpoint: data
+    });
+  }
+};
+
+breakpoint.forward.unmarkedStates = function ({ data, index }) {
+  const { states } = data;
+
+  for (const pair of states) {
+
+  }
+
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: states.length === 0 ? 'There are no states to merge.' : 'Unmarked pair of states have been highlighted.',
+      breakpoint: data
+    });
+  }
+};
+
+breakpoint.forward.updatedDfa = function ({ data, index }) {
+  this.setState({
+    minDfa: automata.visDataFormat('min-dfa-viz', data.dfa)
+  });
+
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: 'Unmarked pairs have been merged.',
+      breakpoint: data
+    });
+  }
+};
+
+breakpoint.forward.finish = function ({ data, index }) {
+  if (this.refs.actionsHistory) {
+    this.refs.actionsHistory.addOrSelect(index, {
+      title: 'The minimization has finished.',
       breakpoint: data
     });
   }
@@ -58,7 +121,8 @@ breakpoint.visualizationStates.commit = function () {
     minDfa: {
       nodes: clone(this.state.minDfa.nodes),
       edges: clone(this.state.minDfa.edges)
-    }
+    },
+    table: clone(this.state.table)
   });
 
   this.setState({ visualizationStates });
@@ -95,6 +159,7 @@ breakpoint.visualizationStates.rollback = function () {
       nodes: minDfaNodes,
       edges: minDfaEdges
     },
+    table: clone(visualizationState.table),
     visualizationStates
   });
 };
