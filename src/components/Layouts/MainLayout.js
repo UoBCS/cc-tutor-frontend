@@ -28,7 +28,13 @@ export default class MainLayout extends Component {
     },
 
     logout: () => {
-
+      api.logout()
+        .then(res => {
+          this.props.history.push('/sign-in');
+        })
+        .catch(err => {
+          this.props.history.push('/sign-in');
+        });
     }
   }
 
