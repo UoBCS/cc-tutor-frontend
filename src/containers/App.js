@@ -6,6 +6,7 @@ import EmptyLayout from 'components/Layouts/EmptyLayout';
 import PortalAccessLayout from 'components/Layouts/PortalAccessLayout';
 
 import Dashboard from './Dashboard';
+import ApiDocumentation from './apiDocumentation/ApiDocumentation';
 import Profile from './Profile';
 import Homepage from './Homepage';
 import NotFound from './NotFound';
@@ -73,6 +74,8 @@ class App extends Component {
           <AppRoute exact path="/cc-assistant" layout={EmptyLayout} component={CCAssistant} />
           <AppRoute exact path="/cc-assistant/courses/:id" layout={EmptyLayout} component={CCAssistantCourse} />
           <AppRoute exact path="/cc-assistant/courses/:cid/lessons/:lid" layout={EmptyLayout} component={CCAssistantLesson} />
+
+          <AppRoute exact path="/api-documentation" layout={EmptyLayout} component={ApiDocumentation} />
 
           <AppRoute exact path="*" layout={EmptyLayout} component={NotFound} />
         </Switch>

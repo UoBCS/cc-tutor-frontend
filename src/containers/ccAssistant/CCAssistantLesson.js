@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choose } from 'react-extras';
 import { Link } from 'react-router-dom';
 import { Menu, Card, Header, Button, Icon, Tab } from 'semantic-ui-react';
 import ui from 'utils/ui';
@@ -42,7 +43,7 @@ export default class CCAssistantLesson extends Component {
           });
         })
         .catch(err => {
-
+          // TODO: err
         });
     }
 
@@ -54,7 +55,7 @@ export default class CCAssistantLesson extends Component {
   }
 
   eventHandlers = {
-    editorOnChangeHandler: filename => {
+    editorChange: filename => {
       return newVal => {
         let lessonData = this.state.lessonData;
 
@@ -64,7 +65,7 @@ export default class CCAssistantLesson extends Component {
       };
     },
 
-    submitClickHandler: () => {
+    submitClick: () => {
       const params = this.props.match.params;
       const data = Object.keys(this.state.lessonData.files).map(filename => ({
         name: filename,
@@ -86,11 +87,11 @@ export default class CCAssistantLesson extends Component {
         })
         .catch(err => {
           ui.obj.loader.hide(this, 'submitLesson');
-          // TODO: handle error
+          ui.obj.modal.showErrorFromData(this, err);
         });
     },
 
-    resetFileClickHandler: () => {
+    resetFileClick: () => {
       let lessonData = this.state.lessonData;
 
       Object.keys(lessonData.files).forEach(filename => {
@@ -114,7 +115,7 @@ export default class CCAssistantLesson extends Component {
             width='auto'
             name={`code_editor_${idx}`}
             value={this.state.lessonData.files[filename]}
-            onChange={this.eventHandlers.editorOnChangeHandler(filename)}
+            onChange={this.eventHandlers.editorChange(filename)}
             enableBasicAutocompletion={true}
             enableLiveAutocompletion={true}
             fontSize={16}
@@ -124,31 +125,24 @@ export default class CCAssistantLesson extends Component {
       )
     }));
 
+    const instructions = this.state.lessonData && this.state.lessonData.instructions || [];
+
     return (
       <div className='CCAssistantLesson'>
-        <Menu style={{ backgroundColor: '#152B39', boxShadow: 'none', border: 'none' }} inverted borderless>
-          <Menu.Menu position='right'>
-            <Menu.Item name='home' />
-            <Menu.Item name='messages' />
-            <Menu.Item name='friends' />
-          </Menu.Menu>
-        </Menu>
+        {ui.obj.modal.render(this)}
 
         <div className='CCAssistantLesson_contents'>
           <div className='CCAssistantLesson_instructions'>
             <Header as='h3' className='CCAssistantLesson_instructions_header'>Learn</Header>
-            <div className='CCAssistantLesson_instructions_content'>
-
+            <div className='CCAssistantLesson_instructions_content' dangerouslySetInnerHTML={{__html: instructions.learn}}>
             </div>
 
             <Header as='h3' className='CCAssistantLesson_instructions_header'>Instructions</Header>
-            <div className='CCAssistantLesson_instructions_content'>
-
+            <div className='CCAssistantLesson_instructions_content' dangerouslySetInnerHTML={{__html: instructions.instructions}}>
             </div>
 
             <Header as='h3' className='CCAssistantLesson_instructions_header'>Report a Bug</Header>
-            <div className='CCAssistantLesson_instructions_content'>
-
+            <div className='CCAssistantLesson_instructions_content' dangerouslySetInnerHTML={{__html: instructions.report_bug}}>
             </div>
 
             <Button.Group width='2' fluid>
@@ -158,7 +152,7 @@ export default class CCAssistantLesson extends Component {
           </div>
 
           <div className='CCAssistantLesson_code'>
-            <Tab panes={filePanes} />
+            <Tab className='CCAssistantLesson_code_tab' panes={filePanes} />
           </div>
 
           <div className='CCAssistantLesson_terminal_wrapper'>
@@ -170,10 +164,8 @@ export default class CCAssistantLesson extends Component {
           </div>
 
           <div className='CCAssistantLesson_actions'>
-            <Button loading={this.state.ui.loader.submitLesson} primary onClick={this.eventHandlers.submitClickHandler}>Submit</Button>
-            <Button icon='refresh' onClick={this.eventHandlers.resetFileClickHandler} />
-            <Button floated='right'>Next</Button>
-            <Button floated='right'>Previous</Button>
+            <Button loading={this.state.ui.loader.submitLesson} primary onClick={this.eventHandlers.submitClick}>Submit</Button>
+            <Button icon='refresh' onClick={this.eventHandlers.resetFileClick} />
           </div>
         </div>
       </div>

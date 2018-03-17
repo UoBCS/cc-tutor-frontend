@@ -135,6 +135,10 @@ ui.obj.modal = {
     comp.setState({ ui });
   },
 
+  showErrorFromData: (comp, err) => {
+    ui.obj.modal.show(comp, 'Error', ui.renderErrors(err));
+  },
+
   hide: comp => {
     let ui = comp.state.ui;
     ui.modal.open = false;

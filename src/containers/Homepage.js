@@ -66,7 +66,7 @@ export default class Homepage extends Component {
             <Menu inverted pointing secondary size='large'>
               <Menu.Item as={Link} to='/' active>Home</Menu.Item>
               <Menu.Item as='a'>About</Menu.Item>
-              <Menu.Item as='a'>API</Menu.Item>
+              <Menu.Item as={Link} to='/api-documentation'>API</Menu.Item>
               {rightMenu}
             </Menu>
           </Container>

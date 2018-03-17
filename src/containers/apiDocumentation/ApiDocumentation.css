@@ -1,0 +1,95 @@
+.ApiDocumentation {
+  margin-top: 30px;
+}
+
+.ApiDocumentation_section {
+  color: #4c555a;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.ApiDocumentation_section:last-child {
+  border-bottom: none;
+}
+
+.ApiDocumentation_section h1.ui.header {
+  font-weight: 100;
+  font-size: 1.6em;
+}
+
+.ApiDocumentation_section p {
+  margin-top: 20px;
+  line-height: 26px;
+}
+
+.ApiDocumentation_section_inner {
+  padding: 20px 25px;
+}
+
+h5.ApiDocumentation_list_title.ui.header {
+  color: #939da3;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  text-transform: uppercase;
+}
+
+.ApiDocumentation_list_group {
+  padding: 0;
+  margin-top: 8px;
+  border-top: 1px solid #e1e8ed;
+  list-style: none;
+}
+
+.ApiDocumentation_list_item {
+  padding: 17px 0;
+  border-bottom: 1px solid #f0f4f7;
+  line-height: 24px;
+}
+
+.ApiDocumentation_list_item:last-child {
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.ApiDocumentation_list_item::before, .ApiDocumentation_list_item::after {
+  content: "";
+  display: table;
+}
+
+.ApiDocumentation_list_item::after {
+  clear: both;
+}
+
+h3.ApiDocumentation_list_item_label.ui.header {
+  position: relative;
+  z-index: 5;
+  float: left;
+  text-align: right;
+  width: 180px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 21px;
+  word-break: break-all;
+  white-space: normal;
+  margin: 0;
+}
+
+.ApiDocumentation_list_item_label_extra {
+  display: block;
+  color: #939da3;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  word-break: normal;
+  text-align: right;
+  line-height: 21px;
+  white-space: normal;
+}
+
+p.ApiDocumentation_list_item_description {
+  position: relative;
+  z-index: 10;
+  background: #fff;
+  margin: 0 0 0 200px;
+  font-size: 13px;
+  line-height: 21px;
+}

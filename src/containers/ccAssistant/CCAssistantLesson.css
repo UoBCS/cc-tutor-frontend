@@ -22,6 +22,10 @@ body.CCAssistantLesson_body {
   overflow: auto;
 }
 
+.CCAssistantLesson_instructions_content {
+  padding: 7px 10px;
+}
+
 .CCAssistantLesson_instructions_header {
   background-color: #D4D5D6;
   font-weight: 100 !important;
@@ -79,4 +83,13 @@ body.CCAssistantLesson_body {
 
 .CCAssistantLesson .ui.tabular.menu .item {
   border-radius: 0 !important;
+  color: #fafafa;
+}
+
+.CCAssistantLesson .ui.tabular.menu .item.active {
+  color: #232323;
+}
+
+.CCAssistantLesson_code_tab .ui.attached.tabular.menu {
+  overflow-x: auto;
 }
