@@ -3,7 +3,7 @@ import { Button, Form, Header, Input, Icon, Tab, Grid } from 'semantic-ui-react'
 import { If } from 'react-extras';
 import DateTime from 'react-datetime';
 import JavaEditor from 'components/JavaEditor/JavaEditor';
-import NfaEditor from 'components/NfaEditor/NfaEditor';
+import FiniteAutomatonEditor from 'components/FiniteAutomatonEditor/FiniteAutomatonEditor';
 import clone from 'clone';
 import api from 'api';
 import ui from 'utils/ui';
@@ -65,10 +65,8 @@ export default class CreateAssignment extends Component {
           break;
 
         case 'nfa_to_dfa':
-          this.refs.nfaEditor.getData(data => {
-            assignment.extra.content = data;
-            this.apiWrappers.createAssignment(assignment);
-          });
+          assignment.extra.content = this.refs.nfaEditor.getData();
+          this.apiWrappers.createAssignment(assignment);
           break;
       }
     },
@@ -185,7 +183,7 @@ export default class CreateAssignment extends Component {
     nfaToDfaContent: () => (
       <div>
         <Header as='h4'>NFA editor</Header>
-        <NfaEditor ref='nfaEditor' />
+        <FiniteAutomatonEditor ref='nfaEditor' />
       </div>
     ),
 

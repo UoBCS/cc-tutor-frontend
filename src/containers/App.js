@@ -32,6 +32,8 @@ import AssignmentSubmissions from './assignments/AssignmentSubmissions';
 import CCAssistant from './ccAssistant/CCAssistant';
 import CCAssistantCourse from './ccAssistant/CCAssistantCourse';
 import CCAssistantLesson from './ccAssistant/CCAssistantLesson';
+import DfaOperations from './dfaOperations/DfaOperations';
+import DfaOpsMembership from './dfaOperations/DfaOpsMembership';
 
 const AppRoute = ({ component: Component, layout: Layout, ...rest }) => (
   <Route {...rest} render={props => (
@@ -65,6 +67,8 @@ class App extends Component {
           <AppRoute exact path="/dashboard/lr0" layout={MainLayout} component={LR0} />
           <AppRoute exact path="/dashboard/semantic-analysis" layout={MainLayout} component={SemanticAnalysis} />
           <AppRoute exact path="/dashboard/cek-machine" layout={MainLayout} component={CekMachine} />
+          <AppRoute exact path="/dashboard/dfa-operations" layout={MainLayout} component={DfaOperations} />
+          <AppRoute exact path="/dashboard/dfa-operations/membership" layout={MainLayout} component={DfaOpsMembership} />
 
           <AppRoute exact path="/dashboard/assignments" layout={MainLayout} component={Assignments} />
           <AppRoute exact path="/dashboard/assignments/create" layout={MainLayout} component={CreateAssignment} />

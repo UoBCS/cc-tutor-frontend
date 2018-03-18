@@ -20,7 +20,7 @@ class Dashboard extends Component {
           <Card
             href='/dashboard/regex2nfa'
             header='Regular expression to NFA'
-            description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+            description='Learn how to transform a regular expression to a non-deterministic finite automaton.'
           />
           <Card
             href='/dashboard/nfa2dfa'

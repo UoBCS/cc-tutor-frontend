@@ -5,13 +5,11 @@ import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
 import automata from 'utils/automata';
 
-export default class NfaEditor extends Component {
+export default class FiniteAutomatonEditor extends Component {
 
   state = {
     inputMethod: 'manual',
-    jsonEditor: null,
-    finishedManualInput: false,
-    getDataCallback: () => {}
+    jsonEditor: null
   }
 
   initializers = {
@@ -42,23 +40,12 @@ export default class NfaEditor extends Component {
   eventHandlers = {
     inputMethodClick: event => {
       this.setState({ inputMethod: event.target.getAttribute('method') });
-    },
-
-    manualEditingFinish: edges => {
-      this.state.getDataCallback(automata.fromVis(edges));
     }
   }
 
-  getData = cb => {
-    if (this.state.inputMethod === 'manual') {
-      this.setState({
-        finishedManualInput: true,
-        getDataCallback: cb
-      });
-    } else if (this.state.inputMethod === 'json') {
-      cb(this.state.jsonEditor.get());
-    }
-  }
+  getData = () => this.state.inputMethod === 'manual'
+      ? this.refs.finiteAutomatonCreator.getFiniteAutomaton()
+      : this.state.jsonEditor.get();
 
   componentDidMount() {
     this.initializers.createJsonEditor();
@@ -69,10 +56,9 @@ export default class NfaEditor extends Component {
       return (
         <div>
           <FiniteAutomatonCreator
+            ref='finiteAutomatonCreator'
             hidden={this.state.inputMethod !== 'manual'}
-            containerElement='manualInput'
-            finished={this.state.finishedManualInput}
-            onFinishEditing={this.eventHandlers.manualEditingFinish}/>
+            containerElement='manualInput'/>
 
           <div hidden={this.state.inputMethod !== 'json'} style={{ marginTop: 20 }}>
             <div id='jsonEditor' style={{ height: 600, margin: '10px auto' }}></div>

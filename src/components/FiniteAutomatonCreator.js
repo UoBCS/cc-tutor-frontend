@@ -16,9 +16,7 @@ class FiniteAutomatonCreator extends Component {
     this.createAutomaton();
   }
 
-  getFiniteAutomaton = () => {
-    return automata.fromVis(this.edges, this.nodes);
-  }
+  getFiniteAutomaton = () => automata.fromVis(this.edges, this.nodes);
 
   createAutomaton = () => {
     this.fa = new vis.Network(

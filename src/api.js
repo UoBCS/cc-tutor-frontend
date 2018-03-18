@@ -65,6 +65,10 @@ api.nfaToDfa = data => axios.post('algorithms/nfa2dfa', data);
 
 api.minimizeDfa = data => axios.post('algorithms/minimize-dfa', data);
 
+api.dfaOps = {};
+
+api.dfaOps.membership = data => axios.post('algorithms/dfa-operations/membership', data);
+
 api.cekMachineRun = content => axios.post(`/algorithms/cek-machine/run`, { cek_machine: { control: content, environment: [], continuation: [] } });
 
 api.lexicalAnalysis = data => axios.post('phases/lexical-analysis', data);

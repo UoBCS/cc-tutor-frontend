@@ -93,6 +93,7 @@ export default class MainLayout extends Component {
                     <Menu.Item name='regularExpressionToNFA' active={url === `${pref}/regex2nfa`} as={Link} to={`${pref}/regex2nfa`} />
                     <Menu.Item name='NFAToDFA' active={url === `${pref}/nfa2dfa`} as={Link} to={`${pref}/nfa2dfa`} />
                     <Menu.Item name='DFAMinimization' active={url === `${pref}/dfa-minimization`} as={Link} to={`${pref}/dfa-minimization`} />
+                    <Menu.Item name='DFAOperations' active={url.startsWith(`${pref}/dfa-operations`)} as={Link} to={`${pref}/dfa-operations`} />
                     <Menu.Item name='LLParsing' active={url === `${pref}/ll`} as={Link} to={`${pref}/ll`} />
                     <Menu.Item name='LRParsing' active={url === `${pref}/lr`} as={Link} to={`${pref}/lr`} />
                     <Menu.Item name='LL(1)Parsing' active={url === `${pref}/ll1`} as={Link} to={`${pref}/ll1`} />

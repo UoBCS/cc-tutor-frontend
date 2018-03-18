@@ -55,21 +55,6 @@ export default class InputFiniteAutomaton extends Component {
     this.setState({ jsonEditor });
   }
 
-  createFiniteAutomatonData = () => {
-    let nfa;
-
-    if (this.state.inputMethod === 'json') {
-      nfa = this.state.jsonEditor.get();
-    }
-
-    if (this.state.inputMethod === 'manual') {
-      this.setState({ finishedManualInput: true });
-      nfa = [];
-    }
-
-    return { nfa };
-  }
-
   render() {
     return (
       <div className='dashboard-card'>
