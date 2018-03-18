@@ -22,4 +22,14 @@ misc.changeKey = (obj, from, to) => {
   delete obj[from];
 };
 
+misc.range = (min, max) => {
+  let arr = [];
+
+  for (let i = min; i < max; i++) {
+    arr.push(i);
+  }
+
+  return arr;
+};
+
 export default misc;

@@ -1,6 +1,10 @@
 import automata from 'utils/automata';
+import ui from 'utils/ui';
+import misc from 'utils/misc';
 import clone from 'clone';
 import _ from 'lodash';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export const breakpoint = {};
 
@@ -129,7 +133,7 @@ breakpoint.forward.newDfaTransition = function ({ data, index }) {
 
 breakpoint.visualizationStates = {};
 
-breakpoint.visualizationStates.commit = function () {
+breakpoint.visualizationStates.commit = function (cb = null) {
   let { visualizationStates } = this.state;
 
   visualizationStates.push({
@@ -143,7 +147,7 @@ breakpoint.visualizationStates.commit = function () {
     }
   });
 
-  this.setState({ visualizationStates });
+  this.setState({ visualizationStates }, cb);
 };
 
 breakpoint.visualizationStates.rollback = function () {
@@ -187,17 +191,21 @@ breakpoint.visualizationStates.rollback = function () {
 
 breakpoint.eventHandlers = {};
 
-breakpoint.eventHandlers.visualizeForward = function (b) {
-  breakpoint.visualizationStates.commit.call(this);
+breakpoint.eventHandlers.visualizeForward = function (b, cb = null) {
+  breakpoint.visualizationStates.commit.call(this, () => {
+    breakpoint.forward[_.camelCase(b.label)].call(this, {
+      label: b.label,
+      data: b.data,
+      index: this.state.breakpoint.index
+    });
 
-  breakpoint.forward[_.camelCase(b.label)].call(this, {
-    label: b.label,
-    data: b.data,
-    index: this.state.breakpoint.index
+    if (cb !== null && _.isFunction(cb)) {
+      cb(b);
+    }
   });
 };
 
-breakpoint.eventHandlers.visualizeBackward = function (b) {
+breakpoint.eventHandlers.visualizeBackward = function (b, cb = null) {
   if (breakpoint.backward !== undefined && breakpoint.backward[_.camelCase(b.label)] !== undefined) {
     breakpoint.backward[_.camelCase(b.label)].call(this, {
       label: b.label,
@@ -208,4 +216,58 @@ breakpoint.eventHandlers.visualizeBackward = function (b) {
     breakpoint.visualizationStates.rollback.call(this);
     this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
   }
+
+  if (cb !== null && _.isFunction(cb)) {
+    cb(b);
+  }
+};
+
+breakpoint.eventHandlers.saveVisualization = function () {
+  if (this.refs.visualizationControl === undefined) {
+    ui.obj.modal.show(this, 'Warning', 'Saving the visualization is not supported.');
+    return;
+  }
+
+  ui.obj.loader.show(this);
+
+  const arr = misc.range(0, this.state.breakpoint.data.length + 1);
+  const doc = new jsPDF('p', 'mm');
+  let promises = [];
+
+  this.refs.visualizationControl.breakpoint.forAll(b => {
+    promises.push(html2canvas(document.querySelector('.dashboard-card-content')));
+  });
+
+  setTimeout(() => {
+    Promise.all(promises).then(canvases => {
+      canvases.forEach((canvas, index) => {
+        let screen = canvas.toDataURL('image/jpeg', 0.5);
+        let imgWidth = 210;
+        let pageHeight = 295;
+        let imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        doc.addImage(screen, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(screen, 'JPEG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        doc.addPage();
+      });
+
+      doc.save('download.pdf');
+
+      ui.obj.loader.hide(this);
+
+      /*setTimeout(() => {
+        ui.obj.loader.hide(this);
+        doc.save('download.pdf');
+      }, 10000);*/
+    });
+  }, 15000);
 };

@@ -121,10 +121,12 @@ export default class NfaToDfaViz extends Component {
           </Grid>
 
           <VisualizationControl
+            ref='visualizationControl'
             active
             breakpoint={this.state.breakpoint}
             visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
             visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            saveVisualizationHandler={breakpoint.eventHandlers.saveVisualization.bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>
 

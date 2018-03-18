@@ -17,32 +17,51 @@ export default class VisualizationControl extends Component {
       breakpointsObj.index = breakpointsObj.index + direction;
 
       this.props.updateState({ breakpointsObj }, cb);
+    },
+
+    startIndex: (cb = null) => {
+      let breakpointsObj = this.props.breakpoint;
+      breakpointsObj.index = -1;
+
+      this.props.updateState({ breakpointsObj }, cb);
+    },
+
+    forAll: (cb = null) => {
+      if (!this.props.breakpoint.data) {
+        return;
+      }
+
+      this.props.breakpoint.data.forEach(b => {
+        this.props.visualizeBreakpointForward(b, cb);
+      });
     }
   }
 
   eventHandlers = {
-    forward: () => {
+    forward: (cb = null) => {
       this.breakpoint.updateIndex(1, () => {
         const breakpoint = this.breakpoint.getCurrent();
 
         if (breakpoint !== undefined) {
-          this.props.visualizeBreakpointForward(breakpoint);
+          this.props.visualizeBreakpointForward(breakpoint, cb);
         }
       });
     },
 
-    back: () => {
+    back: (cb = null) => {
       const breakpoint = this.breakpoint.getCurrent();
 
       this.breakpoint.updateIndex(-1, () => {
         if (breakpoint !== undefined) {
-          this.props.visualizeBreakpointBackward(breakpoint);
+          this.props.visualizeBreakpointBackward(breakpoint, cb);
         }
       });
     },
 
-    handleSettingsBtnClick: () => {
-
+    saveClick: () => {
+      if (this.props.saveVisualizationHandler) {
+        this.props.saveVisualizationHandler();
+      }
     }
   }
 
@@ -75,10 +94,10 @@ export default class VisualizationControl extends Component {
           {checkAnswerBtn}
           {addBreakpointBtn}
           <Button
-            icon='setting'
-            content='Settings'
+            icon='download'
+            content='Save'
             disabled={!this.props.active}
-            onClick={this.eventHandlers.handleSettingsBtnClick}/>
+            onClick={this.eventHandlers.saveClick}/>
           <Button
             labelPosition='right'
             icon='right chevron'
