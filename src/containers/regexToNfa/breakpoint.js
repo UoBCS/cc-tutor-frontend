@@ -1,7 +1,7 @@
 import automata from 'utils/automata';
 import _ from 'lodash';
 
-const breakpoint = {};
+export const breakpoint = {};
 
 /**
  * Utils
@@ -148,5 +148,3 @@ breakpoint.eventHandlers.visualizeBackward = function (b) {
     index: this.state.breakpoint.index
   });
 };
-
-export default breakpoint;

@@ -54,6 +54,14 @@ jsonSchemas.applyTransformer = function (schema, res) {
   return schema.transform ? schema.transform.call(this, res) : res;
 };
 
+/**
+ * Regex to NFA
+ */
+jsonSchemas.regex_to_nfa = {};
+
+/**
+ * NFA to DFA
+ */
 jsonSchemas.nfa_to_dfa = {};
 
 jsonSchemas.nfa_to_dfa.highlight_initial_nfa_state = {
@@ -247,6 +255,8 @@ jsonSchemas.nfa_to_dfa.new_dfa_transition = {
 export const uiSchemas = {};
 const hidden = {'ui:widget': 'hidden'};
 
+uiSchemas.regex_to_nfa = {};
+
 uiSchemas.nfa_to_dfa = {};
 uiSchemas.nfa_to_dfa.highlight_initial_nfa_state = { label: hidden };
 uiSchemas.nfa_to_dfa.initial_state_epsilon_closure = { label: hidden };
@@ -259,6 +269,8 @@ uiSchemas.nfa_to_dfa.epsilon_closure = { label: hidden };
  * Form data
  */
 export const formData = {};
+
+formData.regex_to_nfa = {};
 
 formData.nfa_to_dfa = {};
 formData.nfa_to_dfa.highlight_initial_nfa_state = { label: 'highlight_initial_nfa_state' };

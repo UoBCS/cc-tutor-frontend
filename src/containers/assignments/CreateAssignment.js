@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Header, Icon, Tab, Grid } from 'semantic-ui-react';
+import { Button, Form, Header, Input, Icon, Tab, Grid } from 'semantic-ui-react';
 import { If } from 'react-extras';
 import DateTime from 'react-datetime';
 import JavaEditor from 'components/JavaEditor/JavaEditor';
@@ -18,7 +18,10 @@ export default class CreateAssignment extends Component {
       title: '',
       description: '',
       type: 'impl_general', // 'impl_general', 'regex_to_nfa', 'nfa_to_dfa', 'll', 'lr', 'll1', 'lr0', 'cek_machine'
-      due_date: new Date()
+      due_date: new Date(),
+
+      // regex_to_nfa
+      regex: ''
     },
     ui: clone(ui.state)
   }
@@ -44,6 +47,7 @@ export default class CreateAssignment extends Component {
       const { input } = this.state;
       let assignment = clone(input);
       assignment.due_date = assignment.due_date.toISOString().slice(0, 19).replace('T', ' ');
+      delete assignment.regex;
 
       ui.obj.loader.show(this);
 
@@ -56,7 +60,8 @@ export default class CreateAssignment extends Component {
           break;
 
         case 'regex_to_nfa':
-
+          assignment.extra.content = this.state.input.regex;
+          this.apiWrappers.createAssignment(assignment);
           break;
 
         case 'nfa_to_dfa':
@@ -150,7 +155,7 @@ export default class CreateAssignment extends Component {
           break;
 
         case 'regex_to_nfa':
-          //content =
+          content = this.renderers.regexToNfaContent();
           break;
 
         case 'nfa_to_dfa':
@@ -167,6 +172,13 @@ export default class CreateAssignment extends Component {
         <JavaEditor
           ref='javaEditor'
           initialContent={strings.javaEditorInitialContent}/>
+      </div>
+    ),
+
+    regexToNfaContent: () => (
+      <div>
+        <Header as='h4'>Regular expression</Header>
+        <Input name='regex' value={this.state.input.regex} onChange={this.eventHandlers.inputChange} placeholder='Regular expression' />
       </div>
     ),
 

@@ -106,19 +106,17 @@ export default class Assignments extends Component {
       );
     },
 
-    footer: () => {
-      return (
-        <div>
-          <Button animated primary floated='right' onClick={this.eventHandlers.createAssignment}>
-            <Button.Content visible>New</Button.Content>
-            <Button.Content hidden>
-              <Icon name='add' />
-            </Button.Content>
-          </Button>
-          <br style={{ clear: 'both' }}/>
-        </div>
-      );
-    }
+    footer: () => (
+      <div>
+        <Button animated primary floated='right' onClick={this.eventHandlers.createAssignment}>
+          <Button.Content visible>New</Button.Content>
+          <Button.Content hidden>
+            <Icon name='add' />
+          </Button.Content>
+        </Button>
+        <br style={{ clear: 'both' }}/>
+      </div>
+    )
   }
 
   componentWillMount() {

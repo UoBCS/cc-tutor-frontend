@@ -104,7 +104,7 @@ export default class MainLayout extends Component {
                   CC Assistant
                 </Menu.Item>
 
-                <Menu.Item name='assignments' active={url === `${pref}/assignments`}  as={Link} to={`${pref}/assignments`}>
+                <Menu.Item name='assignments' active={url.startsWith(`${pref}/assignments`)}  as={Link} to={`${pref}/assignments`}>
                   Assignments
                 </Menu.Item>
 

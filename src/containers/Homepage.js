@@ -21,6 +21,22 @@ export default class Homepage extends Component {
     authenticated: false
   }
 
+  eventHandlers = {
+    logoutClick: () => {
+      api.logOut()
+        .then(res => {
+
+        })
+        .catch(err => {
+
+        });
+    },
+
+    getStartedClick: () => {
+      this.props.history.push(this.state.authenticated ? '/dashboard' : '/sign-in');
+    }
+  }
+
   componentWillMount() {
     auth.isAuthenticated()
       .then(res => {
@@ -31,22 +47,12 @@ export default class Homepage extends Component {
       })
   }
 
-  handleLogOutClick = () => {
-    api.logOut()
-      .then(res => {
-
-      })
-      .catch(err => {
-
-      });
-  }
-
   render() {
     const rightMenu = this.state.authenticated
       ?
       <Menu.Item position='right'>
         <Button as={Link} to='/dashboard' inverted>Dashboard</Button>
-        <Button onClick={this.handleLogOutClick} inverted style={{ marginLeft: '0.5em' }}>Log out</Button>
+        <Button onClick={this.eventHandlers.logoutClick} inverted style={{ marginLeft: '0.5em' }}>Log out</Button>
       </Menu.Item>
       :
       <Menu.Item position='right'>
@@ -65,7 +71,6 @@ export default class Homepage extends Component {
           <Container>
             <Menu inverted pointing secondary size='large'>
               <Menu.Item as={Link} to='/' active>Home</Menu.Item>
-              <Menu.Item as='a'>About</Menu.Item>
               <Menu.Item as={Link} to='/api-documentation'>API</Menu.Item>
               {rightMenu}
             </Menu>
@@ -80,11 +85,11 @@ export default class Homepage extends Component {
             />
             <Header
               as='h2'
-              content='A compiler construction assistant platform.'
+              content='A compilation process visualization platform.'
               inverted
               style={{ fontSize: '1.7em', fontWeight: 'normal' }}
             />
-            <Button primary size='huge'>
+            <Button primary size='huge' onClick={this.eventHandlers.getStartedClick}>
               Get Started
               <Icon name='right arrow' />
             </Button>
@@ -94,29 +99,31 @@ export default class Homepage extends Component {
         <Segment style={{ padding: '8em 0em' }} vertical>
           <Grid container stackable verticalAlign='middle'>
             <Grid.Row>
-              <Grid.Column width={8}>
-                <Header as='h3' style={{ fontSize: '2em' }}>We Help Companies and Companions</Header>
+              <Grid.Column>
+                <Header as='h3' style={{ fontSize: '2em' }}>Models of Computation Algorithms Included</Header>
                 <p style={{ fontSize: '1.33em' }}>
-                  We can give your company superpowers to do things that they never thought possible. Let us delight
-                  your customers and empower your needs... through pure data analytics.
+                  Models of Computation is a fundamental module in the formation of a computer science student.
+                  CC Tutor includes some automata theory algorithms. In the future it will include more
+                  of them, such as the Turing Machine.
                 </p>
-                <Header as='h3' style={{ fontSize: '2em' }}>We Make Bananas That Can Dance</Header>
+                <Header as='h3' style={{ fontSize: '2em' }}>Frontend Compilaton Process Visualization</Header>
                 <p style={{ fontSize: '1.33em' }}>
-                  Yes that's right, you thought it was the stuff of dreams, but even bananas can be bioengineered.
+                  With CC Tutor you can visualize the frontend compilation process.
                 </p>
-              </Grid.Column>
-              <Grid.Column floated='right' width={6}>
-                <Image
-                  bordered
-                  rounded
-                  size='large'
-                  src='/assets/images/wireframe/white-image.png'
-                />
+                <Header as='h3' style={{ fontSize: '2em' }}>Compiler Construction Assistant</Header>
+                <p style={{ fontSize: '1.33em' }}>
+                  The Compiler Construction Assistant gives you the possiblity to test your understanding
+                  of the frontend compilation process by implementing on your own.
+                </p>
+                <Header as='h3' style={{ fontSize: '2em' }}>Test Understanding Through Assignments</Header>
+                <p style={{ fontSize: '1.33em' }}>
+                  Teachers can submit assignments regarding any algorithm in CC Tutor.
+                </p>
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
               <Grid.Column textAlign='center'>
-                <Button size='huge'>Check Them Out</Button>
+                <Button size='huge' onClick={this.eventHandlers.getStartedClick}>Check Them Out</Button>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -126,47 +133,15 @@ export default class Homepage extends Component {
           <Grid celled='internally' columns='equal' stackable>
             <Grid.Row textAlign='center'>
               <Grid.Column style={{ paddingBottom: '5em', paddingTop: '5em' }}>
-                <Header as='h3' style={{ fontSize: '2em' }}>"What a Company"</Header>
-                <p style={{ fontSize: '1.33em' }}>That is what they all say about us</p>
+                <Header as='h3' style={{ fontSize: '2em' }}>"The CCA is a useful tool for testing and implementing the frontend."</Header>
+                <p style={{ fontSize: '1.33em' }}>4th year MSci student</p>
               </Grid.Column>
               <Grid.Column style={{ paddingBottom: '5em', paddingTop: '5em' }}>
-                <Header as='h3' style={{ fontSize: '2em' }}>"I shouldn't have gone with their competitor."</Header>
-                <p style={{ fontSize: '1.33em' }}>
-                  <Image avatar src='/assets/images/avatar/large/nan.jpg' />
-                  <b>Nan</b> Chief Fun Officer Acme Toys
-                </p>
+                <Header as='h3' style={{ fontSize: '2em' }}>"Overall it's a simple to use tool"</Header>
+                <p style={{ fontSize: '1.33em' }}>3rd year BSc student</p>
               </Grid.Column>
             </Grid.Row>
           </Grid>
-        </Segment>
-
-        <Segment style={{ padding: '8em 0em' }} vertical>
-          <Container text>
-            <Header as='h3' style={{ fontSize: '2em' }}>Breaking The Grid, Grabs Your Attention</Header>
-            <p style={{ fontSize: '1.33em' }}>
-              Instead of focusing on content creation and hard work, we have learned how to master the art of doing
-              nothing by providing massive amounts of whitespace and generic content that can seem massive, monolithic
-              and worth your attention.
-            </p>
-            <Button as='a' size='large'>Read More</Button>
-
-            <Divider
-              as='h4'
-              className='header'
-              horizontal
-              style={{ margin: '3em 0em', textTransform: 'uppercase' }}
-            >
-              <a href='#'>Case Studies</a>
-            </Divider>
-
-            <Header as='h3' style={{ fontSize: '2em' }}>Did We Tell You About Our Bananas?</Header>
-            <p style={{ fontSize: '1.33em' }}>
-              Yes I know you probably disregarded the earlier boasts as non-sequitur filler content, but it's really
-              true.
-              It took years of gene splicing and combinatory DNA research, but our bananas can really dance.
-            </p>
-            <Button as='a' size='large'>I'm Still Quite Interested</Button>
-          </Container>
         </Segment>
 
         <Segment inverted vertical style={{ padding: '5em 0em' }}>
@@ -176,24 +151,21 @@ export default class Homepage extends Component {
                 <Grid.Column width={3}>
                   <Header inverted as='h4' content='About' />
                   <List link inverted>
-                    <List.Item as='a'>Sitemap</List.Item>
-                    <List.Item as='a'>Contact Us</List.Item>
-                    <List.Item as='a'>Religious Ceremonies</List.Item>
-                    <List.Item as='a'>Gazebo Plans</List.Item>
+                    <List.Item as='a'>Contact</List.Item>
+                    <List.Item as='a'>Backend Repository</List.Item>
+                    <List.Item as='a'>Frontend Repository</List.Item>
                   </List>
                 </Grid.Column>
                 <Grid.Column width={3}>
                   <Header inverted as='h4' content='Services' />
                   <List link inverted>
-                    <List.Item as='a'>Banana Pre-Order</List.Item>
-                    <List.Item as='a'>DNA FAQ</List.Item>
-                    <List.Item as='a'>How To Access</List.Item>
-                    <List.Item as='a'>Favorite X-Men</List.Item>
+                    <List.Item as='a'>API Documentation</List.Item>
+                    <List.Item as='a'>Found a Bug?</List.Item>
                   </List>
                 </Grid.Column>
                 <Grid.Column width={7}>
-                  <Header as='h4' inverted>Footer Header</Header>
-                  <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
+                  <Header as='h4' inverted>Get Access!</Header>
+                  <p>Register or login to get access to all features provided by CC Tutor.</p>
                 </Grid.Column>
               </Grid.Row>
             </Grid>

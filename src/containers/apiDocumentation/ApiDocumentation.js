@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Header, Container, Grid, Menu, Segment } from 'semantic-ui-react';
 import Introduction from './Introduction';
 import Authentication from './Authentication';
@@ -20,6 +21,8 @@ export default class ApiDocumentation extends Component {
         <Grid>
           <Grid.Column width={3}>
             <Menu vertical>
+              <Menu.Item as={Link} to='/'>Home</Menu.Item>
+
               <Menu.Item>
                 <Menu.Header>TOPICS</Menu.Header>
 

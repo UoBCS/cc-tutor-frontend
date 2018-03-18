@@ -113,6 +113,10 @@ export default class Assignment extends Component {
           content = this.renderers.implGeneralContent();
           break;
 
+        case 'regex_to_nfa':
+          content = this.renderers.regexToNfaContent();
+          break;
+
         case 'nfa_to_dfa':
           content = this.renderers.nfaToDfaContent();
           break;
@@ -145,34 +149,52 @@ export default class Assignment extends Component {
       );
     },
 
-    nfaToDfaContent: () => {
-      return (
-        <div>
-          <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+    regexToNfaContent: () => (
+      <div>
+        <VisualizationElement.ActionsHistory ref='actionsHistory'/>
 
-          <Grid columns={2}>
-            <Grid.Column>
-              <Window title='Non-deterministic finite automaton' titleColor='blue'>
-                <div id='nfa-viz' style={{ height: 500 }}></div>
-              </Window>
-            </Grid.Column>
-            <Grid.Column>
-              <Window title='Deterministic finite automaton' titleColor='blue'>
-                <div id='dfa-viz' style={{ height: 500 }}></div>
-              </Window>
-            </Grid.Column>
-          </Grid>
+        <Header as='h4'>Regular Expression: {this.state.contents === null ? null : this.state.contents.input.regex}</Header>
 
-          <VisualizationControl
-            active
-            breakpoint={this.state.contents}
-            visualizeBreakpointForward={breakpoints.eventHandlers.visualizeForward.bind(this)}
-            visualizeBreakpointBackward={breakpoints.eventHandlers.visualizeBackward.bind(this)}
-            addBreakpointHandler={breakpoints.eventHandlers.showActionChooser.bind(this)}
-            updateState={this.helpers.updateState}/>
-        </div>
-      );
-    },
+        <Window title='Non-deterministic finite automaton' titleColor='blue'>
+          <div id='nfa-viz' style={{ height: 500 }}></div>
+        </Window>
+
+        <VisualizationControl
+          active
+          breakpoint={this.state.contents}
+          visualizeBreakpointForward={breakpoints.eventHandlers.visualizeForward.bind(this)}
+          visualizeBreakpointBackward={breakpoints.eventHandlers.visualizeBackward.bind(this)}
+          addBreakpointHandler={breakpoints.eventHandlers.showActionChooser.bind(this)}
+          updateState={this.helpers.updateState}/>
+      </div>
+    ),
+
+    nfaToDfaContent: () => (
+      <div>
+        <VisualizationElement.ActionsHistory ref='actionsHistory'/>
+
+        <Grid columns={2}>
+          <Grid.Column>
+            <Window title='Non-deterministic finite automaton' titleColor='blue'>
+              <div id='nfa-viz' style={{ height: 500 }}></div>
+            </Window>
+          </Grid.Column>
+          <Grid.Column>
+            <Window title='Deterministic finite automaton' titleColor='blue'>
+              <div id='dfa-viz' style={{ height: 500 }}></div>
+            </Window>
+          </Grid.Column>
+        </Grid>
+
+        <VisualizationControl
+          active
+          breakpoint={this.state.contents}
+          visualizeBreakpointForward={breakpoints.eventHandlers.visualizeForward.bind(this)}
+          visualizeBreakpointBackward={breakpoints.eventHandlers.visualizeBackward.bind(this)}
+          addBreakpointHandler={breakpoints.eventHandlers.showActionChooser.bind(this)}
+          updateState={this.helpers.updateState}/>
+      </div>
+    ),
 
     footer: () => (
       <div>
@@ -223,11 +245,19 @@ export default class Assignment extends Component {
 
       breakpoints.initializers.setAlgorithm(assignment.type);
 
-      if (assignment.type === 'nfa_to_dfa') {
-        this.setState({
-          nfa: automata.visDataFormat('nfa-viz', contents.input),
-          dfa: automata.createEmpty('dfa-viz')
-        });
+      switch (assignment.type) {
+        case 'regex_to_nfa':
+          this.setState({
+            nfa: automata.createEmpty('nfa-viz')
+          });
+          break;
+
+        case 'nfa_to_dfa':
+          this.setState({
+            nfa: automata.visDataFormat('nfa-viz', contents.input),
+            dfa: automata.createEmpty('dfa-viz')
+          });
+          break;
       }
     });
   }

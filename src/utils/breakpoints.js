@@ -3,6 +3,7 @@ import { Button, List } from 'semantic-ui-react';
 import { For } from 'react-extras';
 import Form from 'react-jsonschema-form';
 import { breakpoint as nfaToDfaBreakpoint } from 'containers/nfaToDfa/breakpoint';
+import { breakpoint as regexToNfaBreakpoint } from 'containers/regexToNfa/breakpoint';
 import _ from 'lodash';
 import clone from 'clone';
 import { lensPath, view, set } from 'ramda';
@@ -14,7 +15,8 @@ import { jsonSchemas, uiSchemas, formData } from './jsonSchemas';
 const breakpoints = {};
 
 const breakpointModule = {
-  nfa_to_dfa: nfaToDfaBreakpoint
+  regex_to_nfa: regexToNfaBreakpoint,
+  nfa_to_dfa: nfaToDfaBreakpoint,
 };
 
 breakpoints.initializers = {

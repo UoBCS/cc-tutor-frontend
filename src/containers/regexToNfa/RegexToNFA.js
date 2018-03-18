@@ -3,7 +3,7 @@ import { Button, Input, Segment, Header, Grid, Label } from 'semantic-ui-react';
 import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import Window from 'components/Window/Window';
-import breakpoint from './breakpoint';
+import { breakpoint } from './breakpoint';
 import userInteraction from './userInteraction';
 import api from 'api';
 import misc from 'utils/misc';
