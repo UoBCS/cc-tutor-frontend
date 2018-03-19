@@ -9,6 +9,7 @@ import clone from 'clone';
 import _ from 'lodash';
 import automata from 'utils/automata';
 import { breakpoint } from './breakpoint';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import misc from 'utils/misc';
 import ui from 'utils/ui';
 import RGL, { WidthProvider } from 'react-grid-layout';
@@ -74,6 +75,8 @@ export default class DfaMinimizationViz extends Component {
   componentWillMount() {
     ui.obj.loader.show(this);
 
+    globalBreakpointProcessor.initialize(breakpoint);
+
     let data = clone(this.props.data);
     misc.changeKey(data, 'fa', 'dfa');
 
@@ -107,6 +110,8 @@ export default class DfaMinimizationViz extends Component {
         {ui.obj.modal.render(this)}
 
         {ui.obj.loader.render(this)}
+
+        {ui.obj.toast.render(this)}
 
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
@@ -170,8 +175,8 @@ export default class DfaMinimizationViz extends Component {
           <VisualizationControl
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
-            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
+            visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>
 

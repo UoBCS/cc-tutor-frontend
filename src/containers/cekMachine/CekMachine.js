@@ -6,6 +6,7 @@ import api from 'api';
 import clone from 'clone';
 import _ from 'lodash';
 import ui from 'utils/ui';
+import misc from 'utils/misc';
 import automata from 'utils/automata';
 
 import './CekMachine.css';
@@ -14,7 +15,7 @@ export default class CekMachine extends Component {
 
   state = {
     input: {
-      lambda: ''
+      lambda: '(\\x.x)1'
     },
 
     breakpoint: {
@@ -31,7 +32,7 @@ export default class CekMachine extends Component {
   }
 
   eventHandlers = {
-    submitLambdaHandler: () => {
+    submitLambdaClick: () => {
       api.cekMachineRun(this.state.input.lambda)
         .then(res => {
           this.setState({
@@ -46,17 +47,11 @@ export default class CekMachine extends Component {
         });
     },
 
-    inputChangeHandler: event => {
+    inputChange: event => {
       const target = event.target;
       let input = this.state.input;
       input[target.name] = target.value;
       this.setState({ input });
-    }
-  }
-
-  helpers = {
-    updateState: (obj, cb) => {
-      this.setState(obj, cb);
     }
   }
 
@@ -107,8 +102,8 @@ export default class CekMachine extends Component {
                 size='large'
                 placeholder='Enter lambda...'
                 value={this.state.input.lambda}
-                onChange={this.eventHandlers.inputChangeHandler}
-                action={<Button onClick={this.eventHandlers.submitLambdaHandler}>Submit</Button>} />
+                onChange={this.eventHandlers.inputChange}
+                action={<Button onClick={this.eventHandlers.submitLambdaClick}>Submit</Button>} />
             </Grid.Column>
 
             <Grid.Column width={8} className='CekMachine_instructions'>
@@ -127,7 +122,7 @@ export default class CekMachine extends Component {
             breakpoint={this.state.breakpoint}
             visualizeBreakpointForward={this.breakpoint.visualizeForward}
             visualizeBreakpointBackward={this.breakpoint.visualizeBackward}
-            updateState={this.helpers.updateState}/>
+            updateState={misc.updateState.bind(this)}/>
         </div>
       </div>
     );

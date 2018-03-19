@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
-import InputData from '../InputData';
+import InputParserData from '../InputParserData';
 import LRViz from './LRViz';
 
 export default class LR extends WindowManager {
   state = {
     windows: {
-      input: InputData,
+      input: InputParserData,
       viz: LRViz
     }
   }

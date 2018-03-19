@@ -7,6 +7,7 @@ import VisualizationElement from 'components/VisualizationElement/VisualizationE
 import FiniteAutomatonEditor from 'components/FiniteAutomatonEditor/FiniteAutomatonEditor';
 import ConsumableInput from 'components/ConsumableInput/ConsumableInput';
 import { breakpoint } from './membershipBreakpoint';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import api from 'api';
 import automata from 'utils/automata';
 import misc from 'utils/misc';
@@ -80,10 +81,16 @@ export default class DfaOpsMembership extends Component {
     }
   }
 
+  componentWillMount() {
+    globalBreakpointProcessor.initialize(breakpoint);
+  }
+
   render() {
     return (
       <div className='dashboard-card'>
         {ui.obj.loader.render(this)}
+
+        {ui.obj.toast.render(this)}
 
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
@@ -130,8 +137,8 @@ export default class DfaOpsMembership extends Component {
               <VisualizationControl
                 active
                 breakpoint={this.state.breakpoint}
-                visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
-                visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+                visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
+                visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
                 updateState={misc.updateState.bind(this)}/>
             </Choose.Otherwise>
           </Choose>

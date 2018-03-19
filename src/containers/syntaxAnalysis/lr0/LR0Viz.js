@@ -11,7 +11,8 @@ import automata from 'utils/automata';
 import tree from 'utils/tree';
 import ui from 'utils/ui';
 import misc from 'utils/misc';
-import breakpoint from './breakpoint';
+import { breakpoint } from './breakpoint';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import clone from 'clone';
 import _ from 'lodash';
 import RGL, { WidthProvider } from 'react-grid-layout';
@@ -59,20 +60,6 @@ export default class LR0Viz extends Component {
     ui: clone(ui.state)
   }
 
-  componentDidMount() {
-    ui.obj.loader.show(this);
-
-    api.lr0.parse(this.props.data)
-      .then(res => {
-        ui.obj.loader.hide(this);
-        this.initializers.setData(res.data);
-      })
-      .catch(err => {
-        ui.obj.loader.hide(this);
-        ui.obj.message.showErrorFromData(this, err);
-      });
-  }
-
   initializers = {
     setData: data => {
       this.setState({
@@ -108,10 +95,30 @@ export default class LR0Viz extends Component {
     renderStack: (s, idx) => <div key={idx}>{s.id}</div>
   }
 
+  componentWillMount() {
+    globalBreakpointProcessor.initialize(breakpoint);
+  }
+
+  componentDidMount() {
+    ui.obj.loader.show(this);
+
+    api.lr0.parse(this.props.data)
+      .then(res => {
+        ui.obj.loader.hide(this);
+        this.initializers.setData(res.data);
+      })
+      .catch(err => {
+        ui.obj.loader.hide(this);
+        ui.obj.message.showErrorFromData(this, err);
+      });
+  }
+
   render() {
     return (
       <div className='dashboard-card'>
         {ui.obj.loader.render(this)}
+
+        {ui.obj.toast.render(this)}
 
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
@@ -189,8 +196,8 @@ export default class LR0Viz extends Component {
           <VisualizationControl
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
-            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
+            visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>
 

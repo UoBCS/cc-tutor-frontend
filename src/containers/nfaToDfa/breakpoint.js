@@ -17,9 +17,13 @@ breakpoint.forward = {};
 breakpoint.forward.highlightInitialNfaState = function ({data, index}) {
   automata.highlightNodes(this.state.nfa, [data.state.id]);
 
+  const str = 'Consider the initial NFA state';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Consider the initial NFA state',
+      title: str,
       breakpoint: data
     });
   }
@@ -31,9 +35,13 @@ breakpoint.forward.initialStateEpsilonClosure = function ({data, index}) {
   let reachableStates = data.reachable_states.map(s => s.id);
   automata.highlightNodes(this.state.nfa, reachableStates);
 
+  const str = `ε-closure of NFA state ${data.initial.id}: {${reachableStates.join(', ')}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `ε-closure of NFA state ${data.initial.id}: {${reachableStates.join(', ')}}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -54,9 +62,13 @@ breakpoint.forward.initialDfaState = function ({data, index}) {
     title: `Corresponding NFA states: {${nfaStates.join(', ')}}`
   }]);
 
+  const str = `Initial DFA state ${data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Initial DFA state ${data.id} formed by the previous NFA states: {${nfaStates.join(', ')}}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -73,9 +85,13 @@ breakpoint.forward.possibleInputs = function ({data, index}) {
 
   automata.highlightEdges(this.state.nfa, edges);
 
+  const str = `NFA states {${data.dfa_state_contents}} give the possible inputs to follow: {${data.possible_inputs}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `NFA states {${data.dfa_state_contents}} give the possible inputs to follow: {${data.possible_inputs}}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -90,9 +106,13 @@ breakpoint.forward.moveStates = function ({data, index}) {
           ? `no state: there is no '${data.char}' transition`
           : `{${data.connected_states.map(s => s.id).join(', ')}}`}`;
 
+  const str = `Move action: NFA state ${data.state.id} moves to ${connectedStatesString}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Move action: NFA state ${data.state.id} moves to ${connectedStatesString}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -101,9 +121,13 @@ breakpoint.forward.moveStates = function ({data, index}) {
 breakpoint.forward.epsilonClosure = function ({ data, index }) {
   automata.highlightNodes(this.state.nfa, data.output.map(s => s.id), automata.highlightOptions.highlightState[1].color.background);
 
+  const str = `ε-closure of NFA states {${data.input.map(s => s.id).join(', ')}}: {${data.output.map(s => s.id).join(', ')}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `ε-closure of NFA states {${data.input.map(s => s.id).join(', ')}}: {${data.output.map(s => s.id).join(', ')}}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -119,22 +143,20 @@ breakpoint.forward.newDfaTransition = function ({ data, index }) {
   }]);
   automata.addEdge(this.state.dfa, data.src, data.dest, data.char);
 
+  const str = `New DFA state ${data.dest.id} formed by NFA states {${nfaStates}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `New DFA state ${data.dest.id} formed by NFA states {${nfaStates}}`,
+      title: str,
       breakpoint: data
     });
   }
 };
 
-/**
- * Visualization states
- */
-
-breakpoint.visualizationStates = {};
-
-breakpoint.visualizationStates.commit = function (cb = null) {
-  let { visualizationStates } = this.state;
+breakpoint.commit = function (cb = null) {
+  let visualizationStates = this.state.visualizationStates || [];
 
   visualizationStates.push({
     nfa: {
@@ -150,7 +172,7 @@ breakpoint.visualizationStates.commit = function (cb = null) {
   this.setState({ visualizationStates }, cb);
 };
 
-breakpoint.visualizationStates.rollback = function () {
+breakpoint.rollback = function () {
   let visualizationStates = this.state.visualizationStates || [];
 
   let visualizationState = visualizationStates.pop();
@@ -183,90 +205,4 @@ breakpoint.visualizationStates.rollback = function () {
     },
     visualizationStates
   });
-};
-
-/**
- * Event handlers
- */
-
-breakpoint.eventHandlers = {};
-
-breakpoint.eventHandlers.visualizeForward = function (b, cb = null) {
-  breakpoint.visualizationStates.commit.call(this, () => {
-    breakpoint.forward[_.camelCase(b.label)].call(this, {
-      label: b.label,
-      data: b.data,
-      index: this.state.breakpoint.index
-    });
-
-    if (cb !== null && _.isFunction(cb)) {
-      cb(b);
-    }
-  });
-};
-
-breakpoint.eventHandlers.visualizeBackward = function (b, cb = null) {
-  if (breakpoint.backward !== undefined && breakpoint.backward[_.camelCase(b.label)] !== undefined) {
-    breakpoint.backward[_.camelCase(b.label)].call(this, {
-      label: b.label,
-      data: b.data,
-      index: this.state.breakpoint.index
-    });
-  } else {
-    breakpoint.visualizationStates.rollback.call(this);
-    this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
-  }
-
-  if (cb !== null && _.isFunction(cb)) {
-    cb(b);
-  }
-};
-
-breakpoint.eventHandlers.saveVisualization = function () {
-  if (this.refs.visualizationControl === undefined) {
-    ui.obj.modal.show(this, 'Warning', 'Saving the visualization is not supported.');
-    return;
-  }
-
-  ui.obj.loader.show(this);
-
-  const arr = misc.range(0, this.state.breakpoint.data.length + 1);
-  const doc = new jsPDF('p', 'mm');
-  let promises = [];
-
-  this.refs.visualizationControl.breakpoint.forAll(b => {
-    promises.push(html2canvas(document.querySelector('.dashboard-card-content')));
-  });
-
-  setTimeout(() => {
-    Promise.all(promises).then(canvases => {
-      canvases.forEach((canvas, index) => {
-        let screen = canvas.toDataURL('image/jpeg', 0.5);
-        let imgWidth = 210;
-        let pageHeight = 295;
-        let imgHeight = canvas.height * imgWidth / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
-
-        doc.addImage(screen, 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          doc.addPage();
-          doc.addImage(screen, 'JPEG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-        doc.addPage();
-      });
-
-      doc.save('download.pdf');
-      ui.obj.loader.hide(this);
-
-      /*setTimeout(() => {
-        ui.obj.loader.hide(this);
-        doc.save('download.pdf');
-      }, 10000);*/
-    });
-  }, 15000);
 };

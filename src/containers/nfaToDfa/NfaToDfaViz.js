@@ -8,6 +8,7 @@ import clone from 'clone';
 import _ from 'lodash';
 import automata from 'utils/automata';
 import { breakpoint } from './breakpoint';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import misc from 'utils/misc';
 import ui from 'utils/ui';
 
@@ -45,6 +46,8 @@ export default class NfaToDfaViz extends Component {
   componentWillMount() {
     ui.obj.loader.show(this);
 
+    globalBreakpointProcessor.initialize(breakpoint);
+
     let data = clone(this.props.data);
     misc.changeKey(data, 'fa', 'nfa');
 
@@ -78,6 +81,8 @@ export default class NfaToDfaViz extends Component {
         {ui.obj.modal.render(this)}
 
         {ui.obj.loader.render(this)}
+
+        {ui.obj.toast.render(this)}
 
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
@@ -124,9 +129,9 @@ export default class NfaToDfaViz extends Component {
             ref='visualizationControl'
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
-            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
-            saveVisualizationHandler={breakpoint.eventHandlers.saveVisualization.bind(this)}
+            visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
+            visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
+            saveVisualizationHandler={globalBreakpointProcessor.eventHandlers.saveVisualization().bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>
 

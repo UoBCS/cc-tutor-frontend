@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
-import InputData from 'containers/syntaxAnalysis/InputData';
+import InputParserData from 'containers/syntaxAnalysis/InputParserData';
 import BuildAst from './BuildAst';
 import TypeChecking from './TypeChecking';
 
 export default class SemanticAnalysis extends WindowManager {
   state = {
     windows: {
-      input: InputData,
+      input: InputParserData,
       buildAst: BuildAst,
       typeChecking: TypeChecking
     }

@@ -4,7 +4,7 @@ import clone from 'clone';
 import _ from 'lodash';
 import ui from 'utils/ui';
 
-const breakpoint = {};
+export const breakpoint = {};
 
 /**
  * Forward
@@ -35,9 +35,13 @@ breakpoint.forward.init = function ({ data, index }) {
     tokens
   });
 
+  const str = 'Initialization of components';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Initialization of components',
+      title: str,
       breakpoint: data
     });
   }
@@ -49,9 +53,13 @@ breakpoint.forward.considerState = function ({ data, index }) {
 
   this.setState({ stateStack: data.stack });
 
+  const str = `Consider state ${data.state.id} from the top of the stack`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Consider state ${data.state.id} from the top of the stack`,
+      title: str,
       breakpoint: data
     });
   }
@@ -62,9 +70,13 @@ breakpoint.forward.consumeChar = function ({ data, index }) {
   content.index = data.index;
   this.setState({ content });
 
+  const str = 'Consume char';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Consume char',
+      title: str,
       breakpoint: data
     });
   }
@@ -78,9 +90,13 @@ breakpoint.forward.stateNeighbours = function ({ data, index }) {
     ui.obj.modal.show(this, 'Warning', 'There are no reachable neighbours matching the selected character.');
   }
 
+  const str = `Select the reachable neighbours matching the character: {${neighbourIds.join(', ')}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Select the reachable neighbours matching the character: {${neighbourIds.join(', ')}}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -95,9 +111,13 @@ breakpoint.forward.updateText = function ({ data, index }) {
     tokens
   });
 
+  const str = `Update token text: ${data.token_text}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Update token text: ${data.token_text}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -139,21 +159,19 @@ breakpoint.forward.producedToken = function ({ data, index }) {
 
   this.setState({ tokens });
 
+  const str = `The produced token is: [${data.token.text}, ${data.token.type.name}]`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `The produced token is: [${data.token.text}, ${data.token.type.name}]`,
+      title: str,
       data: breakpoint
     });
   }
-}
+};
 
-/**
- * Visualization states
- */
-
-breakpoint.visualizationStates = {};
-
-breakpoint.visualizationStates.commit = function () {
+breakpoint.commit = function (cb = null) {
   let visualizationStates = this.state.visualizationStates || [];
 
   visualizationStates.push({
@@ -166,10 +184,10 @@ breakpoint.visualizationStates.commit = function () {
     content: clone(this.state.content)
   });
 
-  this.setState({ visualizationStates });
+  this.setState({ visualizationStates }, cb);
 };
 
-breakpoint.visualizationStates.rollback = function () {
+breakpoint.rollback = function () {
   let { visualizationStates } = this.state;
 
   let visualizationState = visualizationStates.pop();
@@ -198,34 +216,3 @@ breakpoint.visualizationStates.rollback = function () {
     visualizationStates
   });
 };
-
-/**
- * Event handlers
- */
-
-breakpoint.eventHandlers = {};
-
-breakpoint.eventHandlers.visualizeForward = function (b) {
-  breakpoint.visualizationStates.commit.call(this);
-
-  breakpoint.forward[_.camelCase(b.label)].call(this, {
-    label: b.label,
-    data: b.data,
-    index: this.state.breakpoint.index
-  });
-};
-
-breakpoint.eventHandlers.visualizeBackward = function (b) {
-  if (breakpoint.backward !== undefined && breakpoint.backward[_.camelCase(b.label)] !== undefined) {
-    breakpoint.backward[_.camelCase(b.label)].call(this, {
-      label: b.label,
-      data: b.data,
-      index: this.state.breakpoint.index
-    });
-  } else {
-    breakpoint.visualizationStates.rollback.call(this);
-    this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
-  }
-};
-
-export default breakpoint;

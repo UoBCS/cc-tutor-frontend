@@ -11,6 +11,7 @@ import automata from 'utils/automata';
 import ui from 'utils/ui';
 import api from 'api';
 import { jsonSchemas, uiSchemas, formData } from './jsonSchemas';
+import globalBreakpointProcessor from './globalBreakpointProcessor';
 
 const breakpoints = {};
 
@@ -22,18 +23,11 @@ const breakpointModule = {
 breakpoints.initializers = {
   setAlgorithm: algo => {
     breakpoints.ALGORITHM = algo;
+    globalBreakpointProcessor.initialize(breakpointModule[breakpoints.ALGORITHM]);
   }
-}
+};
 
 breakpoints.eventHandlers = {
-  visualizeForward: function (b) {
-    breakpointModule[breakpoints.ALGORITHM].visualizeForward.call(this, b);
-  },
-
-  visualizeBackward: function (b) {
-    breakpointModule[breakpoints.ALGORITHM].visualizeBackward.call(this, b);
-  },
-
   showActionChooser: function () {
     ui.obj.modal.hide(this);
     ui.obj.modal.show(

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form } from 'semantic-ui-react';
+import { Form, Icon } from 'semantic-ui-react';
 
 export default class TokenInput extends Component {
 
@@ -17,6 +17,7 @@ export default class TokenInput extends Component {
         <Form.Input name={`ti-regex-${this.props.id}`} className='monospace-input' fluid label='Regex' placeholder='Regex' />
         <Form.Input name={`ti-priority-${this.props.id}`} className='monospace-input' fluid label='Priority' placeholder='Priority' type='number' />
         <Form.Checkbox name={`ti-skippable-${this.props.id}`} label='Skippable' />
+        <Icon link circular inverted color='red' name='x' onClick={this.props.onDeleteClickHandler} />
       </Form.Group>
     )
   }

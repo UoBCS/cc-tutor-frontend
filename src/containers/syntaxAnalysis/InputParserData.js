@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
 import { Button, Header, Menu, Grid, Icon, Form } from 'semantic-ui-react';
 import TokenInput from 'components/TokenInput';
-import GrammarInput from 'components/GrammarInput/GrammarInput';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import JSONEditor from 'jsoneditor';
 import automata from 'utils/automata';
 
-export default class InputData extends Component {
+export default class InputParserData extends Component {
 
   state = {
     input: {
       inputMethod: 'default',
-      content: '',
       jsonEditor: null,
+      grammarJsonEditor: null,
+      content: '',
       tokens: {
-        components: [{ key: 0, ref: '0' }],
+        components: [{ key: 0, ref: 'tokenInput0' }],
         refIndex: 1
       }
     }
-  }
-
-  componentDidMount() {
-    this.initializers.createJsonEditor();
   }
 
   initializers = {
@@ -61,6 +57,27 @@ export default class InputData extends Component {
       });
 
       this.setState({ input });
+    },
+
+    createGrammarJsonEditor: () => {
+      const input = this.state.input;
+
+      input.grammarJsonEditor = new JSONEditor(document.getElementById('grammarJsonEditor'), {
+        mode: 'tree',
+        modes: ['code', 'tree'],
+        search: true
+      });
+
+      input.grammarJsonEditor.set({
+        "productions": {
+          "s": [["l", "B"]],
+          "l": [["A", "l"], null]
+        },
+
+        "start_symbol": "s"
+      });
+
+      this.setState({ input });
     }
   }
 
@@ -74,13 +91,21 @@ export default class InputData extends Component {
     },
 
     addTokenCLick: () => {
-      const input = this.state.input;
+      const { input } = this.state;
 
       input.tokens.components.push({
         key: input.tokens.refIndex,
-        ref: input.tokens.refIndex + ''
+        ref: `tokenInput${input.tokens.refIndex}`
       });
       input.tokens.refIndex++
+
+      this.setState({ input });
+    },
+
+    deleteTokenClick: i => () => {
+      const { input } = this.state;
+
+      input.tokens.components = input.tokens.components.filter((token, index) => index !== i);
 
       this.setState({ input });
     },
@@ -97,11 +122,34 @@ export default class InputData extends Component {
                   ? this.getInputData()
                   : this.state.input.jsonEditor.get();
 
+      if (this.state.input.inputMethod === 'default') {
+        console.log(data);
+        return;
+      }
+
       this.props.windowChangeHandler(this.props.data.nextWindow, data);
     }
   }
 
-  getInputData = () => this.refs.grammar;
+  getInputData = () => {
+    const components = this.state.input.tokens.components;
+    let token_types = [];
+
+    for (const token of components) {
+      token_types.push(this.refs[token.ref].getData());
+    }
+
+    return {
+      token_types,
+      grammar: this.state.input.grammarJsonEditor.get(),
+      content: this.state.input.content
+    };
+  };
+
+  componentDidMount() {
+    this.initializers.createJsonEditor();
+    this.initializers.createGrammarJsonEditor();
+  }
 
   render() {
     return (
@@ -133,8 +181,8 @@ export default class InputData extends Component {
           <Form hidden={this.state.input.inputMethod !== 'default'}>
             <div>
               <Header as='h3'>Tokens</Header>
-              {this.state.input.tokens.components.map(c =>
-                <TokenInput id={c.key} key={c.key} ref={c.ref} />
+              {this.state.input.tokens.components.map((c, i) =>
+                <TokenInput id={c.key} key={i} ref={`tokenInput${i}`} onDeleteClickHandler={this.eventHandlers.deleteTokenClick(i)} />
               )}
 
               <Button animated='vertical' onClick={this.eventHandlers.addTokenCLick}>
@@ -147,13 +195,16 @@ export default class InputData extends Component {
 
             <div style={{ marginTop: 30, paddingTop: 30, borderTop: '1px solid #dcdcdc' }}>
               <Header as='h3'>Grammar</Header>
-              <GrammarInput ref='grammar' />
+              <div
+                id='grammarJsonEditor'
+                style={{ height: 250, margin: '10px auto' }}></div>
             </div>
 
             <div style={{ marginTop: 30, paddingTop: 30, borderTop: '1px solid #dcdcdc' }}>
               <Header as='h3'>Content</Header>
               <Form.TextArea
                 name='content'
+                value={this.state.input.content}
                 placeholder='Insert content to split into tokens...'
                 style={{ fontFamily: 'monospace' }}
                 onChange={this.eventHandlers.inputChange}/>

@@ -1,6 +1,9 @@
 import automata from 'utils/automata';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
+import ui from 'utils/ui';
 import clone from 'clone';
 import _ from 'lodash';
+import randomColor from 'randomcolor';
 
 export const breakpoint = {};
 
@@ -28,18 +31,26 @@ breakpoint.forward.inputDfa = function ({ data, index }) {
     dfa: automata.visDataFormat('dfa-viz', data.dfa)
   });
 
+  const str = 'Consider the DFA to minimize';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Consider the DFA to minimize',
+      title: str,
       breakpoint: data
     });
   }
 }
 
 breakpoint.forward.reachableStates = function ({ data, index }) {
+  const str = `Reachable states: {${data.states.map(s => s.id === -1 ? 'Error state' : s.id).join(', ')}}`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Reachable states: {${data.states.map(s => s.id === -1 ? 'Error state' : s.id).join(', ')}}`,
+      title: str,
       breakpoint: data
     });
   }
@@ -48,9 +59,13 @@ breakpoint.forward.reachableStates = function ({ data, index }) {
 breakpoint.forward.initialTable = function ({ data, index }) {
   updateTable.call(this, data);
 
+  const str = 'Initial table contents';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Initial table contents',
+      title: str,
       breakpoint: data
     });
   }
@@ -59,26 +74,33 @@ breakpoint.forward.initialTable = function ({ data, index }) {
 breakpoint.forward.updatedTable = function ({ data, index }) {
   updateTable.call(this, data);
 
+  const str = 'Update table contents';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Update table contents',
+      title: str,
       breakpoint: data
     });
   }
 };
 
 breakpoint.forward.unmarkedStates = function ({ data, index }) {
-  // TODO: finish this
-
   const { states } = data;
 
   for (const pair of states) {
-
+    const color = randomColor();
+    automata.highlightNodes(this.state.dfa, pair.map(s => s.id), color);
   }
+
+  const str = states.length === 0 ? 'There are no states to merge.' : 'Unmarked pair of states have been highlighted.';
+
+  ui.obj.toast.show(str);
 
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: states.length === 0 ? 'There are no states to merge.' : 'Unmarked pair of states have been highlighted.',
+      title: str,
       breakpoint: data
     });
   }
@@ -89,30 +111,32 @@ breakpoint.forward.updatedDfa = function ({ data, index }) {
     minDfa: automata.visDataFormat('min-dfa-viz', data.dfa)
   });
 
+  const str = 'Unmarked pairs have been merged (if any).';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'Unmarked pairs have been merged.',
+      title: str,
       breakpoint: data
     });
   }
 };
 
 breakpoint.forward.finish = function ({ data, index }) {
+  const str = 'The minimization has finished.';
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: 'The minimization has finished.',
+      title: str,
       breakpoint: data
     });
   }
 };
 
-/**
- * Visualization states
- */
-
-breakpoint.visualizationStates = {};
-
-breakpoint.visualizationStates.commit = function () {
+breakpoint.commit = function (cb = null) {
   let visualizationStates = this.state.visualizationStates || [];
 
   visualizationStates.push({
@@ -127,10 +151,10 @@ breakpoint.visualizationStates.commit = function () {
     table: clone(this.state.table)
   });
 
-  this.setState({ visualizationStates });
+  this.setState({ visualizationStates }, cb);
 };
 
-breakpoint.visualizationStates.rollback = function () {
+breakpoint.rollback = function () {
   let { visualizationStates } = this.state;
 
   let visualizationState = visualizationStates.pop();
@@ -164,33 +188,4 @@ breakpoint.visualizationStates.rollback = function () {
     table: clone(visualizationState.table),
     visualizationStates
   });
-};
-
-/**
- * Event handlers
- */
-
-breakpoint.eventHandlers = {};
-
-breakpoint.eventHandlers.visualizeForward = function (b) {
-  breakpoint.visualizationStates.commit.call(this);
-
-  breakpoint.forward[_.camelCase(b.label)].call(this, {
-    label: b.label,
-    data: b.data,
-    index: this.state.breakpoint.index
-  });
-};
-
-breakpoint.eventHandlers.visualizeBackward = function (b) {
-  if (breakpoint.backward !== undefined && breakpoint.backward[_.camelCase(b.label)] !== undefined) {
-    breakpoint.backward[_.camelCase(b.label)].call(this, {
-      label: b.label,
-      data: b.data,
-      index: this.state.breakpoint.index
-    });
-  } else {
-    breakpoint.visualizationStates.rollback.call(this);
-    this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
-  }
 };

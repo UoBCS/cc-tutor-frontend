@@ -4,6 +4,7 @@ import VisualizationControl from 'components/VisualizationControl/VisualizationC
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
 import Window from 'components/Window/Window';
 import { breakpoint } from './breakpoint';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import userInteraction from './userInteraction';
 import api from 'api';
 import misc from 'utils/misc';
@@ -79,12 +80,18 @@ export default class RegexToNFA extends Component {
     }
   }
 
+  componentWillMount() {
+    globalBreakpointProcessor.initialize(breakpoint);
+  }
+
   render() {
     return (
       <div className='dashboard-card'>
         {ui.obj.modal.render(this)}
 
         {ui.obj.loader.render(this)}
+
+        {ui.obj.toast.render(this)}
 
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
@@ -138,8 +145,8 @@ export default class RegexToNFA extends Component {
             ref='visualizationControl'
             active={this.state.regexTree.instance !== null}
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
-            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
+            visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
             checkAnswerHandler={userInteraction.checkAnswer.bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>

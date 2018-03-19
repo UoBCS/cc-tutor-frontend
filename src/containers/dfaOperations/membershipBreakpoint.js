@@ -1,6 +1,7 @@
 import automata from 'utils/automata';
 import clone from 'clone';
 import _ from 'lodash';
+import ui from 'utils/ui';
 
 export const breakpoint = {};
 
@@ -23,30 +24,32 @@ breakpoint.forward.acceptsStep = function ({ data, index }) {
 
   this.setState({ word });
 
+  const str = `Consider the character "${data.transition.char}"`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Consider the character "${data.transition.char}"`,
+      title: str,
       breakpoint: data
     });
   }
 };
 
 breakpoint.forward.acceptsStop = function ({ data, index }) {
+  const str = `Membership test finished. The automaton does ${data.result ? '' : 'NOT'} accept the word.`;
+
+  ui.obj.toast.show(str);
+
   if (this.refs.actionsHistory) {
     this.refs.actionsHistory.addOrSelect(index, {
-      title: `Membership test finished. The automaton does ${data.result ? '' : 'NOT'} accept the word.`,
+      title: str,
       breakpoint: data
     });
   }
 };
 
-/**
- * Visualization states
- */
-
-breakpoint.visualizationStates = {};
-
-breakpoint.visualizationStates.commit = function () {
+breakpoint.commit = function (cb = null) {
   let visualizationStates = this.state.visualizationStates || [];
 
   visualizationStates.push({
@@ -57,10 +60,10 @@ breakpoint.visualizationStates.commit = function () {
     }
   });
 
-  this.setState({ visualizationStates });
+  this.setState({ visualizationStates }, cb);
 };
 
-breakpoint.visualizationStates.rollback = function () {
+breakpoint.rollback = function () {
   let visualizationStates = this.state.visualizationStates || [];
 
   let visualizationState = visualizationStates.pop();
@@ -82,33 +85,4 @@ breakpoint.visualizationStates.rollback = function () {
     },
     visualizationStates
   });
-};
-
-/**
- * Event handlers
- */
-
-breakpoint.eventHandlers = {};
-
-breakpoint.eventHandlers.visualizeForward = function (b) {
-  breakpoint.visualizationStates.commit.call(this);
-
-  breakpoint.forward[_.camelCase(b.label)].call(this, {
-    label: b.label,
-    data: b.data,
-    index: this.state.breakpoint.index
-  });
-};
-
-breakpoint.eventHandlers.visualizeBackward = function (b) {
-  if (breakpoint.backward !== undefined && breakpoint.backward[_.camelCase(b.label)] !== undefined) {
-    breakpoint.backward[_.camelCase(b.label)].call(this, {
-      label: b.label,
-      data: b.data,
-      index: this.state.breakpoint.index
-    });
-  } else {
-    breakpoint.visualizationStates.rollback.call(this);
-    this.refs.actionsHistory.addOrSelect(this.state.breakpoint.index);
-  }
 };

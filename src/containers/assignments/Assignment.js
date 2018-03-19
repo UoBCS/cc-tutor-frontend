@@ -9,6 +9,7 @@ import clone from 'clone';
 import api from 'api';
 import ui from 'utils/ui';
 import breakpoints from 'utils/breakpoints';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import storage from 'utils/storage';
 import strings from 'utils/strings';
 import automata from 'utils/automata';
@@ -162,8 +163,8 @@ export default class Assignment extends Component {
         <VisualizationControl
           active
           breakpoint={this.state.contents}
-          visualizeBreakpointForward={breakpoints.eventHandlers.visualizeForward.bind(this)}
-          visualizeBreakpointBackward={breakpoints.eventHandlers.visualizeBackward.bind(this)}
+          visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward('contents').bind(this)}
+          visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward('contents').bind(this)}
           addBreakpointHandler={breakpoints.eventHandlers.showActionChooser.bind(this)}
           updateState={this.helpers.updateState}/>
       </div>
@@ -189,8 +190,8 @@ export default class Assignment extends Component {
         <VisualizationControl
           active
           breakpoint={this.state.contents}
-          visualizeBreakpointForward={breakpoints.eventHandlers.visualizeForward.bind(this)}
-          visualizeBreakpointBackward={breakpoints.eventHandlers.visualizeBackward.bind(this)}
+          visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward('contents').bind(this)}
+          visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward('contents').bind(this)}
           addBreakpointHandler={breakpoints.eventHandlers.showActionChooser.bind(this)}
           updateState={this.helpers.updateState}/>
       </div>

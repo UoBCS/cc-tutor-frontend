@@ -1,6 +1,7 @@
 import React from 'react';
 import { Message, Modal, Dimmer, Loader } from 'semantic-ui-react';
 import { If } from 'react-extras';
+import { ToastContainer, toast } from 'react-toastify';
 
 const ui = {};
 
@@ -37,6 +38,18 @@ ui.renderErrors = (err, fallbackStr = 'An error has occurred.') => {
 };
 
 ui.obj = {};
+
+/**
+ * Toast
+ */
+
+ui.obj.toast = {
+  show: (text, type = 'info', position = toast.POSITION.TOP_CENTER) => {
+    toast[type](text, { position });
+  },
+
+  render: comp => <ToastContainer />
+};
 
 /**
  * Message

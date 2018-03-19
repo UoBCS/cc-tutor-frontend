@@ -12,7 +12,8 @@ import clone from 'clone';
 import ui from 'utils/ui';
 import misc from 'utils/misc';
 import automata from 'utils/automata';
-import breakpoint from './breakpoint';
+import { breakpoint } from './breakpoint';
+import globalBreakpointProcessor from 'utils/globalBreakpointProcessor';
 import RGL, { WidthProvider } from 'react-grid-layout';
 
 import 'react-grid-layout/css/styles.css';
@@ -57,28 +58,6 @@ export default class LexicalAnalysisViz extends Component {
     ui: clone(ui.state)
   }
 
-  componentDidMount() {
-    api.lexicalAnalysis(this.props.data)
-      .then(res => {
-        this.setState({
-          breakpoint: {
-            data: res.data.breakpoints,
-            index: -1
-          },
-
-          dfa: automata.visDataFormat('dfa-viz', res.data.dfa),
-
-          content: {
-            data: this.props.data.content,
-            index: -1
-          }
-        }, this.initializers.setDfaData)
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
   initializers = {
     setDfaData: () => {
       automata.updateNodesAttr(this.state.dfa, this.state.dfa.nodes.map(n => {
@@ -110,10 +89,38 @@ export default class LexicalAnalysisViz extends Component {
     }
   }
 
+  componentWillMount() {
+    globalBreakpointProcessor.initialize(breakpoint);
+  }
+
+  componentDidMount() {
+    api.lexicalAnalysis(this.props.data)
+      .then(res => {
+        this.setState({
+          breakpoint: {
+            data: res.data.breakpoints,
+            index: -1
+          },
+
+          dfa: automata.visDataFormat('dfa-viz', res.data.dfa),
+
+          content: {
+            data: this.props.data.content,
+            index: -1
+          }
+        }, this.initializers.setDfaData)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   render() {
     return (
       <div className='dashboard-card'>
         {ui.obj.modal.render(this)}
+
+        {ui.obj.toast.render(this)}
 
         <div className='dashboard-card-header'>
           <Grid className='viz-heading'>
@@ -184,8 +191,8 @@ export default class LexicalAnalysisViz extends Component {
           <VisualizationControl
             active
             breakpoint={this.state.breakpoint}
-            visualizeBreakpointForward={breakpoint.eventHandlers.visualizeForward.bind(this)}
-            visualizeBreakpointBackward={breakpoint.eventHandlers.visualizeBackward.bind(this)}
+            visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
+            visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
             updateState={misc.updateState.bind(this)}/>
         </div>
 
