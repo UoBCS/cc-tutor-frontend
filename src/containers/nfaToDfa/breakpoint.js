@@ -261,7 +261,6 @@ breakpoint.eventHandlers.saveVisualization = function () {
       });
 
       doc.save('download.pdf');
-
       ui.obj.loader.hide(this);
 
       /*setTimeout(() => {

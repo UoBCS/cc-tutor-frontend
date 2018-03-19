@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Header } from 'semantic-ui-react';
 
-export default class Authentication extends Component {
+export default class BreakpointsObject extends Component {
   render() {
     return (
       <div className='ApiDocumentation_section'>
-        <div className='ApiDocumentation_section_inner'>
+        <div id='breakpoints_object' className='ApiDocumentation_section_inner'>
           <Header as='h1'>Breakpoints object</Header>
 
           <p>

@@ -151,16 +151,16 @@ export default class Homepage extends Component {
                 <Grid.Column width={3}>
                   <Header inverted as='h4' content='About' />
                   <List link inverted>
-                    <List.Item as='a'>Contact</List.Item>
-                    <List.Item as='a'>Backend Repository</List.Item>
-                    <List.Item as='a'>Frontend Repository</List.Item>
+                    <List.Item>Contact: ossedb@gmail.com</List.Item>
+                    <List.Item as={Link} to='https://github.com/UoBCS/cc-tutor-backend'>Backend Repository</List.Item>
+                    <List.Item as={Link} to='https://github.com/UoBCS/cc-tutor-frontend'>Frontend Repository</List.Item>
                   </List>
                 </Grid.Column>
                 <Grid.Column width={3}>
                   <Header inverted as='h4' content='Services' />
                   <List link inverted>
-                    <List.Item as='a'>API Documentation</List.Item>
-                    <List.Item as='a'>Found a Bug?</List.Item>
+                    <List.Item as={Link} to='/api-documentation'>API Documentation</List.Item>
+                    <List.Item as={Link} to='https://github.com/UoBCS/cc-tutor-frontend/issues/new'>Found a Bug?</List.Item>
                   </List>
                 </Grid.Column>
                 <Grid.Column width={7}>

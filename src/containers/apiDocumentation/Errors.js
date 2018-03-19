@@ -4,7 +4,7 @@ import { Header } from 'semantic-ui-react';
 export default class Introduction extends Component {
   render() {
     return (
-      <div className='ApiDocumentation_section'>
+      <div id='errors' className='ApiDocumentation_section'>
         <div className='ApiDocumentation_section_inner'>
           <Header as='h1'>Errors</Header>
 

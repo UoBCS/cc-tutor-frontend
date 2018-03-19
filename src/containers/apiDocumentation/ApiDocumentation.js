@@ -5,6 +5,17 @@ import Introduction from './Introduction';
 import Authentication from './Authentication';
 import Errors from './Errors';
 import BreakpointsObject from './BreakpointsObject';
+import FiniteAutomatonObject from './FiniteAutomatonObject';
+import TreeObject from './TreeObject';
+import CekMachineObject from './CekMachineObject';
+import AssignmentObject from './AssignmentObject';
+import CourseObject from './CourseObject';
+import LessonObject from './LessonObject';
+import Algorithms from './Algorithms';
+import Assignments from './Assignments';
+import CompilerConstructionAssistant from './CompilerConstructionAssistant';
+import Phases from './Phases';
+import Users from './Users';
 import './ApiDocumentation.css';
 
 export default class ApiDocumentation extends Component {
@@ -21,49 +32,41 @@ export default class ApiDocumentation extends Component {
         <Grid>
           <Grid.Column width={3}>
             <Menu vertical>
-              <Menu.Item as={Link} to='/'>Home</Menu.Item>
+              <Menu.Item as='a' href='/'>Home</Menu.Item>
 
               <Menu.Item>
                 <Menu.Header>TOPICS</Menu.Header>
 
                 <Menu.Menu>
-                  <Menu.Item name='introduction' active={activeItem === 'enterprise'} onClick={this.itemClick} />
-                  <Menu.Item name='authentication' active={activeItem === 'consumer'} onClick={this.itemClick} />
-                  <Menu.Item name='errors' active={activeItem === 'consumer'} onClick={this.itemClick} />
-                  <Menu.Item name='objects' active={activeItem === 'consumer'} onClick={this.itemClick} />
+                  <Menu.Item name='introduction' as='a' href='#introduction' />
+                  <Menu.Item name='authentication' as='a' href='#authentication' />
+                  <Menu.Item name='errors' as='a' href='#errors' />
                 </Menu.Menu>
               </Menu.Item>
 
               <Menu.Item>
-                <Menu.Header>Algorithms</Menu.Header>
+                <Menu.Header>OBJECTS</Menu.Header>
 
                 <Menu.Menu>
-                  <Menu.Item name='rails' active={activeItem === 'rails'} onClick={this.itemClick} />
-                  <Menu.Item name='python' active={activeItem === 'python'} onClick={this.itemClick} />
-                  <Menu.Item name='php' active={activeItem === 'php'} onClick={this.itemClick} />
+                  <Menu.Item name='breakpointsObject' as='a' href='#breakpoints_object' />
+                  <Menu.Item name='finiteAutomatonObject' as='a' href='#finite_automaton_object' />
+                  <Menu.Item name='treeObject' as='a' href='#tree_object' />
+                  <Menu.Item name='CEKMachineObject' as='a' href='#cek_machine_object' />
+                  <Menu.Item name='assignmentObject' as='a' href='#assignment_object' />
+                  <Menu.Item name='courseObject' as='a' href='#course_object' />
+                  <Menu.Item name='lessonObject' as='a' href='#lesson_object' />
                 </Menu.Menu>
               </Menu.Item>
 
               <Menu.Item>
-                <Menu.Header>Hosting</Menu.Header>
+                <Menu.Header>ENDPOINTS</Menu.Header>
 
                 <Menu.Menu>
-                  <Menu.Item name='shared' active={activeItem === 'shared'} onClick={this.itemClick} />
-                  <Menu.Item name='dedicated' active={activeItem === 'dedicated'} onClick={this.itemClick} />
-                </Menu.Menu>
-              </Menu.Item>
-
-              <Menu.Item>
-                <Menu.Header>Support</Menu.Header>
-
-                <Menu.Menu>
-                  <Menu.Item name='email' active={activeItem === 'email'} onClick={this.itemClick}>
-                    E-mail Support
-                  </Menu.Item>
-
-                  <Menu.Item name='faq' active={activeItem === 'faq'} onClick={this.itemClick}>
-                    FAQs
-                  </Menu.Item>
+                  <Menu.Item name='algorithms' as='a' href='#algorithms' />
+                  <Menu.Item name='assignments' as='a' href='#assignments' />
+                  <Menu.Item name='compilerConstructionAssistant' as='a' href='#compiler_construction_assistant' />
+                  <Menu.Item name='phases' as='a' href='#phases' />
+                  <Menu.Item name='users' as='a' href='#users' />
                 </Menu.Menu>
               </Menu.Item>
             </Menu>
@@ -75,6 +78,17 @@ export default class ApiDocumentation extends Component {
               <Authentication />
               <Errors />
               <BreakpointsObject />
+              <FiniteAutomatonObject />
+              <TreeObject />
+              <CekMachineObject />
+              <AssignmentObject />
+              <CourseObject />
+              <LessonObject />
+              <Algorithms />
+              <Assignments />
+              <CompilerConstructionAssistant />
+              <Phases />
+              <Users />
             </Segment>
           </Grid.Column>
         </Grid>

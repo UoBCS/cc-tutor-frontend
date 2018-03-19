@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Header, Grid, Icon, Menu } from 'semantic-ui-react';
 import auth from 'utils/auth';
-import storage from 'utils/storage';
 import api from 'api';
 import './MainLayout.css';
 

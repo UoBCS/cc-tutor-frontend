@@ -4,7 +4,7 @@
 
 .ApiDocumentation_section {
   color: #4c555a;
-  border-bottom: 1px solid #e7e7e7;
+  margin: 30px 0;
 }
 
 .ApiDocumentation_section:last-child {
@@ -14,6 +14,43 @@
 .ApiDocumentation_section h1.ui.header {
   font-weight: 100;
   font-size: 1.6em;
+}
+
+.ApiDocumentation_section h2.ui.header {
+  font-weight: 100;
+  font-size: 1.3em;
+}
+
+.ApiDocumentation_segment {
+  margin: 56px 0;
+}
+
+.ApiDocumentation_segment_title {
+  font-family: monospace !important;
+}
+
+.ApiDocumentation_get_verb, .ApiDocumentation_post_verb, .ApiDocumentation_patch_verb, .ApiDocumentation_delete_verb {
+  padding: 5px 9px;
+}
+
+.ApiDocumentation_get_verb {
+  color: #fafafa;
+  background-color: rgb(42, 158, 7);
+}
+
+.ApiDocumentation_post_verb {
+  color: #fafafa;
+  background-color: rgb(201, 150, 9);
+}
+
+.ApiDocumentation_patch_verb {
+  color: #fafafa;
+  background-color: rgb(9, 108, 201);
+}
+
+.ApiDocumentation_delete_verb {
+  color: #fafafa;
+  background-color: rgb(201, 22, 9);
 }
 
 .ApiDocumentation_section p {
@@ -92,4 +129,8 @@ p.ApiDocumentation_list_item_description {
   margin: 0 0 0 200px;
   font-size: 13px;
   line-height: 21px;
+}
+
+.ApiDocumentation_mono {
+  font-family: monospace !important;
 }
