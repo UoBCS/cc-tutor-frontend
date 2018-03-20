@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Popup } from 'semantic-ui-react';
 
 import './VisualizationControl.css';
 
@@ -93,11 +93,16 @@ export default class VisualizationControl extends Component {
             onClick={this.eventHandlers.back}/>
           {checkAnswerBtn}
           {addBreakpointBtn}
-          <Button
-            icon='download'
-            content='Save'
-            disabled={!this.props.active}
-            onClick={this.eventHandlers.saveClick}/>
+          <Popup
+            trigger={
+              <Button
+                icon='download'
+                content='Save'
+                disabled={!this.props.active}
+                onClick={this.eventHandlers.saveClick}/>
+            }
+            content='This operation may take minutes to complete.'
+          />
           <Button
             labelPosition='right'
             icon='right chevron'
