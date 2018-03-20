@@ -61,9 +61,17 @@ globalBreakpointProcessor.eventHandlers.saveVisualization = (breakpointName = 'b
     const doc = new jsPDF('p', 'mm');
     let promises = [];
 
-    this.refs.visualizationControl.breakpoint.forAll(b => {
-      setTimeout(() => {
-        promises.push(html2canvas(document.querySelector('.dashboard-card-content')));
+    let i = 1;
+
+    this.refs.visualizationControl.breakpoint.startIndex(() => {
+      let intervalLoop = setInterval(() => {
+        if (this.refs.visualizationControl.breakpoint.getNext() === undefined) {
+          clearInterval(intervalLoop);
+        }
+
+        this.refs.visualizationControl.eventHandlers.forward(b => {
+          promises.push(html2canvas(document.querySelector('.dashboard-card-content')));
+        });
       }, 1000);
     });
 
@@ -91,13 +99,8 @@ globalBreakpointProcessor.eventHandlers.saveVisualization = (breakpointName = 'b
 
         doc.save('download.pdf');
         ui.obj.loader.hide(this);
-
-        /*setTimeout(() => {
-          ui.obj.loader.hide(this);
-          doc.save('download.pdf');
-        }, 10000);*/
       });
-    }, 15000);
+    }, 10000);
   };
 };
 
