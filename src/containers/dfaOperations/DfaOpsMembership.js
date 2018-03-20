@@ -139,6 +139,7 @@ export default class DfaOpsMembership extends Component {
                 breakpoint={this.state.breakpoint}
                 visualizeBreakpointForward={globalBreakpointProcessor.eventHandlers.visualizeForward().bind(this)}
                 visualizeBreakpointBackward={globalBreakpointProcessor.eventHandlers.visualizeBackward().bind(this)}
+                saveVisualizationHandler={globalBreakpointProcessor.eventHandlers.saveVisualization().bind(this)}
                 updateState={misc.updateState.bind(this)}/>
             </Choose.Otherwise>
           </Choose>
