@@ -113,16 +113,21 @@ breakpoint.forward.or4 = function ({data, index}) {
 breakpoint.commit = function (cb = null) {
   let visualizationStates = this.state.visualizationStates || [];
 
-  visualizationStates.push({
+  let state = {
     nfa: {
       nodes: clone(this.state.nfa.nodes),
       edges: clone(this.state.nfa.edges)
-    },
-    regexTree: {
+    }
+  };
+
+  if (this.state.regexTree) {
+    state.regexTree = {
       nodes: clone(this.state.regexTree.nodes),
       edges: clone(this.state.regexTree.edges)
-    }
-  });
+    };
+  }
+
+  visualizationStates.push(state);
 
   this.setState({ visualizationStates }, cb);
 };
@@ -132,32 +137,40 @@ breakpoint.rollback = function () {
 
   let visualizationState = visualizationStates.pop();
 
+  let state = { visualizationStates };
+
   const nfaNodes = clone(visualizationState.nfa.nodes);
   const nfaEdges = clone(visualizationState.nfa.edges);
-  const regexTreeNodes = clone(visualizationState.regexTree.nodes);
-  const regexTreeEdges = clone(visualizationState.regexTree.edges);
 
   this.state.nfa.instance.setData({
     nodes: nfaNodes,
     edges: nfaEdges
   });
 
-  this.state.regexTree.instance.setData({
-    nodes: regexTreeNodes,
-    edges: regexTreeEdges
-  });
+  state.nfa = {
+    instance: this.state.nfa.instance,
+    nodes: nfaNodes,
+    edges: nfaEdges
+  };
 
-  this.setState({
-    nfa: {
-      instance: this.state.nfa.instance,
-      nodes: nfaNodes,
-      edges: nfaEdges
-    },
-    regexTree: {
+  let regexTreeNodes;
+  let regexTreeEdges;
+
+  if (this.state.regexTree && visualizationState.regexTree) {
+    regexTreeNodes = clone(visualizationState.regexTree.nodes);
+    regexTreeEdges = clone(visualizationState.regexTree.edges);
+
+    this.state.regexTree.instance.setData({
+      nodes: regexTreeNodes,
+      edges: regexTreeEdges
+    });
+
+    state.regexTree = {
       instance: this.state.regexTree.instance,
       nodes: regexTreeNodes,
       edges: regexTreeEdges
-    },
-    visualizationStates
-  });
+    };
+  }
+
+  this.setState(state);
 };
