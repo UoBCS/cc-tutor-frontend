@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Header, Icon, Form, Grid, Segment, Label, List } from 'semantic-ui-react';
-import { If, For } from 'react-extras';
+import { Button, Header, Icon, Grid } from 'semantic-ui-react';
+import { If } from 'react-extras';
 import Window from 'components/Window/Window';
 import VisualizationControl from 'components/VisualizationControl/VisualizationControl';
 import VisualizationElement from 'components/VisualizationElement/VisualizationElement';
@@ -28,8 +28,6 @@ export default class Assignment extends Component {
 
   initializers = {
     getData: cb => {
-      const { user } = this.state;
-
       ui.obj.loader.show(this);
 
       api.assignments.get(this.props.match.params.id)
@@ -56,7 +54,7 @@ export default class Assignment extends Component {
 
   eventHandlers = {
     saveAssignment: () => {
-      const { user, assignment } = this.state;
+      const { assignment } = this.state;
 
       const data = {
         extra: assignment.type === 'impl_general'
@@ -103,7 +101,7 @@ export default class Assignment extends Component {
   renderers = Object.assign({}, {
     content: () => {
       let content = null;
-      let { assignment, user } = this.state;
+      let { assignment } = this.state;
 
       if (assignment === null) {
         return null;
@@ -120,6 +118,10 @@ export default class Assignment extends Component {
 
         case 'nfa_to_dfa':
           content = this.renderers.nfaToDfaContent();
+          break;
+
+        default:
+          content = null;
           break;
       }
 
@@ -259,6 +261,8 @@ export default class Assignment extends Component {
             dfa: automata.createEmpty('dfa-viz')
           });
           break;
+
+        default: break;
       }
     });
   }

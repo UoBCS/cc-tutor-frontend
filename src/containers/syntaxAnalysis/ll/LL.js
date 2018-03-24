@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
 import InputParserData from '../InputParserData';
 import LLViz from './LLViz';

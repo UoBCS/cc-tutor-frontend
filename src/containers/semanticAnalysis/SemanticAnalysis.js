@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
 import InputParserData from 'containers/syntaxAnalysis/InputParserData';
 import BuildAst from './BuildAst';

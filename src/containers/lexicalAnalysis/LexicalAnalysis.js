@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
 import InputData from './InputData';
 import LexicalAnalysisViz from './LexicalAnalysisViz';

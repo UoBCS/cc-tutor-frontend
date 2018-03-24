@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import WindowManager from 'containers/WindowManager';
 import InputFiniteAutomaton from '../inputFiniteAutomaton/InputFiniteAutomaton';
 import DfaMinimizationViz from './DfaMinimizationViz';
