@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Header, Grid, Icon, Menu } from 'semantic-ui-react';
 import auth from 'utils/auth';
+import ui from 'utils/ui';
 import api from 'api';
+import clone from 'clone';
 import './MainLayout.css';
 
 export default class MainLayout extends Component {
   state = {
     sidebarClosed: false,
-    user: null
+    user: null,
+    ui: clone(ui.state)
   }
 
   updaters = {
@@ -27,11 +30,15 @@ export default class MainLayout extends Component {
     },
 
     logout: () => {
+      ui.obj.loader.show(this);
+
       api.logout()
         .then(res => {
+          ui.obj.loader.hide(this);
           this.props.history.push('/sign-in');
         })
         .catch(err => {
+          ui.obj.loader.hide(this);
           this.props.history.push('/sign-in');
         });
     }
@@ -51,6 +58,8 @@ export default class MainLayout extends Component {
 
     return (
       <div>
+        {ui.obj.loader.render(this)}
+
         <Header as='h1' style={{
           margin: '24px 60px',
           paddingBottom: 15,

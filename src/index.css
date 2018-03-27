@@ -17,6 +17,13 @@ body {
   font-weight: 100 !important;
 }
 
+.cctutor-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.95em;
+  color: #4a4a4a;
+}
+
 /* Visualization */
 
 .viz-heading.ui.grid {
@@ -24,6 +31,14 @@ body {
   margin-bottom: 0;
   margin-left: 0;
   margin-right: 0;
+}
+
+.viz-heading .ui.header {
+  color: #222;
+}
+
+.viz-heading p {
+  color: #6e6e6e;
 }
 
 .viz-heading-left h1.ui.header {

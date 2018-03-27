@@ -74,6 +74,7 @@ export default class RegexToNFA extends Component {
           });
         })
         .catch(err => {
+          console.log(err);
           ui.obj.loader.hide(this);
           ui.obj.message.showErrorFromData(this, err);
         });
@@ -106,10 +107,11 @@ export default class RegexToNFA extends Component {
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
-              <Button.Group basic size='small' style={{ float: 'right' }}>
-                <Button icon='settings' />
-                <Button icon='question' />
-              </Button.Group>
+              <Button
+                circular
+                icon='question'
+                color='blue'
+                style={{ float: 'right' }}/>
               <br style={{ clear: 'both' }}/>
             </Grid.Column>
           </Grid>
@@ -118,11 +120,12 @@ export default class RegexToNFA extends Component {
         <div className='dashboard-card-content'>
           {ui.obj.message.render(this)}
 
+          <label className='cctutor-label'>Regular Expression</label>
           <Input
             name='regex'
             value={this.state.input.regex}
             onChange={this.eventHandlers.inputChange}
-            placeholder='Regular expression'
+            placeholder='(a|b)+'
             style={{ margin: '0px auto 30px auto' }}
             action={<Button primary onClick={this.eventHandlers.regexToNfaClick}>Run</Button>}/>
 
@@ -130,12 +133,12 @@ export default class RegexToNFA extends Component {
 
           <Grid columns={2}>
             <Grid.Column>
-              <Window title='Regular expression parse tree' titleColor='blue'>
+              <Window title='Regular expression parse tree'>
                 <div id='regex-tree-viz' style={{ height: 600 }}></div>
               </Window>
             </Grid.Column>
             <Grid.Column>
-              <Window title='Regular expression parse tree' titleColor='blue'>
+              <Window title='Non-deterministic finite automaton' titleColor='blue'>
                 <div id='nfa-viz' style={{ height: 600 }}></div>
               </Window>
             </Grid.Column>

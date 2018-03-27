@@ -54,7 +54,7 @@ export default class ActionsHistory extends Component {
         {ui.obj.modal.render(this)}
 
         <div className='viz-history'>
-          <div className='viz-history-current left'>
+          <div className='viz-history-current'>
             {actions
               && actions.length > 0
               && actions[index] !== undefined
@@ -63,11 +63,9 @@ export default class ActionsHistory extends Component {
             }
           </div>
 
-          <List bulleted horizontal className='viz-history-options right'>
+          <List bulleted horizontal className='viz-history-options'>
             <List.Item as='a' onClick={this.eventHandlers.showHistoryClick}>Show history</List.Item>
-            <List.Item as='a'>Close</List.Item>
           </List>
-          <br style={{ clear: 'both' }}/>
         </div>
       </div>
     );

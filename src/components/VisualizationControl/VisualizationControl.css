@@ -15,6 +15,10 @@
   display: none;
 }
 
+.VisualizationControl .ui.button.VisualizationControl_hidden {
+  display: none;
+}
+
 .VisualizationControl_button_group button {
   border-radius: 0 !important;
 }

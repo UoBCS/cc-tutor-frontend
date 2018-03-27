@@ -93,7 +93,8 @@ export default class NfaToDfaViz extends Component {
                 NFA to DFA visualization
               </Header>
               <p>
-                Some nice description right here please.
+                Convert a non-deterministic finite automaton to a deterministic one by
+                removing epsilon states and duplicate transitions which create the non-determinism.
               </p>
             </Grid.Column>
             <Grid.Column floated='right' width={1}>
