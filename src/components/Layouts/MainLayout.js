@@ -32,7 +32,7 @@ export default class MainLayout extends Component {
     logout: () => {
       ui.obj.loader.show(this);
 
-      api.logout()
+      api.logOut()
         .then(res => {
           ui.obj.loader.hide(this);
           this.props.history.push('/sign-in');

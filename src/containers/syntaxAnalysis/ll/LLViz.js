@@ -124,7 +124,7 @@ export default class LLViz extends Component {
         this.initializers.initParser(res.data);
       })
       .catch(err => {
-        console.log(err);
+        ui.obj.message.showErrorFromData(this, err);
       });
   }
 
