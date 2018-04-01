@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = {};
 
-axios.defaults.baseURL = 'http://cc-tutor.backend'; //'https://cc-tutor-api.herokuapp.com'; //'http://cc-tutor.backend';
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 
 if (localStorage.getItem('access_token')) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access_token').replace(/"/g, '');
